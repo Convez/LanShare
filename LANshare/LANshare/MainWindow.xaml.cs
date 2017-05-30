@@ -35,8 +35,6 @@ namespace LANshare
         {
             base.EndInit();
             trayIcon.Visible = true;
-            Task t = new Task(communication.LAN_Advertise);
-            t.Start();
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -45,8 +43,13 @@ namespace LANshare
             trayIcon = new System.Windows.Forms.NotifyIcon();
             trayIcon.Icon = new System.Drawing.Icon("Media/switch.ico");
             trayIcon.Click += new EventHandler(IconClicked);
+            trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
         }
-        
+
+        private void IconDoubleClicked(object sender, EventArgs args)
+        {
+            Application.Current.Shutdown();
+        }
         private void IconClicked(object sender, EventArgs eventArgs)
         {
             Visibility = Visibility.Visible;

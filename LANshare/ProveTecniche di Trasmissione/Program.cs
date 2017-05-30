@@ -44,52 +44,47 @@ namespace ProveTecniche_di_Trasmissione
 
     class infoSendRec
     {
-        private readonly User currentUser;
-        private readonly int port;
-        public infoSendRec()
-        {
-            port = 42666;
-            currentUser = new User();
-            currentUser.name = "Tonino";
-            currentUser.surname = "Accolla";
-        }
+        private readonly int _port = 42666;
 
 
         public async void InfoServer()
         {
-            TcpListener server = new TcpListener(IPAddress.Any, port);
+            TcpListener server = new TcpListener(IPAddress.Any, _port);
             server.Start();
             var client = server.AcceptTcpClient();
             var str = client.GetStream();
-            IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            formatter.Serialize(ms, currentUser);
-            var data = ms.ToArray();
-            str.Write(data, 0, data.Length);
-        }
-
-        public async void InfoClient()
-        {
-            TcpClient client = new TcpClient("127.0.0.1", port);
-            var str =client.GetStream();
             byte[] data = new byte[client.ReceiveBufferSize];
             str.Read(data, 0, client.ReceiveBufferSize);
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             MemoryStream ms = new MemoryStream(data);
-            User u = (User) formatter.Deserialize(ms);
-            Console.WriteLine(u.ToString());
+            List<string> filesToReceive = (List<string>) formatter.Deserialize(ms);
+            filesToReceive.ForEach(Console.WriteLine);
+        }
+
+        public async void InfoClient()
+        {
+            TcpClient client = new TcpClient("127.0.0.1", _port);
+            var str =client.GetStream();
+            IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            MemoryStream ms = new MemoryStream();
+            List<string> filesToSend = new List<string>();
+            filesToSend.Add("Giovanni");
+            filesToSend.Add("Muciaccia");
+            formatter.Serialize(ms,filesToSend);
+            byte[] data = ms.ToArray();
+            str.Write(data, 0, data.Length);
         }
     }
 
 
     class com
     {
-        private readonly System.Net.IPAddress _multicastAddress;
-        private readonly int port;
+        private readonly IPAddress _multicastAddress;
+        private readonly int _port;
         private readonly User currentUser;
         public com()
         {
-            port = 44666;
+            _port = 44666;
             _multicastAddress = System.Net.IPAddress.Parse("239.165.41.74");
             currentUser = new User();
             currentUser.name = "Tonino";
@@ -98,8 +93,8 @@ namespace ProveTecniche_di_Trasmissione
         
         public async void LAN_Advertise()
         {
-            var endPoint = new System.Net.IPEndPoint(_multicastAddress, port);
-            var client = new System.Net.Sockets.UdpClient(System.Net.Sockets.AddressFamily.InterNetwork);
+            var endPoint = new IPEndPoint(_multicastAddress, _port);
+            var client = new UdpClient(AddressFamily.InterNetwork);
             client.JoinMulticastGroup(_multicastAddress);
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             MemoryStream ms = new MemoryStream();
@@ -115,8 +110,8 @@ namespace ProveTecniche_di_Trasmissione
 
         public bool LAN_Listen()
         {
-            System.Net.Sockets.UdpClient client = new UdpClient(port);
-            var endPoint = new System.Net.IPEndPoint(IPAddress.Any, 0);
+            UdpClient client = new UdpClient(_port);
+            var endPoint = new IPEndPoint(IPAddress.Any, 0);
             client.JoinMulticastGroup(_multicastAddress);
 
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
@@ -126,7 +121,7 @@ namespace ProveTecniche_di_Trasmissione
                 using (MemoryStream ms = new MemoryStream(data))
                 {
                     var u = (string) formatter.Deserialize(ms);
-                    Console.WriteLine(endPoint.Address.ToString() + @" " + u.ToString());
+                    Console.WriteLine(endPoint.Address + @" " + u);
                 }
             }
             return true;
