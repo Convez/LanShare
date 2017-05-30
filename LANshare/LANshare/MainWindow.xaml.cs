@@ -26,6 +26,9 @@ namespace LANshare
         public MainWindow()
         {
             InitializeComponent();
+
+            //TODO Use netstat -n -o to find pid of process binded to port
+
         }
 
         public override void EndInit()
