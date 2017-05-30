@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LANshare.Connection;
 
 namespace LANshare
 {
@@ -21,6 +22,7 @@ namespace LANshare
     public partial class MainWindow : Window
     {
         private System.Windows.Forms.NotifyIcon trayIcon = null;
+        private LAN_Comunication communication = new LAN_Comunication();
         public MainWindow()
         {
             InitializeComponent();
@@ -30,6 +32,8 @@ namespace LANshare
         {
             base.EndInit();
             trayIcon.Visible = true;
+            Task t = new Task(communication.LAN_Advertise);
+            t.Start();
         }
 
         protected override void OnInitialized(EventArgs e)
