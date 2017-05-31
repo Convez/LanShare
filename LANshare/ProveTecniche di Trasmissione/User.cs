@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace LANshare.Model
 {
     [Serializable]
@@ -13,7 +14,6 @@ namespace LANshare.Model
         
 
         public string surname { get; set; }
-        
         
 
         public override string ToString()

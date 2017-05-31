@@ -40,6 +40,7 @@ namespace LANshare
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
+            Model.Configuration.LoadConfiguration();
             trayIcon = new System.Windows.Forms.NotifyIcon();
             trayIcon.Icon = new System.Drawing.Icon("Media/switch.ico");
             trayIcon.Click += new EventHandler(IconClicked);

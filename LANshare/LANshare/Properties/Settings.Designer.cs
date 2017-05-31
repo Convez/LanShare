@@ -8,22 +8,123 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace LANshare.Properties
-{
-
-
+namespace LANshare.Properties {
+    
+    
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
-    {
-
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
+        
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-
-        public static Settings Default
-        {
-            get
-            {
+        
+        public static Settings Default {
+            get {
                 return defaultInstance;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("44666")]
+        public int UdpPort {
+            get {
+                return ((int)(this["UdpPort"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("42666")]
+        public int TcpPort {
+            get {
+                return ((int)(this["TcpPort"]));
+            }
+            set {
+                this["TcpPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("AskAlways")]
+        public global::LANshare.Model.EFileAcceptanceMode FileAcceptanceMode {
+            get {
+                return ((global::LANshare.Model.EFileAcceptanceMode)(this["FileAcceptanceMode"]));
+            }
+            set {
+                this["FileAcceptanceMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("UseDefault")]
+        public global::LANshare.Model.EFileSavePathMode FileSavePathMode {
+            get {
+                return ((global::LANshare.Model.EFileSavePathMode)(this["FileSavePathMode"]));
+            }
+            set {
+                this["FileSavePathMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Public")]
+        public global::LANshare.Model.EUserAdvertisementMode UserAdvertisementMode {
+            get {
+                return ((global::LANshare.Model.EUserAdvertisementMode)(this["UserAdvertisementMode"]));
+            }
+            set {
+                this["UserAdvertisementMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("UseComputerUserLogin")]
+        public global::LANshare.Model.EAdvertisedUserMode AdvertisedUserMode {
+            get {
+                return ((global::LANshare.Model.EAdvertisedUserMode)(this["AdvertisedUserMode"]));
+            }
+            set {
+                this["AdvertisedUserMode"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%USERPROFILE%\\Documents")]
+        public string DefaultSavePath {
+            get {
+                return ((string)(this["DefaultSavePath"]));
+            }
+            set {
+                this["DefaultSavePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%USERNAME%")]
+        public string DefaultUser {
+            get {
+                return ((string)(this["DefaultUser"]));
+            }
+            set {
+                this["DefaultUser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string UserNickName {
+            get {
+                return ((string)(this["UserNickName"]));
+            }
+            set {
+                this["UserNickName"] = value;
             }
         }
     }
