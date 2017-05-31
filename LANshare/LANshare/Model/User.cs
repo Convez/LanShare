@@ -12,13 +12,19 @@ namespace LANshare.Model
     {
         public string Name
         {
-            get { return this.Name; }
-            set {this.Name = Environment.ExpandEnvironmentVariables(value); }
+            get => this._name;
+            set => _name = Environment.ExpandEnvironmentVariables(value);
         }
+        private string _name;
         public string NickName { get; set; }
-        public User(string name,string nickName=null)
+
+
+        // Tcp port listening for file upload requests for user
+        public int TcpPortTo { get; set; }
+        public User(string name, int tcpPortTo , string nickName=null)
         {
             Name = name;
+            TcpPortTo = tcpPortTo;
             NickName = nickName;
         }
     }

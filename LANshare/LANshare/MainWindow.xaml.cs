@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
+using System.Threading.Tasks;
 using LANshare.Connection;
 
 namespace LANshare
@@ -22,7 +24,9 @@ namespace LANshare
     public partial class MainWindow : Window
     {
         private System.Windows.Forms.NotifyIcon trayIcon = null;
-        private LAN_Comunication communication = new LAN_Comunication();
+        private LAN_Comunication comunication;
+        private Task advertiser;
+        private CancellationTokenSource cts;
         public MainWindow()
         {
             InitializeComponent();
@@ -41,19 +45,21 @@ namespace LANshare
         {
             base.OnInitialized(e);
             Model.Configuration.LoadConfiguration();
-            trayIcon = new System.Windows.Forms.NotifyIcon();
-            trayIcon.Icon = new System.Drawing.Icon("Media/switch.ico");
-            trayIcon.Click += new EventHandler(IconClicked);
+            trayIcon = new System.Windows.Forms.NotifyIcon {Icon = new System.Drawing.Icon("Media/switch.ico")};
             trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
+            cts = new CancellationTokenSource();
+            comunication = new LAN_Comunication();
+            advertiser = Task.Run(()=> { comunication.LAN_Advertise(cts.Token); });
+                       
         }
 
         private void IconDoubleClicked(object sender, EventArgs args)
         {
+            trayIcon.Visible = false;
+            cts.Cancel();
+            advertiser.Wait();
             Application.Current.Shutdown();
         }
-        private void IconClicked(object sender, EventArgs eventArgs)
-        {
-            Visibility = Visibility.Visible;
-        }
+        
     }
 }

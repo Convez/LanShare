@@ -127,5 +127,14 @@ namespace LANshare.Properties {
                 this["UserNickName"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("239.165.41.74")]
+        public string MulticastAddress {
+            get {
+                return ((string)(this["MulticastAddress"]));
+            }
+        }
     }
 }

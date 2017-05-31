@@ -37,6 +37,7 @@ namespace LANshare.Model
     public static class Configuration
     {
         public static int UdpPort { get; private set; }
+        public static System.Net.IPAddress MulticastAddress{get; private set; }
         public static int TcpPort { get; set; }
         public static EFileAcceptanceMode FileAcceptanceMode { get; set; }
         public static EFileSavePathMode FileSavePathMode { get; set; }
@@ -44,16 +45,19 @@ namespace LANshare.Model
         public static EAdvertisedUserMode AdvertisedUserMode { get; set; }
         public static string DefaultSavePath { get; set; }
         public static User CurrentUser { get; private set; }
+
+
         public static void LoadConfiguration()
         {
             UdpPort = Properties.Settings.Default.UdpPort;
+            MulticastAddress = System.Net.IPAddress.Parse(Properties.Settings.Default.MulticastAddress);
             TcpPort = Properties.Settings.Default.TcpPort;
             FileAcceptanceMode = Properties.Settings.Default.FileAcceptanceMode;
             FileSavePathMode = Properties.Settings.Default.FileSavePathMode;
             UserAdvertisementMode = Properties.Settings.Default.UserAdvertisementMode;
             AdvertisedUserMode = Properties.Settings.Default.AdvertisedUserMode;
             DefaultSavePath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Properties.Settings.Default.DefaultSavePath));
-            CurrentUser = new User(Properties.Settings.Default.DefaultUser, Properties.Settings.Default.UserNickName);
+            CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort ,Properties.Settings.Default.UserNickName);
         }
 
         public static void SaveConfiguration()
@@ -64,6 +68,8 @@ namespace LANshare.Model
             Properties.Settings.Default.UserAdvertisementMode = UserAdvertisementMode;
             Properties.Settings.Default.AdvertisedUserMode = AdvertisedUserMode;
             Properties.Settings.Default.DefaultSavePath = DefaultSavePath;
+            Properties.Settings.Default.DefaultUser = CurrentUser.Name;
+            Properties.Settings.Default.UserNickName = CurrentUser.NickName;
             Properties.Settings.Default.Save();
         }
 
