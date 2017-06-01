@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Threading;
-using System.Threading.Tasks;
 using LANshare.Connection;
 
 namespace LANshare
@@ -23,10 +22,11 @@ namespace LANshare
     /// </summary>
     public partial class MainWindow : Window
     {
-        private System.Windows.Forms.NotifyIcon trayIcon = null;
-        private LAN_Comunication comunication;
-        private Task advertiser;
-        private CancellationTokenSource cts;
+        private System.Windows.Forms.NotifyIcon _trayIcon;
+        private LAN_Comunication _comunication;
+        private Task _advertiser;
+        private Task _listener;
+        private CancellationTokenSource _cts;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,26 +38,27 @@ namespace LANshare
         public override void EndInit()
         {
             base.EndInit();
-            trayIcon.Visible = true;
+            _trayIcon.Visible = true;
         }
 
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
             Model.Configuration.LoadConfiguration();
-            trayIcon = new System.Windows.Forms.NotifyIcon {Icon = new System.Drawing.Icon("Media/switch.ico")};
-            trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
-            cts = new CancellationTokenSource();
-            comunication = new LAN_Comunication();
-            advertiser = Task.Run(()=> { comunication.LAN_Advertise(cts.Token); });
-                       
+            _trayIcon = new System.Windows.Forms.NotifyIcon {Icon = new System.Drawing.Icon("Media/switch.ico")};
+            _trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
+            _cts = new CancellationTokenSource();
+            _comunication = new LAN_Comunication();
+            _advertiser = Task.Run( async()=> { await _comunication.LAN_Advertise(_cts.Token); });
+            _listener = Task.Run(async () => { await _comunication.LAN_Listen(_cts.Token); });
         }
 
         private void IconDoubleClicked(object sender, EventArgs args)
         {
-            trayIcon.Visible = false;
-            cts.Cancel();
-            advertiser.Wait();
+            _trayIcon.Visible = false;
+            _cts.Cancel();
+            _advertiser.Wait();
+            _listener.Wait();
             Application.Current.Shutdown();
         }
         
