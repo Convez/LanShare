@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,6 +60,8 @@ namespace LANshare.Model
             AdvertisedUserMode = Properties.Settings.Default.AdvertisedUserMode;
             DefaultSavePath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Properties.Settings.Default.DefaultSavePath));
             CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort ,Properties.Settings.Default.UserNickName);
+            CurrentUser.userAddress = Dns.GetHostAddresses(Dns.GetHostName())
+                .FirstOrDefault((ip) => ip.AddressFamily == AddressFamily.InterNetwork);
         }
 
         public static void SaveConfiguration()

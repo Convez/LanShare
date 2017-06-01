@@ -18,7 +18,8 @@ namespace LANshare.Model
         private string _name;
         public string NickName { get; set; }
 
-
+        //User ip address
+        [NonSerialized] public System.Net.IPAddress userAddress;
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
         public User(string name, int tcpPortTo , string nickName=null)

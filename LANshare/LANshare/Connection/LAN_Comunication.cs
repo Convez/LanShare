@@ -15,7 +15,6 @@ namespace LANshare.Connection
     class LAN_Comunication
     {
         public ConcurrentDictionary<User, Timer> usersOnNetwork;
-
         public LAN_Comunication()
         {
             usersOnNetwork = new ConcurrentDictionary<User, Timer>();
@@ -38,15 +37,12 @@ namespace LANshare.Connection
             }
             advertiser.DropMulticastGroup(Configuration.MulticastAddress);
         }
-
         public async Task LAN_Listen(CancellationToken ct)
         {
             UdpClient listener = new UdpClient(Model.Configuration.UdpPort);
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
             listener.JoinMulticastGroup(Model.Configuration.MulticastAddress);
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            IPAddress ownIp = Dns.GetHostAddresses(Dns.GetHostName())
-                .FirstOrDefault((ip) => { return ip.AddressFamily == AddressFamily.InterNetwork; });
             var timeout = TimeSpan.FromSeconds(12);
             while (!ct.IsCancellationRequested)
             {
@@ -57,11 +53,12 @@ namespace LANshare.Connection
                     try
                     {
                         byte[] udpResult = listener.EndReceive(asyncResult, ref endPoint);
-                        if (endPoint.Address.Equals(ownIp))
+                        if (endPoint.Address.Equals(Configuration.CurrentUser.userAddress))
                             continue;
                         using (MemoryStream ms = new MemoryStream(udpResult))
                         {
                             var user = (Model.User)formatter.Deserialize(ms);
+                            user.userAddress = IPAddress.Parse(endPoint.Address.ToString());
                             Timer t = new Timer(ObjectExpired, user, 0, 5000);
                             usersOnNetwork.AddOrUpdate(user, t, (u, old) =>
                             {
@@ -77,7 +74,6 @@ namespace LANshare.Connection
             }
             listener.DropMulticastGroup(Configuration.MulticastAddress);
         }
-
         private void ObjectExpired(Object o)
         {
             var u = (User)o;
