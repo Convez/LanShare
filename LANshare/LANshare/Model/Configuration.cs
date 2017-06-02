@@ -40,6 +40,8 @@ namespace LANshare.Model
     {
         public static int UdpPort { get; private set; }
         public static System.Net.IPAddress MulticastAddress{get; private set; }
+        public static int UdpPacketsIntervalMilliseconds { get; private set; }
+        public static int UdpConnectionTimeoutMilliseconds { get; private set; }
         public static int TcpPort { get; set; }
         public static EFileAcceptanceMode FileAcceptanceMode { get; set; }
         public static EFileSavePathMode FileSavePathMode { get; set; }
@@ -47,12 +49,14 @@ namespace LANshare.Model
         public static EAdvertisedUserMode AdvertisedUserMode { get; set; }
         public static string DefaultSavePath { get; set; }
         public static User CurrentUser { get; private set; }
-
+        public static int UserValidityMilliseconds { get; private set; }
 
         public static void LoadConfiguration()
         {
             UdpPort = Properties.Settings.Default.UdpPort;
             MulticastAddress = System.Net.IPAddress.Parse(Properties.Settings.Default.MulticastAddress);
+            UdpPacketsIntervalMilliseconds = Properties.Settings.Default.UdpPacketsIntervalMilliseconds;
+            UdpConnectionTimeoutMilliseconds = Properties.Settings.Default.UdpConnectionTimeoutMilliseconds;
             TcpPort = Properties.Settings.Default.TcpPort;
             FileAcceptanceMode = Properties.Settings.Default.FileAcceptanceMode;
             FileSavePathMode = Properties.Settings.Default.FileSavePathMode;
@@ -62,6 +66,7 @@ namespace LANshare.Model
             CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort ,Properties.Settings.Default.UserNickName);
             CurrentUser.userAddress = Dns.GetHostAddresses(Dns.GetHostName())
                 .FirstOrDefault((ip) => ip.AddressFamily == AddressFamily.InterNetwork);
+            UserValidityMilliseconds = Properties.Settings.Default.UserValidityMilliseconds;
         }
 
         public static void SaveConfiguration()

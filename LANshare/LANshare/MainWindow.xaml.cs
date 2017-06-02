@@ -23,7 +23,7 @@ namespace LANshare
     public partial class MainWindow : Window
     {
         private System.Windows.Forms.NotifyIcon _trayIcon;
-        private LAN_Comunication _comunication;
+        private LanComunication _comunication;
         private Task _advertiser;
         private Task _listener;
         private CancellationTokenSource _cts;
@@ -48,9 +48,9 @@ namespace LANshare
             _trayIcon = new System.Windows.Forms.NotifyIcon {Icon = new System.Drawing.Icon("Media/switch.ico")};
             _trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
             _cts = new CancellationTokenSource();
-            _comunication = new LAN_Comunication();
+            _comunication = new LanComunication();
             _advertiser = Task.Run( async()=> { await _comunication.LAN_Advertise(_cts.Token); });
-            _listener = Task.Run(async () => { await _comunication.LAN_Listen(_cts.Token); });
+            _listener = Task.Run(async () => { await Task.Run(()=>_comunication.LAN_Listen(_cts.Token)); });
         }
 
         private void IconDoubleClicked(object sender, EventArgs args)

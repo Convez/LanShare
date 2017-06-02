@@ -32,5 +32,14 @@
     <Setting Name="MulticastAddress" Type="System.String" Scope="Application">
       <Value Profile="(Default)">239.165.41.74</Value>
     </Setting>
+    <Setting Name="UdpPacketsIntervalMilliseconds" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">10000</Value>
+    </Setting>
+    <Setting Name="UserValidityMilliseconds" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">15000</Value>
+    </Setting>
+    <Setting Name="UdpConnectionTimeoutMilliseconds" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">12000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

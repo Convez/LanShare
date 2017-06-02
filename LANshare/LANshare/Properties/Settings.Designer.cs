@@ -136,5 +136,32 @@ namespace LANshare.Properties {
                 return ((string)(this["MulticastAddress"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10000")]
+        public int UdpPacketsIntervalMilliseconds {
+            get {
+                return ((int)(this["UdpPacketsIntervalMilliseconds"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15000")]
+        public int UserValidityMilliseconds {
+            get {
+                return ((int)(this["UserValidityMilliseconds"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("12000")]
+        public int UdpConnectionTimeoutMilliseconds {
+            get {
+                return ((int)(this["UdpConnectionTimeoutMilliseconds"]));
+            }
+        }
     }
 }
