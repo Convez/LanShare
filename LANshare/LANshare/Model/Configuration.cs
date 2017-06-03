@@ -15,13 +15,12 @@ namespace LANshare.Model
         AcceptAll,
         AskAlways
     }
-
     [Serializable]
     public enum EFileSavePathMode
     {
         UseDefault,
-        AskForPath,
-        UseCustomDefault
+        UseCustom,
+        AskForPath
     }
     [Serializable]
     public enum EUserAdvertisementMode
@@ -47,7 +46,8 @@ namespace LANshare.Model
         public static EFileSavePathMode FileSavePathMode { get; set; }
         public static EUserAdvertisementMode UserAdvertisementMode { get; set; }
         public static EAdvertisedUserMode AdvertisedUserMode { get; set; }
-        public static string DefaultSavePath { get; set; }
+        public static string DefaultSavePath { get; private set; }
+        public static string CustomSavePath { get; set; }
         public static User CurrentUser { get; private set; }
         public static int UserValidityMilliseconds { get; private set; }
 
@@ -67,6 +67,7 @@ namespace LANshare.Model
             CurrentUser.userAddress = Dns.GetHostAddresses(Dns.GetHostName())
                 .FirstOrDefault((ip) => ip.AddressFamily == AddressFamily.InterNetwork);
             UserValidityMilliseconds = Properties.Settings.Default.UserValidityMilliseconds;
+            CustomSavePath = Properties.Settings.Default.CustomSavePath;
         }
 
         public static void SaveConfiguration()
@@ -76,7 +77,7 @@ namespace LANshare.Model
             Properties.Settings.Default.FileSavePathMode = FileSavePathMode;
             Properties.Settings.Default.UserAdvertisementMode = UserAdvertisementMode;
             Properties.Settings.Default.AdvertisedUserMode = AdvertisedUserMode;
-            Properties.Settings.Default.DefaultSavePath = DefaultSavePath;
+            Properties.Settings.Default.CustomSavePath = CustomSavePath;
             Properties.Settings.Default.DefaultUser = CurrentUser.Name;
             Properties.Settings.Default.UserNickName = CurrentUser.NickName;
             Properties.Settings.Default.Save();

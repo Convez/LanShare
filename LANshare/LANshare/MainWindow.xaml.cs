@@ -49,8 +49,13 @@ namespace LANshare
             _trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
             _cts = new CancellationTokenSource();
             _comunication = new LanComunication();
-            _advertiser = Task.Run( async()=> { await _comunication.LAN_Advertise(_cts.Token); });
-            _listener = Task.Run(async () => { await Task.Run(()=>_comunication.LAN_Listen(_cts.Token)); });
+            //_advertiser = Task.Run( async()=> { await _comunication.LAN_Advertise(_cts.Token); });
+            //_listener = Task.Run(async () => { await Task.Run(()=>_comunication.LAN_Listen(_cts.Token)); });
+
+            var tcproba = new TCP_FileTransfer();
+            _advertiser = Task.Run(async () => await tcproba.TransferRequestListener(_cts.Token));
+            _listener = Task.Run(async () => await tcproba.TransferRequestSender(Model.Configuration.CurrentUser, new List<string>()));
+
         }
 
         private void IconDoubleClicked(object sender, EventArgs args)

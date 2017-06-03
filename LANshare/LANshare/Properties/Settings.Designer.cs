@@ -92,15 +92,12 @@ namespace LANshare.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%USERPROFILE%\\Documents")]
+        [global::System.Configuration.DefaultSettingValueAttribute("%USERPROFILE%\\Documents\\LANshare")]
         public string DefaultSavePath {
             get {
                 return ((string)(this["DefaultSavePath"]));
-            }
-            set {
-                this["DefaultSavePath"] = value;
             }
         }
         
@@ -161,6 +158,30 @@ namespace LANshare.Properties {
         public int UdpConnectionTimeoutMilliseconds {
             get {
                 return ((int)(this["UdpConnectionTimeoutMilliseconds"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%USERPROFILE%\\Documents\\LANshare")]
+        public string CustomSavePath {
+            get {
+                return ((string)(this["CustomSavePath"]));
+            }
+            set {
+                this["CustomSavePath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Setting {
+            get {
+                return ((string)(this["Setting"]));
+            }
+            set {
+                this["Setting"] = value;
             }
         }
     }
