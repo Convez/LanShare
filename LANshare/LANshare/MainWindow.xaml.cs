@@ -30,7 +30,7 @@ namespace LANshare
         public MainWindow()
         {
             InitializeComponent();
-
+            
             //TODO Use netstat -n -o to find pid of process binded to port
 
         }
@@ -46,15 +46,16 @@ namespace LANshare
             base.OnInitialized(e);
             Model.Configuration.LoadConfiguration();
             _trayIcon = new System.Windows.Forms.NotifyIcon {Icon = new System.Drawing.Icon("Media/switch.ico")};
-            _trayIcon.DoubleClick += new EventHandler(IconDoubleClicked);
+           
+            _trayIcon.DoubleClick += IconDoubleClicked;
             _cts = new CancellationTokenSource();
             _comunication = new LanComunication();
             //_advertiser = Task.Run( async()=> { await _comunication.LAN_Advertise(_cts.Token); });
             //_listener = Task.Run(async () => { await Task.Run(()=>_comunication.LAN_Listen(_cts.Token)); });
 
-            var tcproba = new TCP_FileTransfer();
-            _advertiser = Task.Run(async () => await tcproba.TransferRequestListener(_cts.Token));
-            _listener = Task.Run(async () => await tcproba.TransferRequestSender(Model.Configuration.CurrentUser, new List<string>()));
+            //var tcproba = new TCP_FileTransfer();
+            //_advertiser = Task.Run(async () => await tcproba.TransferRequestListener(_cts.Token));
+            //_listener = Task.Run(async () => await tcproba.TransferRequestSender(Model.Configuration.CurrentUser, new List<string>()));
 
         }
 
