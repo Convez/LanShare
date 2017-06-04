@@ -30,6 +30,11 @@ namespace LANshare
         public MainWindow()
         {
             InitializeComponent();
+            string[] args = Environment.GetCommandLineArgs();
+            for (int i = 1; i < args.Length; i++)
+            {
+                List.Items.Add(args[i]);
+            }
             
             //TODO Use netstat -n -o to find pid of process binded to port
 
@@ -39,6 +44,10 @@ namespace LANshare
         {
             base.EndInit();
             _trayIcon.Visible = true;
+            if (Environment.GetCommandLineArgs().Length > 1)
+            {
+                Visibility = Visibility.Visible;
+            }
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -63,8 +72,8 @@ namespace LANshare
         {
             _trayIcon.Visible = false;
             _cts.Cancel();
-            _advertiser.Wait();
-            _listener.Wait();
+            //_advertiser.Wait();
+            //_listener.Wait();
             Application.Current.Shutdown();
         }
         

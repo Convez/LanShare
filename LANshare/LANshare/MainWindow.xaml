@@ -8,6 +8,8 @@
         Title="MainWindow" Height="350" Width="525"
         Visibility="Hidden">
     <Grid>
-        
+        <ListView Name="List">
+            
+        </ListView>
     </Grid>
 </Window>
