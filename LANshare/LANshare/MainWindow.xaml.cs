@@ -29,32 +29,34 @@ namespace LANshare
         private CancellationTokenSource _cts;
         public MainWindow()
         {
+            Console.WriteLine("Entered");
             InitializeComponent();
             string[] args = Environment.GetCommandLineArgs();
             for (int i = 1; i < args.Length; i++)
             {
                 List.Items.Add(args[i]);
             }
-            
-            //TODO Use netstat -n -o to find pid of process binded to port
-
         }
 
         public override void EndInit()
         {
             base.EndInit();
             _trayIcon.Visible = true;
-            if (Environment.GetCommandLineArgs().Length > 1)
-            {
-                Visibility = Visibility.Visible;
-            }
+            Visibility = Visibility.Visible;
         }
 
         protected override void OnInitialized(EventArgs e)
         {
+            Console.WriteLine("Init");
             base.OnInitialized(e);
             Model.Configuration.LoadConfiguration();
-            _trayIcon = new System.Windows.Forms.NotifyIcon {Icon = new System.Drawing.Icon("Media/switch.ico")};
+            _trayIcon = new System.Windows.Forms.NotifyIcon {
+                Icon = new System.Drawing.Icon(
+                    System.IO.Path.Combine(
+                        System.IO.Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]), //Directory where executable is (NEVER NULL)
+                        "Media/switch.ico")
+                    )
+            };
            
             _trayIcon.DoubleClick += IconDoubleClicked;
             _cts = new CancellationTokenSource();

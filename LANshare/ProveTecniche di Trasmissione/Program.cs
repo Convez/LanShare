@@ -29,7 +29,7 @@ namespace ProveTecniche_di_Trasmissione
             p.Wait();
             t.Wait();
             */
-
+            Console.WriteLine(Guid.NewGuid().ToString());
             infoSendRec i = new infoSendRec();
             Task t = new Task(i.InfoServer);
             Task p = new Task(i.InfoClient);

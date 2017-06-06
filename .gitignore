@@ -29,5 +29,7 @@
 *.app
 
 # Visual Studio generated folders
+.vs/
 bin/
 obj/
+x64/
