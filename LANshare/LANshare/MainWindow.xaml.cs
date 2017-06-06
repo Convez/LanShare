@@ -24,12 +24,16 @@ namespace LANshare
         public MainWindow()
         {
             InitializeComponent();
+            
+            
         }
 
         public override void EndInit()
         {
             base.EndInit();
+            
             trayIcon.Visible = true;
+            
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -38,6 +42,8 @@ namespace LANshare
             trayIcon = new System.Windows.Forms.NotifyIcon();
             trayIcon.Icon = new System.Drawing.Icon("Media/switch.ico");
             trayIcon.Click += new EventHandler(IconClicked);
+            
+            
         }
         
         private void IconClicked(object sender, EventArgs eventArgs)
