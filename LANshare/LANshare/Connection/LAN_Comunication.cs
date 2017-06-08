@@ -20,9 +20,10 @@ namespace LANshare.Connection
         }
 
         /// <summary>
-        /// Continuously sends UDP dgrams to advertise user presence and TCP transmission parameters
+        /// Invia in continuazione datagram UDP per avvisare della propria presenza.
+        /// All'interno del pacchetto sono scritto i parametri da usare per la connessione TCP
         /// </summary>
-        /// <param name="ct">Used to stop the advertising during application shutdown</param>
+        /// <param name="ct">Usato per fermare l'invio dei pacchetti quando l'applicazione si chiude</param>
         public async Task LAN_Advertise(CancellationToken ct)
         {
             var endpoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
@@ -35,9 +36,10 @@ namespace LANshare.Connection
             formatter.Serialize(ms, Configuration.CurrentUser);
             byte[] data = ms.ToArray();
 
-
+            // Finche non viene richiesta la cancellazione
             while (!ct.IsCancellationRequested)
             {
+                //Manda i pacchetti a certi intervalli
                 await advertiser.SendAsync(data, data.Length,endpoint);
                 Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
             }
@@ -45,33 +47,40 @@ namespace LANshare.Connection
         }
 
         /// <summary>
-        /// <para>Listens for user advertisement and saves them into the dictionary for a certain amount of time.</para>
-        /// <para>For use before sending files</para>
+        /// <para>Riceve i pacchetti di annuncio e inserisce gli utenti nel dizionario con un timer</para>
+        /// <para>Da usare in fase di invio file</para>
         /// </summary>
-        /// <param name="ct">Used to stop the advertising during application shutdown</param>
+        /// <param name="ct">Usato per fermare la ricezione se l'operazione d'invio viene cancellata</param>
         public void LAN_Listen(CancellationToken ct)
         {
             UdpClient listener = new UdpClient(Configuration.UdpPort);
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
             listener.JoinMulticastGroup(Configuration.MulticastAddress);
+            
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+
             var timeout = TimeSpan.FromMilliseconds(Configuration.UserValidityMilliseconds);
+
             while (!ct.IsCancellationRequested)
             {
-                var asyncResult = listener.BeginReceive(null, null);
+                //Inizia la ricezione dei file
+                var asyncResult = listener.BeginReceive(null,null);
                 asyncResult.AsyncWaitHandle.WaitOne(timeout);
                 if (asyncResult.IsCompleted)
                 {
                     try
                     {
+                        //Ricevi il pacchetto
                         byte[] udpResult = listener.EndReceive(asyncResult, ref endPoint);
+                        //Escludi te stesso
                         if (endPoint.Address.Equals(Configuration.CurrentUser.userAddress))
                             continue;
                         using (MemoryStream ms = new MemoryStream(udpResult))
                         {
                             var user = (User)formatter.Deserialize(ms);
-                            user.userAddress = IPAddress.Parse(endPoint.Address.ToString());
+                            user.userAddress = endPoint.Address;
                             Timer t = new Timer(UserExpired, user, 0, Configuration.UserValidityMilliseconds);
+                            //Aggiungi l'utente alla lista. Se l'utente è già stato inserito resetta il timer
                             UsersOnNetwork.AddOrUpdate(user, t, (u, old) =>
                             {
                                 old.Dispose();
@@ -81,6 +90,7 @@ namespace LANshare.Connection
                     }
                     catch (AggregateException)
                     {
+                        //Se il pacchetto è stato ricevuto male (quindi EndReceive o la deserializzazione lancerà delle eccezioni) ignoralo e passa avanti
                     }
                 }
             }
@@ -88,7 +98,7 @@ namespace LANshare.Connection
         }
 
         /// <summary>
-        /// Removes user from dictionary upon timer expiring
+        /// Quando il timer scatta rimuove l'utente dal dizionario
         /// </summary>
         /// <param name="o">User to remove</param>
         private void UserExpired(Object o)
