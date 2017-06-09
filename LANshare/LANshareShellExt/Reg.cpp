@@ -4,33 +4,27 @@
 #include <combaseapi.h>
 
 
-#pragma region Registry Helper Functions
+#pragma region Funzioni d'appoggio
 
 //
 //   FUNCTION: SetHKCRRegistryKeyAndValue
 //
-//   PURPOSE: The function creates a HKCR registry key and sets the specified 
-//   registry value.
+//   PURPOSE: Crea chiave di registro e imposta il valore
 //
 //   PARAMETERS:
-//   * pszSubKey - specifies the registry key under HKCR. If the key does not 
-//     exist, the function will create the registry key.
-//   * pszValueName - specifies the registry value to be set. If pszValueName 
-//     is NULL, the function will set the default value.
-//   * pszData - specifies the string data of the registry value.
+//   * pszSubKey - chiave di registro da creare sotto HKCR, se non esiste
+//   * pszValueName - valore del registro da impostare. se NULL imposta il valore Predefinito
+//   * pszData - string da impostare nel valore
 //
 //   RETURN VALUE: 
-//   If the function succeeds, it returns S_OK. Otherwise, it returns an 
-//   HRESULT error code.
-// 
+//   S_OK se la funzione ha successo, un codice d'errore altrimenti
 HRESULT SetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 	PCWSTR pszData)
 {
 	HRESULT hr;
 	HKEY hKey = NULL;
 
-	// Creates the specified registry key. If the key already exists, the 
-	// function opens it. 
+	// Crea chiave di registro. Se esiste già viene semplicemente aperta
 	hr = HRESULT_FROM_WIN32(RegCreateKeyEx(HKEY_CLASSES_ROOT, pszSubKey, 0,
 		NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL));
 
@@ -38,7 +32,7 @@ HRESULT SetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 	{
 		if (pszData != NULL)
 		{
-			// Set the specified value of the key.
+			//Imposta il valore della chiave
 			DWORD cbData = lstrlen(pszData) * sizeof(*pszData);
 			hr = HRESULT_FROM_WIN32(RegSetValueEx(hKey, pszValueName, 0,
 				REG_SZ, reinterpret_cast<const BYTE *>(pszData), cbData));
@@ -54,22 +48,15 @@ HRESULT SetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 //
 //   FUNCTION: GetHKCRRegistryKeyAndValue
 //
-//   PURPOSE: The function opens a HKCR registry key and gets the data for the 
-//   specified registry value name.
+//   PURPOSE: Apre la chiave di registro e legge il valore
 //
 //   PARAMETERS:
-//   * pszSubKey - specifies the registry key under HKCR. If the key does not 
-//     exist, the function returns an error.
-//   * pszValueName - specifies the registry value to be retrieved. If 
-//     pszValueName is NULL, the function will get the default value.
-//   * pszData - a pointer to a buffer that receives the value's string data.
-//   * cbData - specifies the size of the buffer in bytes.
+//   * pszSubKey - chiave di registro. se non esiste ritorna errore
+//   * pszValueName - valore da leggere. se NULL legge il Predefinito
+//   * pszData - buffer che riceve il dato letto. (paramentro OUT)
+//   * cbData - dimensione del buffer in bytes
 //
-//   RETURN VALUE:
-//   If the function succeeds, it returns S_OK. Otherwise, it returns an 
-//   HRESULT error code. For example, if the specified registry key does not 
-//   exist or the data for the specified value name was not set, the function 
-//   returns COR_E_FILENOTFOUND (0x80070002).
+//   RETURN VALUE: S_OK in caso di successo, un valore d'errore altrimenti
 // 
 HRESULT GetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 	PWSTR pszData, DWORD cbData)
@@ -77,13 +64,13 @@ HRESULT GetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 	HRESULT hr;
 	HKEY hKey = NULL;
 
-	// Try to open the specified registry key. 
+	// Prova ad aprire la chiave
 	hr = HRESULT_FROM_WIN32(RegOpenKeyEx(HKEY_CLASSES_ROOT, pszSubKey, 0,
 		KEY_READ, &hKey));
 
 	if (SUCCEEDED(hr))
 	{
-		// Get the data for the specified value name.
+		// Legge il dato associato al valore
 		hr = HRESULT_FROM_WIN32(RegQueryValueEx(hKey, pszValueName, NULL,
 			NULL, reinterpret_cast<LPBYTE>(pszData), &cbData));
 
@@ -96,33 +83,6 @@ HRESULT GetHKCRRegistryKeyAndValue(PCWSTR pszSubKey, PCWSTR pszValueName,
 #pragma endregion
 
 
-//
-//   FUNCTION: RegisterInprocServer
-//
-//   PURPOSE: Register the in-process component in the registry.
-//
-//   PARAMETERS:
-//   * pszModule - Path of the module that contains the component
-//   * clsid - Class ID of the component
-//   * pszFriendlyName - Friendly name
-//   * pszThreadModel - Threading model
-//
-//   NOTE: The function creates the HKCR\CLSID\{<CLSID>} key in the registry.
-// 
-//   HKCR
-//   {
-//      NoRemove CLSID
-//      {
-//          ForceRemove {<CLSID>} = s '<Friendly Name>'
-//          {
-//              InprocServer32 = s '%MODULE%'
-//              {
-//                  val ThreadingModel = s '<Thread Model>'
-//              }
-//          }
-//      }
-//   }
-//
 HRESULT RegisterInprocServer(PCWSTR pszModule, const CLSID& clsid,
 	PCWSTR pszFriendlyName, PCWSTR pszThreadModel)
 {
@@ -168,16 +128,6 @@ HRESULT RegisterInprocServer(PCWSTR pszModule, const CLSID& clsid,
 }
 
 
-//
-//   FUNCTION: UnregisterInprocServer
-//
-//   PURPOSE: Unegister the in-process component in the registry.
-//
-//   PARAMETERS:
-//   * clsid - Class ID of the component
-//
-//   NOTE: The function deletes the HKCR\CLSID\{<CLSID>} key in the registry.
-//
 HRESULT UnregisterInprocServer(const CLSID& clsid)
 {
 	HRESULT hr = S_OK;
@@ -198,34 +148,6 @@ HRESULT UnregisterInprocServer(const CLSID& clsid)
 }
 
 
-//
-//   FUNCTION: RegisterShellExtContextMenuHandler
-//
-//   PURPOSE: Register the context menu handler.
-//
-//   PARAMETERS:
-//   * pszFileType - The file type that the context menu handler is 
-//     associated with. For example, '*' means all file types; '.txt' means 
-//     all .txt files. The parameter must not be NULL.
-//   * clsid - Class ID of the component
-//   * pszFriendlyName - Friendly name
-//
-//   NOTE: The function creates the following key in the registry.
-//
-//   HKCR
-//   {
-//      NoRemove <File Type>
-//      {
-//          NoRemove shellex
-//          {
-//              NoRemove ContextMenuHandlers
-//              {
-//                  {<CLSID>} = s '<Friendly Name>'
-//              }
-//          }
-//      }
-//   }
-//
 HRESULT RegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszFriendlyName)
 {
 	PCWSTR pszFileType;
@@ -248,6 +170,7 @@ HRESULT RegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszFriendl
 
 	return hr;
 }
+
 HRESULT FolderRegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszFriendlyName)
 {
 	PCWSTR pszFileType;
@@ -272,20 +195,6 @@ HRESULT FolderRegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszF
 }
 
 
-//
-//   FUNCTION: UnregisterShellExtContextMenuHandler
-//
-//   PURPOSE: Unregister the context menu handler.
-//
-//   PARAMETERS:
-//   * pszFileType - The file type that the context menu handler is 
-//     associated with. For example, '*' means all file types; '.txt' means 
-//     all .txt files. The parameter must not be NULL.
-//   * clsid - Class ID of the component
-//
-//   NOTE: The function removes the {<CLSID>} key under 
-//   HKCR\<File Type>\shellex\ContextMenuHandlers in the registry.
-//
 HRESULT UnregisterShellExtContextMenuHandler( const CLSID& clsid)
 {
 	PCWSTR pszFileType;
@@ -308,6 +217,7 @@ HRESULT UnregisterShellExtContextMenuHandler( const CLSID& clsid)
 
 	return hr;
 }
+
 HRESULT FolderUnregisterShellExtContextMenuHandler(const CLSID& clsid)
 {
 	PCWSTR pszFileType;

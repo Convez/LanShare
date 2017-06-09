@@ -5,89 +5,74 @@
 //
 //   FUNCTION: RegisterInprocServer
 //
-//   PURPOSE: Register the in-process component in the registry.
+//   PURPOSE: Registra il dll come componente in-process
 //
 //   PARAMETERS:
-//   * pszModule - Path of the module that contains the component
-//   * clsid - Class ID of the component
+//   * pszModule - Cartella in cui si trova il dll
+//   * clsid - Class ID del componente (GUID)
 //   * pszFriendlyName - Friendly name
-//   * pszThreadModel - Threading model
+//   * pszThreadModel - Tipo di modello di threading per il componente (single/multi)
 //
-//   NOTE: The function creates the HKCR\CLSID\{<CLSID>} key in the registry.
-// 
-//   HKCR
-//   {
-//      NoRemove CLSID
-//      {
-//          ForceRemove {<CLSID>} = s '<Friendly Name>'
-//          {
-//              InprocServer32 = s '%MODULE%'
-//              {
-//                  val ThreadingModel = s '<Thread Model>'
-//              }
-//          }
-//      }
-//   }
-//
+//   NOTE: Crea la chiave HKCR\CLSID\{<CLSID>}\Inprocserver32 nel registro e setta i valori (Predefinito) e Threadingmodel
 HRESULT RegisterInprocServer(PCWSTR pszModule, const CLSID& clsid,
 	PCWSTR pszFriendlyName, PCWSTR pszThreadModel);
 
 //
 //   FUNCTION: UnregisterInprocServer
 //
-//   PURPOSE: Unegister the in-process component in the registry.
+//   PURPOSE: Rimuove il componente in-process dal registro
 //
 //   PARAMETERS:
-//   * clsid - Class ID of the component
+//   * clsid - Class ID del componente(GUID)
 //
-//   NOTE: The function deletes the HKCR\CLSID\{<CLSID>} key in the registry.
+//   NOTE: Elimina la chiave HKCR\CLSID\{<CLSID>} (E di conseguenza le sottochiavi) dal registro.
 //
 HRESULT UnregisterInprocServer(const CLSID& clsid);
 
 //
 //   FUNCTION: RegisterShellExtContextMenuHandler
 //
-//   PURPOSE: Register the context menu handler.
+//   PURPOSE: Registra la "voce del context menu" per ogni file
 //
 //   PARAMETERS:
-//   * pszFileType - The file type that the context menu handler is 
-//     associated with. For example, '*' means all file types; '.txt' means 
-//     all .txt files. The parameter must not be NULL.
-//   * clsid - Class ID of the component
+//   * clsid - Class ID del componente (GUID)
 //   * pszFriendlyName - Friendly name
 //
-//   NOTE: The function creates the following key in the registry.
-//
-//   HKCR
-//   {
-//      NoRemove <File Type>
-//      {
-//          NoRemove shellex
-//          {
-//              NoRemove ContextMenuHandlers
-//              {
-//                  {<CLSID>} = s '<Friendly Name>'
-//              }
-//          }
-//      }
-//   }
+//   NOTE: La funzione crea la chiave di registro HKCR\*\shellex\ContextMenuHandlers\{<CLSID>}
 //
 HRESULT RegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszFriendlyName);
+
+//
+//   FUNCTION: FolderRegisterShellExtContextMenuHandler
+//
+//   PURPOSE: Registra la "voce del context menu" per ogni cartella
+//
+//   PARAMETERS:
+//   * clsid - Class ID del componente (GUID)
+//   * pszFriendlyName - Friendly name
+//
+//   NOTE: La funzione crea la chiave di registro HKCR\Directory\shellex\ContextMenuHandlers\{<CLSID>}
+//
 HRESULT FolderRegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszFriendlyName);
 
 //
 //   FUNCTION: UnregisterShellExtContextMenuHandler
 //
-//   PURPOSE: Unregister the context menu handler.
+//   PURPOSE: Rimuove la "voce del context menu" per ogni file
 //
 //   PARAMETERS:
-//   * pszFileType - The file type that the context menu handler is 
-//     associated with. For example, '*' means all file types; '.txt' means 
-//     all .txt files. The parameter must not be NULL.
-//   * clsid - Class ID of the component
+//   * clsid - Class ID del componente (GUID)
 //
-//   NOTE: The function removes the {<CLSID>} key under 
-//   HKCR\<File Type>\shellex\ContextMenuHandlers in the registry.
-//
+//   NOTE: La funzoine rimuove la chiave HKCR\*\shellex\ContextMenuHandlers\{<CLSID>} dal registro
 HRESULT UnregisterShellExtContextMenuHandler(const CLSID& clsid);
+
+//
+//   FUNCTION: FolderUnregisterShellExtContextMenuHandler
+//
+//   PURPOSE: Rimuove la "voce del context menu" per ogni cartella
+//
+//   PARAMETERS:
+//   * clsid - Class ID del componente (GUID)
+//
+//   NOTE: La funzoine rimuove la chiave HKCR\Directory\shellex\ContextMenuHandlers\{<CLSID>} dal registro
 HRESULT FolderUnregisterShellExtContextMenuHandler(const CLSID& clsid);

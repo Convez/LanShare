@@ -9,12 +9,12 @@ class ClassFactory : public IClassFactory
 {
 public:
 
-	//Implementing IUnknown
+	//Interfaccia IUnknown
 	IFACEMETHODIMP QueryInterface(REFIID riid, void **ppv);
 	IFACEMETHODIMP_(ULONG) AddRef();
 	IFACEMETHODIMP_(ULONG) Release();
 
-	//Implementing IClassFactory
+	//Interfaccia IClassFactory
 	IFACEMETHODIMP CreateInstance(IUnknown *pUnkOther, REFIID riid, void **ppv);
 	IFACEMETHODIMP LockServer(BOOL fLock);
 

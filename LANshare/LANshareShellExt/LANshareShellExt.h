@@ -30,11 +30,11 @@ private:
 	//Reference count of component
 	long m_cRef;
 	
-	// The name of the selected file
+	// The name of the selected files
 	std::wstring *m_szSelectedFile = new std::wstring();
 
 	//The method that handles the "display" of the verb
-	void OnVerbDisplayFileName(HWND hWnd);
+	void OnVerbCallLANshare(HWND hWnd);
 
 	PWSTR m_pszMenuText;
 	HANDLE m_hMenuBmp;

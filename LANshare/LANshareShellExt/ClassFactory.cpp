@@ -6,19 +6,22 @@
 extern long g_cDllRef;
 
 
-
+//Incrementa reference count al dll (Lo sto usando)
 ClassFactory::ClassFactory() : m_cRef(1)
 {
 	InterlockedIncrement(&g_cDllRef);
 }
 
-
+//Decrementa reference count al dll (ho finito di usarlo)
 ClassFactory::~ClassFactory()
 {
 	InterlockedDecrement(&g_cDllRef);
 }
 
 //Interface IUnknown
+
+//Chiede se sono implementati i metodi dell'interfaccia IClassFactory
+//Assegna a ppv il puntatore alla sezione di ClassFactory contenente l'interfaccia
 IFACEMETHODIMP ClassFactory::QueryInterface(REFIID riid, void ** ppv)
 {
 	static const QITAB qit[] = {
@@ -28,11 +31,13 @@ IFACEMETHODIMP ClassFactory::QueryInterface(REFIID riid, void ** ppv)
 	return QISearch(this, qit, riid, ppv);
 }
 
+//Aumenta contatore reference della classe (La sto usando)
 IFACEMETHODIMP_(ULONG) ClassFactory::AddRef()
 {
 	return InterlockedIncrement(&m_cRef);
 }
 
+//Decrementa contatore reference della classe (Posso distruggerla)
 IFACEMETHODIMP_(ULONG) ClassFactory::Release()
 {
 	ULONG cRef = InterlockedDecrement(&m_cRef);
@@ -55,7 +60,7 @@ IFACEMETHODIMP ClassFactory::CreateInstance(IUnknown * pUnkOther, REFIID riid, v
 	{
 		hr = E_OUTOFMEMORY;
 
-		//Create the COM component
+		//Crea il componente
 		LANshareShellExt *pExt = new (std::nothrow) LANshareShellExt();
 		if(pExt)
 		{
@@ -66,6 +71,7 @@ IFACEMETHODIMP ClassFactory::CreateInstance(IUnknown * pUnkOther, REFIID riid, v
 	return hr;
 }
 
+//Blocca l'oggetto in memoria
 IFACEMETHODIMP ClassFactory::LockServer(BOOL fLock)
 {
 	if(fLock)

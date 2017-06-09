@@ -25,7 +25,7 @@ LANshareShellExt::LANshareShellExt() : m_cRef(1),
 	m_pwszVerbHelpText(L"Open with LANshare")
 {
 	InterlockedIncrement(&g_cDllRef);
-
+	//Eventuale icona (Al momento ritorna null)
 	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_OK), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
 
 }
@@ -41,7 +41,7 @@ LANshareShellExt::~LANshareShellExt()
 	InterlockedDecrement(&g_cDllRef);
 }
 
-void LANshareShellExt::OnVerbDisplayFileName(HWND hWnd)
+void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 {
 	wchar_t szMessage[MAX_PATH];
 	STARTUPINFO si;
@@ -55,28 +55,24 @@ void LANshareShellExt::OnVerbDisplayFileName(HWND hWnd)
 	
 	std::wstring s = std::wstring();
 	std::getline(ss,s);
-
-	if (SUCCEEDED(StringCchPrintf(szMessage, ARRAYSIZE(szMessage), L"%s\\LANshare.exe \"%s\"", DllDirectory,(*m_szSelectedFile))))
+	CreateProcess(
+		NULL,							//No exe (Use cmd)
+		&s[0],							//command line arguments (Path to exe + command line arguments)
+		NULL,
+		NULL,
+		FALSE,
+		DETACHED_PROCESS,
+		NULL,
+		NULL,
+		&si,
+		&pi);
+	if(pi.hThread)
 	{
-		CreateProcess(
-			NULL,							//No exe (Use cmd)
-			&s[0],							//command line arguments (Path to exe + command line arguments)
-			NULL,
-			NULL,
-			FALSE,
-			DETACHED_PROCESS,
-			NULL,
-			NULL,
-			&si,
-			&pi);
-		if(pi.hThread)
-		{
-			CloseHandle(pi.hThread);
-		}
-		if(pi.hProcess)
-		{
-			CloseHandle(pi.hProcess);
-		}
+		CloseHandle(pi.hThread);
+	}
+	if(pi.hProcess)
+	{
+		CloseHandle(pi.hProcess);
 	}
 }
 
@@ -200,7 +196,7 @@ IFACEMETHODIMP LANshareShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
 		//verb. IS it supported by this extension?
 		if(StrCmpIA(pici->lpVerb,m_pszVerb)==0)
 		{
-			OnVerbDisplayFileName(pici->hwnd);
+			OnVerbCallLANshare(pici->hwnd);
 		}else
 		{
 			return E_FAIL;
@@ -209,7 +205,7 @@ IFACEMETHODIMP LANshareShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
 	{
 		if(StrCmpIW(((CMINVOKECOMMANDINFOEX*)pici)->lpVerbW,m_pwszVerb)==0)
 		{
-			OnVerbDisplayFileName(pici->hwnd);
+			OnVerbCallLANshare(pici->hwnd);
 		}else
 		{
 			return E_FAIL;
@@ -218,7 +214,7 @@ IFACEMETHODIMP LANshareShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO pici)
 	{
 		if(LOWORD(pici->lpVerb)==IDM_DISPLAY)
 		{
-			OnVerbDisplayFileName(pici->hwnd);
+			OnVerbCallLANshare(pici->hwnd);
 		}
 	}
 	return S_OK;
