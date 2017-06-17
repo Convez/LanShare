@@ -27,6 +27,7 @@ namespace LANshare
 
         private LanComunication _comunication;
         private Task _UDPadvertiser;
+        private Task _UDPlistener;
 
         private TCP_FileTransfer _FileTransfer;
         private Task _TCPlistener;
@@ -41,6 +42,7 @@ namespace LANshare
 
             //Carica oggett nella listview della finestra (Esempio di acquisizione oggetti da linea di comando)
             string[] args = Environment.GetCommandLineArgs();
+            
             //Se ci sono file da inviare
             if (args.Length > 1)
             {
@@ -81,9 +83,35 @@ namespace LANshare
             _cts = new CancellationTokenSource();
 
             _comunication = new LanComunication();
-
+            //Aggiorno listview quando avviene l'evento
+            _comunication.UserFound += (sender, args) =>
+            {
+                string s = args.NickName == ""
+                    ? args.Name + "("+args.userAddress.ToString()+")"
+                    : args.NickName + "("+args.userAddress.ToString()+")";
+                //Usare il dispatcher per eseguire l'aggiornamento dell'interfaccia
+                //(Provare ad aggiornare gli items in un thread che non sia il proprietario fa esplodere il programma)
+                List.Dispatcher.Invoke(new Action(delegate()
+                {
+                    if(!List.Items.Contains(s))
+                        List.Items.Add(s);
+                }));
+            };
+            //Aggiorno listview quando avviene l'evento
+            _comunication.UserExpired += (sender, args) =>
+            {
+                string s = args.NickName == ""
+                    ? args.Name + "(" + args.userAddress.ToString() + ")"
+                    : args.NickName + "(" + args.userAddress.ToString() + ")";
+                List.Dispatcher.Invoke(new Action(delegate()
+                {
+                    if (List.Items.Contains(s))
+                        List.Items.Remove(s);
+                }));
+            };
             //Crea thread per mandare pacchetti di advertisement
             _UDPadvertiser = Task.Run( async()=> { await _comunication.LAN_Advertise(_cts.Token); });
+            _UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
 
             _FileTransfer = new TCP_FileTransfer();
 

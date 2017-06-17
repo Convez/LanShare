@@ -79,13 +79,15 @@ namespace LANshare.Connection
                         {
                             var user = (User)formatter.Deserialize(ms);
                             user.userAddress = endPoint.Address;
-                            Timer t = new Timer(UserExpired, user, 0, Configuration.UserValidityMilliseconds);
+                            Timer t = new Timer(OnUserExpired, user, Configuration.UserValidityMilliseconds,Timeout.Infinite);
                             //Aggiungi l'utente alla lista. Se l'utente è già stato inserito resetta il timer
+                            
                             UsersOnNetwork.AddOrUpdate(user, t, (u, old) =>
                             {
                                 old.Dispose();
                                 return t;
                             });
+                            UserFound(this, user);
                         }
                     }
                     catch (AggregateException)
@@ -101,12 +103,29 @@ namespace LANshare.Connection
         /// Quando il timer scatta rimuove l'utente dal dizionario
         /// </summary>
         /// <param name="o">User to remove</param>
-        private void UserExpired(Object o)
+        private void OnUserExpired(Object o)
         {
             var u = (User)o;
             Timer t;
             UsersOnNetwork.TryRemove(u,out t);
+            EventHandler<User> handler = UserExpired;
+            if (handler != null)
+            {
+                handler(this, u);
+            }
         }
+
+        protected void OnUserFound(User u)
+        {
+            EventHandler<User> handler = UserFound;
+            if (handler != null)
+            {
+                handler(this, u);
+            }
+        }
+
+        public event EventHandler<User> UserFound;
+        public event EventHandler<User> UserExpired;
     }
 
 }
