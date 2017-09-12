@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Text;
@@ -11,15 +12,7 @@ using System.Threading.Tasks;
 
 namespace LANshare.Connection
 {
-    [Serializable]
-    public enum EFileRequestState
-    {
-        Send,
-        Accepted,
-        NotAccepted,
-        Err
-    }
-
+    
     class TCP_FileTransfer
     {
 
@@ -30,29 +23,41 @@ namespace LANshare.Connection
         /// <returns></returns>
         public async Task TransferRequestListener(CancellationToken ct)
         {
-            //Crea socket inizia ad ascoltare per connessioni sulla porta
-            Socket listSock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var timeout = TimeSpan.FromMilliseconds(Configuration.TCPConnectionTimeoutMilliseconds);
             System.Net.IPEndPoint endpoint = new System.Net.IPEndPoint(System.Net.IPAddress.Any, Configuration.TcpPort);
-            listSock.Bind(endpoint);
-            listSock.Listen(20);
-
-            while(!ct.IsCancellationRequested)
+            TcpListener listener = new TcpListener(endpoint);
+            listener.Start(40);
+            while (!ct.IsCancellationRequested)
             {
-                //Accetta connessione
-                var cliSock = listSock.Accept();
-                //Escludi te stesso
-                if (!((System.Net.IPEndPoint) cliSock.RemoteEndPoint).Address.Equals(Configuration.CurrentUser
-                    .userAddress))
+                var acceptClientResult = listener.BeginAcceptTcpClient(null, null);
+                acceptClientResult.AsyncWaitHandle.WaitOne(timeout);
+                if (acceptClientResult.IsCompleted)
                 {
-                    Task.Run(async () => await Task.Run(() => ServeClient(cliSock, ct)));
+                    try
+                    {
+                        TcpClient currentClient = listener.EndAcceptTcpClient(acceptClientResult);
+                        //Escludi te stesso
+                        if (!((IPEndPoint) currentClient.Client.RemoteEndPoint).Address.Equals(Configuration.CurrentUser
+                            .userAddress))
+                        {
+                            Task.Run(async () =>
+                             {
+                                 await Task.Run(() => { ServeClient(currentClient, ct); });
+                             });
+                        }
+                        else
+                        {
+                            currentClient.Close();
+                            continue;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        //Error connecting to the client. go on
+                    }
                 }
-                else
-                {
-                    CloseSocket(cliSock);
-                }
-                
             }
-            CloseSocket(listSock);
+            listener.Stop();
         }
 
         /// <summary>
@@ -60,46 +65,22 @@ namespace LANshare.Connection
         /// </summary>
         /// <param name="cliSock">Socket del client</param>
         /// <param name="ct"></param>
-        private void ServeClient(Socket cliSock, CancellationToken ct)
+        private void ServeClient(TcpClient cliSock, CancellationToken ct)
         {
-            byte[] data = new byte[cliSock.ReceiveBufferSize];
-            //Get current request state
-            cliSock.Receive(data);
-
-            //Deserialize request state
-            MemoryStream ms = new MemoryStream();
-            ms.Write(data, 0, data.Length);
-            ms.Seek(0, SeekOrigin.Begin);
-            IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            var request = (EFileRequestState) formatter.Deserialize(ms);
-
-            //If remote client doesn't want to send
-            if (request != EFileRequestState.Send)
+            
+            using (NetworkStream ns = cliSock.GetStream())
             {
-                //Send error
-                request = EFileRequestState.Err;
-                ms.Flush();
-                formatter.Serialize(ms, request);
-                ms.Read(data, 0, data.Length);
-                cliSock.Send(data);
+                //TODO Get number of elements
+                byte[] nElemBuf = new byte[sizeof(uint)];
+                ns.Read(nElemBuf, 0, nElemBuf.Length);
+                UInt32 nElem = BitConverter.ToUInt32(nElemBuf, 0);
+                Console.WriteLine("Received " + nElem.ToString());
+                //TODO Ask user for confermation if necessary
+
+                //TODO For each element get type, fileNameSize, fileName and transfer it
+
+
             }
-            else
-            {
-                //TODO ask who is sending 
-
-                //TODO ask user for acceptance
-
-                //Send Accept
-                request = EFileRequestState.Accepted;
-                ms.Seek(0, SeekOrigin.Begin);
-                formatter.Serialize(ms, request);
-                ms.Seek(0, SeekOrigin.Begin);
-                ms.Read(data, 0, data.Length);
-                cliSock.Send(data);
-
-                //TODO start receiving files
-            }
-            CloseSocket(cliSock);
         }
 
         /// <summary>
@@ -111,69 +92,30 @@ namespace LANshare.Connection
         /// <returns></returns>
         public async Task TransferRequestSender(User server, List<string> filesToSend, CancellationToken ct)
         {
-            //Crea socket e connetti all'utente remoto
-            Socket client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var endpoint = new System.Net.IPEndPoint(server.userAddress, server.TcpPortTo);
-            client.Connect(endpoint);
-            //Serializza richiesta di mandare file
-            var data = new byte[client.ReceiveBufferSize];
-            EFileRequestState request = EFileRequestState.Send;
-            IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            formatter.Serialize(ms, request);
-            ms.Seek(0, SeekOrigin.Begin);
-            ms.Read(data, 0, data.Length);
-
             try
             {
-                //Manda richiesta
-                client.Send(data);
-                //TODO manda chi sei
-                //Aspetta risposta
-                client.Receive(data);
-                //Se sono stati ricevuti dei file (L'host remoto c'è ancora, quindi il socket non è stato chiuso)
-                if (data.Length > 0)
+                TcpClient client = new TcpClient(server.userAddress.ToString(), server.TcpPortTo);
+                using (NetworkStream ns = client.GetStream())
                 {
-                    //Deserializza
-                    ms.Seek(0, SeekOrigin.Begin);
-                    ms.Write(data, 0, data.Length);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    request = (EFileRequestState) formatter.Deserialize(ms);
-                    //Se c'è stato un errore oppure l'utente remoto non accetta i file
-                    if (request == EFileRequestState.Err || request == EFileRequestState.NotAccepted)
-                    {
-                        //Staccah
-                        CloseSocket(client);
-                    }
-                    else
-                    {
-                        //TODO start sending files
-                    }
+
+                    //TODO Send number of elements to send
+                    byte[] nElemBuf = BitConverter.GetBytes((uint)filesToSend.Count);
+                    ns.Write(nElemBuf, 0, nElemBuf.Length);
+                    Console.WriteLine("Sent "+ filesToSend.Count.ToString());
+                    //TODO Wait for ok
+
+                    //TODO For each element send type, fileNameSize, fileName and transfer it
 
                 }
-                else
-                {
-                    //Staccah
-                    CloseSocket(client);
-                }
             }
-            catch (AggregateException)
+            catch (SocketException e)
             {
-                //TODO errore di trasmissione -> Avvisa utente (riprova?)
+                //Error connecting to client
+                //TODO Print error message
             }
+        
         }
         
-        /// <summary>
-        /// Staccah
-        /// </summary>
-        /// <param name="client">Da staccahre</param>
-        private void CloseSocket(Socket client)
-        {
-            client.Shutdown(SocketShutdown.Both);
-            client.Disconnect(false);
-            client.Close();
-            client.Dispose();
-        }
         
     }
 }

@@ -38,7 +38,7 @@
     <Setting Name="UserValidityMilliseconds" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">15000</Value>
     </Setting>
-    <Setting Name="UdpConnectionTimeoutMilliseconds" Type="System.Int32" Scope="Application">
+    <Setting Name="TcpConnectionTimeoutMilliseconds" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">12000</Value>
     </Setting>
     <Setting Name="CustomSavePath" Type="System.String" Scope="User">

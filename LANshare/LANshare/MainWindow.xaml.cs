@@ -50,12 +50,21 @@ namespace LANshare
                 for (int i = 1; i < args.Length; i++)
                 {
                     List.Items.Add(args[i]);
+                    //Dimostrazione acquisizione elementi selezionati dalla lista (Può essere tramite doppio click o quando si clicca un bottone)
+                    List.MouseDoubleClick += (sender, arg) =>
+                    {
+                        foreach (string s in List.SelectedItems)
+                        {
+                            Console.WriteLine(s);
+                        }
+                    };                    
                 }
             }
+            
             //TODO se ci sono altre sessioni del programma aperte esci (magari aprire una messagebox dicendo che il programma sta già girando)
             
         }
-
+        
         public override void EndInit()
         {
             base.EndInit();
@@ -123,6 +132,7 @@ namespace LANshare
         {
             _trayIcon.Visible = false;
             _cts.Cancel();
+            _UDPlistener.Wait();
             _UDPadvertiser.Wait();
             _TCPlistener.Wait();
             Application.Current.Shutdown();

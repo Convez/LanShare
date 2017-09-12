@@ -40,7 +40,7 @@ namespace LANshare.Model
         public static int UdpPort { get; private set; }
         public static System.Net.IPAddress MulticastAddress{get; private set; }
         public static int UdpPacketsIntervalMilliseconds { get; private set; }
-        public static int UdpConnectionTimeoutMilliseconds { get; private set; }
+        public static int TCPConnectionTimeoutMilliseconds { get; private set; }
         public static int TcpPort { get; set; }
         public static EFileAcceptanceMode FileAcceptanceMode { get; set; }
         public static EFileSavePathMode FileSavePathMode { get; set; }
@@ -56,7 +56,7 @@ namespace LANshare.Model
             UdpPort = Properties.Settings.Default.UdpPort;
             MulticastAddress = System.Net.IPAddress.Parse(Properties.Settings.Default.MulticastAddress);
             UdpPacketsIntervalMilliseconds = Properties.Settings.Default.UdpPacketsIntervalMilliseconds;
-            UdpConnectionTimeoutMilliseconds = Properties.Settings.Default.UdpConnectionTimeoutMilliseconds;
+            TCPConnectionTimeoutMilliseconds = Properties.Settings.Default.TcpConnectionTimeoutMilliseconds;
             TcpPort = Properties.Settings.Default.TcpPort;
             FileAcceptanceMode = Properties.Settings.Default.FileAcceptanceMode;
             FileSavePathMode = Properties.Settings.Default.FileSavePathMode;

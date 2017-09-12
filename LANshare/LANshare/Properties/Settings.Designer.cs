@@ -155,9 +155,9 @@ namespace LANshare.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("12000")]
-        public int UdpConnectionTimeoutMilliseconds {
+        public int TcpConnectionTimeoutMilliseconds {
             get {
-                return ((int)(this["UdpConnectionTimeoutMilliseconds"]));
+                return ((int)(this["TcpConnectionTimeoutMilliseconds"]));
             }
         }
         
