@@ -52,7 +52,7 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 	ZeroMemory(&pi, sizeof(pi));
 	std::wstringstream ss = std::wstringstream();
 	ss << DllDirectory << L"\\LANshare.exe " << (*m_szSelectedFile) <<L"\0";
-	
+
 	std::wstring s = std::wstring();
 	std::getline(ss,s);
 	CreateProcess(
@@ -129,12 +129,20 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 			UINT nFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 			std::wstringstream ss = std::wstringstream();
 			wchar_t tmp[MAX_PATH];
+			if(DragQueryFile(hDrop, 0, tmp, ARRAYSIZE(tmp))!=0)
+			{
+				if(PathRemoveFileSpec(tmp)!=0)
+				{
+					ss << L"\"" << tmp << L"\" ";
+				}
+			}
 			for(int i=0;i<nFiles;i++)
 			{
 				//get the path of the file
 				if (DragQueryFile(hDrop, i, tmp, ARRAYSIZE(tmp))!=0)
 				{
-					ss <<L"\"" << tmp <<L"\" ";
+
+					ss <<L"\"" << PathFindFileName(tmp) <<L"\" ";
 					hr = S_OK;
 				}
 			}

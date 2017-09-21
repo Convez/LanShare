@@ -4,8 +4,7 @@
 #include <combaseapi.h>
 
 
-#pragma region Funzioni d'appoggio
-
+#pragma region Appoggio
 //
 //   FUNCTION: SetHKCRRegistryKeyAndValue
 //
