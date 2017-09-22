@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace LANshare.Connection
 {
@@ -25,8 +26,16 @@ namespace LANshare.Connection
         {
             var timeout = TimeSpan.FromMilliseconds(Configuration.TCPConnectionTimeoutMilliseconds);
             System.Net.IPEndPoint endpoint = new System.Net.IPEndPoint(System.Net.IPAddress.Any, Configuration.TcpPort);
-            TcpListener listener = new TcpListener(endpoint);
-            listener.Start(40);
+            TcpListener listener = new TcpListener(endpoint); ;
+            try
+            {
+                listener.Start(40);
+            }
+            catch (SocketException e)
+            {
+                MessageBox.Show("Can't start server. Port occupied.");
+                return;
+            }
             while (!ct.IsCancellationRequested)
             {
                 var acceptClientResult = listener.BeginAcceptTcpClient(null, null);

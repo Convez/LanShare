@@ -13,5 +13,21 @@ namespace LANshare
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            Model.Configuration.LoadConfiguration();
+            if (Environment.GetCommandLineArgs().Length > 1)
+            {
+                var userWindow = new ShowUsersWindow();
+                userWindow.Show();
+            }
+            else
+            {
+                var trayIconWindow = new TrayIconWindow();
+                trayIconWindow.Activate();
+            }
+        }
     }
 }
