@@ -58,18 +58,13 @@ namespace LANshare
 
             //Crea thread per mandare pacchetti di advertisement
             _UDPadvertiser = Task.Run(async () => { await _comunication.LAN_Advertise(_cts.Token); });
-
-            _FileTransfer = new TCP_FileTransfer();
-
-            //Crea thread in ascolto richieste di trasferimento file
-            _TCPlistener = Task.Run(async () => { await _FileTransfer.TransferRequestListener(_cts.Token); });
+            
         }
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             _cts.Cancel();
             _UDPadvertiser.Wait();
-            _TCPlistener.Wait();
             Application.Current.Shutdown();
         }
         private void ExitApplication(object sender, EventArgs args)

@@ -53,14 +53,20 @@ namespace LANshare.Connection
         /// <param name="ct">Usato per fermare la ricezione se l'operazione d'invio viene cancellata</param>
         public void LAN_Listen(CancellationToken ct)
         {
-            UdpClient listener = new UdpClient(Configuration.UdpPort);
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
-            listener.JoinMulticastGroup(Configuration.MulticastAddress);
+
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Configuration.UdpPort);
+            UdpClient listener = new UdpClient(endPoint);
+
+            listener.JoinMulticastGroup(Configuration.MulticastAddress,Configuration.CurrentUser.userAddress);
             
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
             var timeout = TimeSpan.FromMilliseconds(Configuration.UserValidityMilliseconds);
-
+            byte[] b = {0};
+            endPoint.Address = Configuration.MulticastAddress;
+            //Soluzione temporanea e poco duratura al timeout dell'igmp snooping nei bridge
+            //TODO trovare una soluzione definitiva (attviare applicazione con trayicon se non è attiva?)
+            listener.Send(b, 0, endPoint);
             while (!ct.IsCancellationRequested)
             {
                 //Inizia la ricezione dei file

@@ -136,7 +136,7 @@ namespace LANshare.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("10000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5000")]
         public int UdpPacketsIntervalMilliseconds {
             get {
                 return ((int)(this["UdpPacketsIntervalMilliseconds"]));
@@ -145,7 +145,7 @@ namespace LANshare.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("15000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("30000")]
         public int UserValidityMilliseconds {
             get {
                 return ((int)(this["UserValidityMilliseconds"]));
