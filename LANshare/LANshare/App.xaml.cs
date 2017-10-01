@@ -37,9 +37,11 @@ namespace LANshare
             if (Environment.GetCommandLineArgs().Length > 1)
             {
                 //Ho dei file come argomento
+
+                
                 if (!alreadyRunning)
                 {
-                    Process.Start("cmd.exe", System.Windows.Forms.Application.ExecutablePath);
+                    Process.Start(System.Windows.Forms.Application.ExecutablePath);
                 }
                 var userWindow = new ShowUsersWindow();
                 userWindow.Show();
