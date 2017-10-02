@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.Serialization;
+using System.IO;
 
 namespace LANshare.Model
 {
@@ -12,7 +14,7 @@ namespace LANshare.Model
     {
         public string Name
         {
-            get => this._name;
+            get => _name;
             set => _name = Environment.ExpandEnvironmentVariables(value);
         }
         private string _name;
@@ -28,5 +30,6 @@ namespace LANshare.Model
             TcpPortTo = tcpPortTo;
             NickName = nickName;
         }
+        
     }
 }

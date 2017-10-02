@@ -79,13 +79,40 @@ namespace LANshare.Connection
             
             using (NetworkStream ns = cliSock.GetStream())
             {
-                //TODO Get number of elements
-                byte[] nElemBuf = new byte[sizeof(uint)];
-                ns.Read(nElemBuf, 0, nElemBuf.Length);
-                UInt32 nElem = BitConverter.ToUInt32(nElemBuf, 0);
-                Console.WriteLine("Received " + nElem.ToString());
-                //TODO Ask user for confermation if necessary
+                ns.ReadTimeout = Configuration.TCPConnectionTimeoutMilliseconds;
 
+                //Get size of serialized counterpart data
+                byte[] sizeBuf = new byte[sizeof(int)];
+                int bytesRed = ns.Read(sizeBuf, 0, sizeBuf.Length);
+                if (bytesRed < 0) {
+                    MessageBox.Show("Cannot receive data from counterpart. Please check connection to the LAN and try again");
+                    return;
+                }
+                int size = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(sizeBuf, 0));
+
+                //Get client parameters (Identity and security)
+                byte[] formattedUser = new byte[size];
+                ns.Read(formattedUser, 0, formattedUser.Length);
+
+                IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                User counterpart;
+                using (MemoryStream ms = new MemoryStream(formattedUser)) {
+                    counterpart = (User)formatter.Deserialize(ms);
+                }
+                
+
+                //TODO Get number of elements
+                byte[] nElemBuf = new byte[sizeof(int)];
+                bytesRed = ns.Read(nElemBuf, 0, nElemBuf.Length);
+                if (bytesRed < 0) {
+                    MessageBox.Show("Cannot receive data from user " + counterpart.NickName!=""?counterpart.NickName:counterpart.Name + ". Please check connection to the LAN and try again");
+                    return;
+                }
+                int nElem = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(nElemBuf,0));
+
+                //TODO Ask user for confermation if necessary
+                MessageBox.Show("User " + counterpart.NickName != "" ? counterpart.NickName : counterpart.Name + " wants to send " + nElem.ToString() + " files/folders. Accept?");
+                
                 //TODO For each element get type, fileNameSize, fileName and transfer it
 
 
@@ -106,12 +133,29 @@ namespace LANshare.Connection
                 TcpClient client = new TcpClient(server.userAddress.ToString(), server.TcpPortTo);
                 using (NetworkStream ns = client.GetStream())
                 {
+                    //TODO Send Info
+
+                    //Serialize user
+                    IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                    MemoryStream ms = new MemoryStream();
+                    formatter.Serialize(ms, Configuration.CurrentUser);
+                    byte[] data = ms.ToArray();
+                    //Send size of serialized data
+                    int sizeFormatted = IPAddress.HostToNetworkOrder(data.Length);
+                    byte[] sizeBuf = BitConverter.GetBytes(sizeFormatted);
+                    ns.Write(sizeBuf, 0, sizeBuf.Length);
+                    //Send serialized data
+                    ns.Write(data, 0, data.Length);
 
                     //TODO Send number of elements to send
-                    byte[] nElemBuf = BitConverter.GetBytes((uint)filesToSend.Count);
+                    int numFiles = IPAddress.HostToNetworkOrder(filesToSend.Count);
+                    byte[] nElemBuf = BitConverter.GetBytes(numFiles);
                     ns.Write(nElemBuf, 0, nElemBuf.Length);
                     Console.WriteLine("Sent "+ filesToSend.Count.ToString());
                     //TODO Wait for ok
+
+
+
 
                     //TODO For each element send type, fileNameSize, fileName and transfer it
 
