@@ -1,0 +1,11 @@
+﻿  stdafx.cpp
+  Reg.cpp
+  LANshareShellExt.cpp
+c:\users\crema\documents\1 università\programmazione di sistema\lanshare_en1\lanshareshellext\lanshareshellext.cpp(46): warning C4101: 'szMessage': unreferenced local variable
+c:\users\crema\documents\1 università\programmazione di sistema\lanshare_en1\lanshareshellext\lanshareshellext.cpp(139): warning C4018: '<': signed/unsigned mismatch
+  ClassFactory.cpp
+  Generating Code...
+  dllmain.cpp
+     Creating library x64\Debug\LANshareShellExt.lib and object x64\Debug\LANshareShellExt.exp
+  LANshareShellExt.vcxproj -> C:\Users\crema\Documents\1 Università\Programmazione di sistema\LANshare_en1\LANshareShellExt\x64\Debug\LANshareShellExt.dll
+  LANshareShellExt.vcxproj -> x64\Debug\LANshareShellExt.pdb (Partial PDB)
