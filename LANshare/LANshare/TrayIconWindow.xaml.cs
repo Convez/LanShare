@@ -23,7 +23,7 @@ namespace LANshare
     public partial class TrayIconWindow : Window
     {
         private System.Windows.Forms.NotifyIcon _trayIcon;
-        private ContextMenu icon_menu;
+        private System.Windows.Forms.ContextMenu icon_menu;
 
         private LanComunication _comunication;
         private Task _UDPadvertiser;
@@ -51,11 +51,19 @@ namespace LANshare
                         "Media/switch.ico")
                 )
             };
+            _trayIcon.Visible = true;
             //Crea Context menu del trayicon
-            icon_menu = new ContextMenu();
-            MenuItem show_interface = new MenuItem() { Header = "Open LANgur Share" };
-            //show_interface.Click += //+= notation subscribes to event
-            //icon_menu.Items.Add();
+            icon_menu = new System.Windows.Forms.ContextMenu();
+            //MenuItem show_interface = new MenuItem() { Header = "Open LANgur Share" };
+            //show_interface.Click += new RoutedEventHandler(delegate (Object o, RoutedEventArgs a) //+= notation subscribes to event
+            //{
+            //    //code to show users window
+            //    var userWindow = new ShowUsersWindow();
+            //    userWindow.Show();
+            //});
+            icon_menu.MenuItems.Add(0,new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler()))
+
+            _trayIcon.ContextMenu = icon_menu;
             
 
             //TODO Creare menu click tasto destro

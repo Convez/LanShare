@@ -30,7 +30,7 @@
         </Border>
 
         <Grid.Background>
-            <ImageBrush ImageSource="Resources/1.jpg"/>
+            <ImageBrush ImageSource="Media/1.jpg"/>
         </Grid.Background>
     </Grid>
 </Window>
