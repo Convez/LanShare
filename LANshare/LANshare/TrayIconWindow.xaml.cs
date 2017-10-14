@@ -61,13 +61,24 @@ namespace LANshare
             //    var userWindow = new ShowUsersWindow();
             //    userWindow.Show();
             //});
-            icon_menu.MenuItems.Add(0,new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler()))
+            icon_menu.MenuItems.Add(0, new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
+                 {
+                     var userWindow = new ShowUsersWindow();
+                     userWindow.Show();
+                     icon_menu.MenuItems.RemoveAt(0);
+                 })));
+
+            icon_menu.MenuItems.Add(1, new System.Windows.Forms.MenuItem("Exit", new EventHandler(delegate (Object sender, System.EventArgs a)
+            {
+                Application.Current.Shutdown();
+                //icon bug after closing the application must be fixed
+            })));
 
             _trayIcon.ContextMenu = icon_menu;
             
 
             //TODO Creare menu click tasto destro
-            _trayIcon.DoubleClick += ExitApplication;
+            //_trayIcon.DoubleClick += ExitApplication;
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
 
