@@ -31,3 +31,4 @@
 # Visual Studio generated folders
 bin/
 obj/
+*.opendb
