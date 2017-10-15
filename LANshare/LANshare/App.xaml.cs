@@ -16,6 +16,7 @@ namespace LANshare
     /// </summary>
     public partial class App : Application
     {
+      //  private bool _is_users_window_open = false;
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -45,6 +46,7 @@ namespace LANshare
                 }
                 var userWindow = new ShowUsersWindow();
                 userWindow.Show();
+                //is_users_window_open = true;
             }
             else
             {
@@ -57,5 +59,12 @@ namespace LANshare
                 }
             }
         }
+
+        //public bool is_users_window_open
+        //{
+        //    get{ return _is_users_window_open; }
+        //    set { _is_users_window_open = value; }
+        //}
+       
     }
 }

@@ -24,6 +24,7 @@ namespace LANshare
     {
         private System.Windows.Forms.NotifyIcon _trayIcon;
         private System.Windows.Forms.ContextMenu icon_menu;
+        private bool is_private_mode = false; //should add the option to set true as default at startup
 
         private LanComunication _comunication;
         private Task _UDPadvertiser;
@@ -54,25 +55,46 @@ namespace LANshare
             _trayIcon.Visible = true;
             //Crea Context menu del trayicon
             icon_menu = new System.Windows.Forms.ContextMenu();
-            //MenuItem show_interface = new MenuItem() { Header = "Open LANgur Share" };
-            //show_interface.Click += new RoutedEventHandler(delegate (Object o, RoutedEventArgs a) //+= notation subscribes to event
-            //{
-            //    //code to show users window
-            //    var userWindow = new ShowUsersWindow();
-            //    userWindow.Show();
-            //});
-            icon_menu.MenuItems.Add(0, new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
-                 {
-                     var userWindow = new ShowUsersWindow();
-                     userWindow.Show();
-                     icon_menu.MenuItems.RemoveAt(0);
-                 })));
 
-            icon_menu.MenuItems.Add(1, new System.Windows.Forms.MenuItem("Exit", new EventHandler(delegate (Object sender, System.EventArgs a)
+            System.Windows.Forms.MenuItem show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
             {
-                Application.Current.Shutdown();
-                //icon bug after closing the application must be fixed
-            })));
+
+                var userWindow = new ShowUsersWindow();
+                userWindow.Show();
+                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
+
+            }));
+
+            icon_menu.MenuItems.Add(0, show_window);
+
+            String priv = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
+
+            System.Windows.Forms.MenuItem privacy = new System.Windows.Forms.MenuItem("Private Mode: "+ priv , new EventHandler(delegate (Object sender, System.EventArgs a)
+            {
+                System.Windows.Forms.MenuItem m = sender as System.Windows.Forms.MenuItem;
+                if( priv== "off")
+                {
+                    priv = "on";
+                    is_private_mode = true;
+                }
+                else
+                {
+                    priv = "off";
+                    is_private_mode = false;
+                }
+                m.Text = "Private Mode: " + priv;
+                
+            }));
+
+            icon_menu.MenuItems.Add(1, privacy);
+
+            System.Windows.Forms.MenuItem exit = new System.Windows.Forms.MenuItem("Exit", new EventHandler(delegate (Object sender, System.EventArgs a)
+            {
+                _trayIcon.Visible = false;
+                this.Close();
+            }));
+
+            icon_menu.MenuItems.Add(2, exit);
 
             _trayIcon.ContextMenu = icon_menu;
             
@@ -98,6 +120,7 @@ namespace LANshare
         private void ExitApplication(object sender, EventArgs args)
         {
             _trayIcon.Visible = false;
+            
             this.Close();
         }
 
