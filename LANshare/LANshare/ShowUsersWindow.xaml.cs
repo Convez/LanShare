@@ -25,11 +25,17 @@ namespace LANshare
         private LanComunication _comunication;
         private Task _UDPlistener;
         private CancellationTokenSource _cts;
+        private TrayIconWindow trayIconWindow;
 
         public ShowUsersWindow()
         {
             InitializeComponent();
             
+        }
+
+        public ShowUsersWindow(TrayIconWindow trayIconWindow)
+        {
+            this.trayIconWindow = trayIconWindow;
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -72,7 +78,11 @@ namespace LANshare
             _cts.Cancel();
             _UDPlistener.Wait();
             base.OnClosed(e);
-            Application.Current.Shutdown();
+            if (trayIconWindow != null)
+            {
+                trayIconWindow.RestoreItem();
+            }
+            //Application.Current.Shutdown();
         }
     }
 }

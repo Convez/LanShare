@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-        Title="People Online" Height="300" Width="300">
+        Title="People Ollain" Height="300" Width="300">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />

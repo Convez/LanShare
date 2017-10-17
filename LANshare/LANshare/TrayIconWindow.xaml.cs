@@ -25,6 +25,7 @@ namespace LANshare
         private System.Windows.Forms.NotifyIcon _trayIcon;
         private System.Windows.Forms.ContextMenu icon_menu;
         private bool is_private_mode = false; //should add the option to set true as default at startup
+        private System.Windows.Forms.MenuItem show_window;
 
         private LanComunication _comunication;
         private Task _UDPadvertiser;
@@ -56,10 +57,10 @@ namespace LANshare
             //Crea Context menu del trayicon
             icon_menu = new System.Windows.Forms.ContextMenu();
 
-            System.Windows.Forms.MenuItem show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
+            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
             {
 
-                var userWindow = new ShowUsersWindow();
+                var userWindow = new ShowUsersWindow(this);
                 userWindow.Show();
                 icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
 
@@ -88,11 +89,7 @@ namespace LANshare
 
             icon_menu.MenuItems.Add(1, privacy);
 
-            System.Windows.Forms.MenuItem exit = new System.Windows.Forms.MenuItem("Exit", new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-                _trayIcon.Visible = false;
-                this.Close();
-            }));
+            System.Windows.Forms.MenuItem exit = new System.Windows.Forms.MenuItem("Exit",ExitApplication);
 
             icon_menu.MenuItems.Add(2, exit);
 
@@ -124,5 +121,9 @@ namespace LANshare
             this.Close();
         }
 
+        public void RestoreItem()
+        {
+            icon_menu.MenuItems.Add(0, show_window);
+        }
     }
 }
