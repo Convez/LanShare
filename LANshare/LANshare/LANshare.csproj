@@ -103,6 +103,9 @@
     <Compile Include="ShowUsersWindow.xaml.cs">
       <DependentUpon>ShowUsersWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TransfersWindow.xaml.cs">
+      <DependentUpon>TransfersWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TrayIconWindow.xaml.cs">
       <DependentUpon>TrayIconWindow.xaml</DependentUpon>
     </Compile>
@@ -113,6 +116,10 @@
     <Compile Include="Connection\LAN_Comunication.cs" />
     <Compile Include="Connection\TCP_FileTransfer.cs" />
     <Page Include="ShowUsersWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TransfersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

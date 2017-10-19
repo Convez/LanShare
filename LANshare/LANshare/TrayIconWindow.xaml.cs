@@ -25,19 +25,59 @@ namespace LANshare
         private System.Windows.Forms.NotifyIcon _trayIcon;
         private System.Windows.Forms.ContextMenu icon_menu;
         private bool is_private_mode = false; //should add the option to set true as default at startup
+        private String privateMode = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
         private System.Windows.Forms.MenuItem show_window;
+        private System.Windows.Forms.MenuItem sending;
+        private System.Windows.Forms.MenuItem privacy;
+        private System.Windows.Forms.MenuItem exit;
+        private int transactions=0; //number of active transations
+
 
         private LanComunication _comunication;
         private Task _UDPadvertiser;
-
         private TCP_FileTransfer _FileTransfer;
         private Task _TCPlistener;
-
-
         private CancellationTokenSource _cts;
 
         public TrayIconWindow()
         {
+            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
+            {
+
+                var userWindow = new ShowUsersWindow(this);
+                userWindow.Show();
+                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
+
+            }));
+
+            privacy = new System.Windows.Forms.MenuItem("Private Mode: " + privateMode, new EventHandler(delegate (Object sender, System.EventArgs a)
+            {
+                System.Windows.Forms.MenuItem m = sender as System.Windows.Forms.MenuItem;
+                if (privateMode == "off")
+                {
+                    privateMode = "on";
+                    is_private_mode = true;
+                }
+                else
+                {
+                    privateMode = "off";
+                    is_private_mode = false;
+                }
+                m.Text = "Private Mode: " + privateMode;
+
+            }));
+
+            exit = new System.Windows.Forms.MenuItem("Exit", ExitApplication);
+
+            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs a)
+            {
+
+                var transfersWindow = new TransfersWindow(this);
+                transfersWindow.Show();
+                icon_menu.MenuItems.RemoveAt(3);
+
+            }));
+
             InitializeComponent();
         }
 
@@ -57,39 +97,9 @@ namespace LANshare
             //Crea Context menu del trayicon
             icon_menu = new System.Windows.Forms.ContextMenu();
 
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-
-                var userWindow = new ShowUsersWindow(this);
-                userWindow.Show();
-                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
-
-            }));
-
             icon_menu.MenuItems.Add(0, show_window);
 
-            String priv = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
-
-            System.Windows.Forms.MenuItem privacy = new System.Windows.Forms.MenuItem("Private Mode: "+ priv , new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-                System.Windows.Forms.MenuItem m = sender as System.Windows.Forms.MenuItem;
-                if( priv== "off")
-                {
-                    priv = "on";
-                    is_private_mode = true;
-                }
-                else
-                {
-                    priv = "off";
-                    is_private_mode = false;
-                }
-                m.Text = "Private Mode: " + priv;
-                
-            }));
-
             icon_menu.MenuItems.Add(1, privacy);
-
-            System.Windows.Forms.MenuItem exit = new System.Windows.Forms.MenuItem("Exit",ExitApplication);
 
             icon_menu.MenuItems.Add(2, exit);
 
@@ -100,7 +110,6 @@ namespace LANshare
             //_trayIcon.DoubleClick += ExitApplication;
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
-
             _comunication = new LanComunication();
 
             //Crea thread per mandare pacchetti di advertisement
@@ -124,6 +133,30 @@ namespace LANshare
         public void RestoreItem()
         {
             icon_menu.MenuItems.Add(0, show_window);
+        }
+
+        public void NotifyTransactionOpened()
+        {
+            if (transactions == 0)
+            {
+                icon_menu.MenuItems.Add(3, sending);
+            }
+            transactions++;
+
+        }
+        public void NotifyTransactionsClosed()
+        {
+            transactions--;
+            if(transactions<0)
+            {
+                //an error has occured, recheck number of transactions
+                Console.WriteLine("error in transaction count");
+            }
+            else if(transactions==0)
+            {
+                icon_menu.MenuItems.RemoveAt(3);
+            }
+           
         }
     }
 }

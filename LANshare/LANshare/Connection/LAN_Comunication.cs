@@ -41,7 +41,7 @@ namespace LANshare.Connection
             {
                 //Manda i pacchetti a certi intervalli
                 await advertiser.SendAsync(data, data.Length,endpoint);
-                Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
+                Thread.Sleep(1000);
             }
             advertiser.DropMulticastGroup(Configuration.MulticastAddress);
         }
@@ -55,9 +55,9 @@ namespace LANshare.Connection
         {
 
             IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, Configuration.UdpPort);
-            UdpClient listener = new UdpClient(endPoint);
+            UdpClient listener = new UdpClient(Configuration.UdpPort);
 
-            listener.JoinMulticastGroup(Configuration.MulticastAddress,Configuration.CurrentUser.userAddress);
+            listener.JoinMulticastGroup(Configuration.MulticastAddress);
             
             IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
