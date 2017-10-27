@@ -32,7 +32,7 @@ namespace LANshare
         private System.Windows.Forms.MenuItem privacy;
         private System.Windows.Forms.MenuItem exit;
         private int transfers=0; //number of active transations
-        private List<User> _userlist;
+        
 
 
         private LanComunication _comunication;
@@ -76,6 +76,7 @@ namespace LANshare
 
                 var transfersWindow = new TransfersWindow(this);
                 transfersWindow.Show();
+                
                 icon_menu.MenuItems.RemoveAt(3);
 
             }));
@@ -114,27 +115,31 @@ namespace LANshare
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
             _comunication = new LanComunication();
-            _userlist = new List<User>();
+           
 
             //Aggiorno userlist quando avviene l'evento
             _comunication.UserFound += (sender, args) =>
             {
-                if (!_userlist.Contains(args))
-                {
-                    _userlist.Add(args);
-                    _userlist.Sort();
-                }
+                User u = args;
+                UserFoundT(this, u);
+                //if (!_userlist.Contains(args))
+                //{
+                //    _userlist.Add(args);
+                //    _userlist.Sort();
+                //}
             };           
                 
             
             //Aggiorno listview quando avviene l'evento
             _comunication.UserExpired += (sender, args) =>
             {
-                if (_userlist.Contains(args))
-                {
-                    _userlist.Remove(args);
-                    _userlist.Sort();
-                }
+                User u = args;
+                UserExpiredT(this, u);
+                //if (_userlist.Contains(args))
+                //{
+                //    _userlist.Remove(args);
+                //    _userlist.Sort();
+                //}
             };
 
             //_UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
@@ -201,9 +206,23 @@ namespace LANshare
            
         }
 
-        //public LanComunication GetLanComunication()
-        //{
-        //    return _comunication;
-        //}
+        public event EventHandler<User> UserFoundT;
+        protected void OnUserFoundT(User u)
+        {
+            EventHandler<User> handler = UserFoundT;
+            if (handler != null)
+            {
+                handler(this, u);
+            }
+        }
+        public event EventHandler<User> UserExpiredT;
+        protected void OnUserExpiredT(User u)
+        {
+            EventHandler<User> handler = UserExpiredT;
+            if (handler != null)
+            {
+                handler(this, u);
+            }
+        }
     }
 }
