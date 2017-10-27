@@ -1,4 +1,5 @@
 ﻿using LANshare.Connection;
+using LANshare.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,7 @@ namespace LANshare
         public ShowUsersWindow(TrayIconWindow trayIconWindow)
         {
             this.trayIconWindow = trayIconWindow;
+            
             InitializeComponent();
         }
 
@@ -71,7 +73,7 @@ namespace LANshare
             //            ConnectedUsers.Items.Remove(s);
             //    }));
             //};
-
+            
             //_UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
         }
         protected override void OnClosed(EventArgs e)
@@ -81,9 +83,14 @@ namespace LANshare
             base.OnClosed(e);
             if (trayIconWindow != null)
             {
-                trayIconWindow.RestoreItem();
+                trayIconWindow.RestoreShowWindowItem();
             }
             //Application.Current.Shutdown();
+        }
+
+        public void UsersUpdate(List<User> userlist)
+        {
+
         }
     }
 }

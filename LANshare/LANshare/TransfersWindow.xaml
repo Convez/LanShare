@@ -5,8 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-        Title="TransfersWindow" Height="300" Width="300">
+        Title="All File Transfers" Height="500" Width="600">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="530"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource listHeaderStyle}">
+            <Label Style="{StaticResource listHeaderTextStyle}">Names</Label>
+        </Border>
+        <Border BorderBrush="Aquamarine" Grid.Column="1" Grid.Row="1">
+            <ListView Name="TransactionsUsers" >
+
+            </ListView>
+        </Border>
+
+        <Grid.Background>
+            <ImageBrush ImageSource="Media/1.jpg"/>
+        </Grid.Background>
     </Grid>
 </Window>

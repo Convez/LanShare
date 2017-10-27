@@ -60,11 +60,7 @@ namespace LANshare
             }
         }
 
-        //public bool is_users_window_open
-        //{
-        //    get{ return _is_users_window_open; }
-        //    set { _is_users_window_open = value; }
-        //}
+       
        
     }
 }

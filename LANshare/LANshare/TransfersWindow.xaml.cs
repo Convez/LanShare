@@ -31,5 +31,14 @@ namespace LANshare
             this.trayIconWindow = trayIconWindow;
             InitializeComponent();
         }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            if (trayIconWindow != null)
+            {
+                trayIconWindow.RestoreSendingItem();
+            }
+        }
     }
 }

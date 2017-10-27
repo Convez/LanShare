@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LANshare.Connection;
+using LANshare.Model;
 
 namespace LANshare
 {
@@ -30,7 +31,8 @@ namespace LANshare
         private System.Windows.Forms.MenuItem sending;
         private System.Windows.Forms.MenuItem privacy;
         private System.Windows.Forms.MenuItem exit;
-        private int transactions=0; //number of active transations
+        private int transfers=0; //number of active transations
+        private List<User> _userlist;
 
 
         private LanComunication _comunication;
@@ -102,6 +104,7 @@ namespace LANshare
             icon_menu.MenuItems.Add(1, privacy);
 
             icon_menu.MenuItems.Add(2, exit);
+            NotifyTransferOpened();
 
             _trayIcon.ContextMenu = icon_menu;
             
@@ -111,9 +114,35 @@ namespace LANshare
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
             _comunication = new LanComunication();
+            _userlist = new List<User>();
+
+            //Aggiorno userlist quando avviene l'evento
+            _comunication.UserFound += (sender, args) =>
+            {
+                if (!_userlist.Contains(args))
+                {
+                    _userlist.Add(args);
+                    _userlist.Sort();
+                }
+            };           
+                
+            
+            //Aggiorno listview quando avviene l'evento
+            _comunication.UserExpired += (sender, args) =>
+            {
+                if (_userlist.Contains(args))
+                {
+                    _userlist.Remove(args);
+                    _userlist.Sort();
+                }
+            };
+
+            //_UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
 
             //Crea thread per mandare pacchetti di advertisement
             _UDPadvertiser = Task.Run(async () => { await _comunication.LAN_Advertise(_cts.Token); });
+
+            
             
         }
         protected override void OnClosed(EventArgs e)
@@ -130,33 +159,51 @@ namespace LANshare
             this.Close();
         }
 
-        public void RestoreItem()
+        //called after the users window is closed to reinsert the relative menu item in context menu
+        public void RestoreShowWindowItem()
         {
             icon_menu.MenuItems.Add(0, show_window);
+        } //called after the users window is closed to reinsert the relative menu item in context menu
+
+        //called after transactions window is closed to reinsert relative menuitem in context menu
+        public void RestoreSendingItem()
+        {
+            if(transfers >0) icon_menu.MenuItems.Add(3,sending);
         }
 
-        public void NotifyTransactionOpened()
+        // to be called when a new transfer (one way stream of files that are either sent to the same user or received from the same user) is set up.. 
+        //so we might at most have 2 different transfer connected to another user, one of the files being sent and one of the files being received. 
+        //group transactions are not considered for the sake of the transactions counter as they are counted separately for each of the participants in the group.
+        
+        public void NotifyTransferOpened()   
         {
-            if (transactions == 0)
+            if (transfers == 0)
             {
                 icon_menu.MenuItems.Add(3, sending);
             }
-            transactions++;
+            transfers++;
 
-        }
-        public void NotifyTransactionsClosed()
+        } 
+
+        //to be called when a transfer has finished (a transfer is considered finished when all the files that were being sent to (or received from) a certain user have successfully completed
+        public void NotifyTransferClosed()
         {
-            transactions--;
-            if(transactions<0)
+            transfers--;
+            if(transfers<0)
             {
                 //an error has occured, recheck number of transactions
                 Console.WriteLine("error in transaction count");
             }
-            else if(transactions==0)
+            else if(transfers==0)
             {
                 icon_menu.MenuItems.RemoveAt(3);
             }
            
         }
+
+        //public LanComunication GetLanComunication()
+        //{
+        //    return _comunication;
+        //}
     }
 }
