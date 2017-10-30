@@ -65,7 +65,7 @@ namespace LANshare
                 }));
             };
 
-            _UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
+            _UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.StartLanListen(); }); });
         }
         protected override void OnClosed(EventArgs e)
         {

@@ -55,16 +55,15 @@ namespace LANshare
             _cts = new CancellationTokenSource();
 
             _comunication = new LanComunication();
+            _comunication.StartLanAdvertise();
+            _comunication.StartLanListen();
 
-            //Crea thread per mandare pacchetti di advertisement
-            _UDPadvertiser = Task.Run(async () => { await _comunication.LAN_Advertise(_cts.Token); });
-            
         }
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             _cts.Cancel();
-            _UDPadvertiser.Wait();
+            _comunication.StopAll();
             Application.Current.Shutdown();
         }
         private void ExitApplication(object sender, EventArgs args)
