@@ -94,6 +94,11 @@ namespace LANshare.Connection
                 }
                 try
                 {
+                    Configuration.CurrentUser.online=false;
+                    formatter.Serialize(ms, Configuration.CurrentUser);
+                    data = formatter.ToArray();
+                    //Non me ne frega un cazzo se il pacchetto va perso, tanto chissene c'è il timer
+                    advertiser.Send(data,data.Length,endpoint);
                     advertiser.DropMulticastGroup(Configuration.MulticastAddress);
                 }
                 catch (ObjectDisposedException ex)
@@ -131,10 +136,18 @@ namespace LANshare.Connection
                                     IFormatter formatter =
                                         new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                                     var user = (User) formatter.Deserialize(ms);
+                                    //TODO se l'user manda messaggio offline levalo dalla lista
+                                    
                                     user.userAddress = endPoint.Address;
-                                    userList.Add(userList.GetCount().ToString(), user,
-                                        DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
-                                    OnUserFound(user);
+                                    if(!user.online){
+                                        user.online=true;
+                                        var pairToRemove=userList.ToList().Where(x=>x.Item2.equals(user)).First();
+                                        userList.Remove(pairToRemove.Item1);
+                                    }else{
+                                        userList.Add(userList.GetCount().ToString(), user,
+                                            DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
+                                        OnUserFound(user);
+                                    }
                                 }
                             }
                         }
