@@ -19,7 +19,7 @@ namespace LANshare.Model
         }
         private string _name;
         public string NickName { get; set; }
-
+        public bool online;
         //User ip address
         [NonSerialized] public System.Net.IPAddress userAddress;
         // Tcp port listening for file upload requests for user
@@ -29,6 +29,7 @@ namespace LANshare.Model
             Name = name;
             TcpPortTo = tcpPortTo;
             NickName = nickName;
+            online=true;
         }
         
     }
