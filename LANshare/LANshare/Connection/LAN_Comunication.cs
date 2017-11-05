@@ -171,6 +171,9 @@ namespace LANshare.Connection
                                             DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
                                         OnUserFound(user);
                                     }
+<<<<<<< HEAD
+>>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
+=======
 >>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
                                 }
                             }
