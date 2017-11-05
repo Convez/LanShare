@@ -127,7 +127,7 @@ namespace LANshare.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("239.165.41.74")]
+        [global::System.Configuration.DefaultSettingValueAttribute("239.192.41.74")]
         public string MulticastAddress {
             get {
                 return ((string)(this["MulticastAddress"]));

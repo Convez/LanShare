@@ -9,6 +9,7 @@ using System.Threading;
 using LANshare.Model;
 using System.Net.NetworkInformation;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Caching;
 
@@ -21,6 +22,7 @@ namespace LANshare.Connection
         private Task advertiserTask;
         private Task listenerTask;
 
+        //TODO create thread safe class to handle expiring user list
         //MemoryCache is thread-safe
         private MemoryCache userList;
 
@@ -55,8 +57,17 @@ namespace LANshare.Connection
                         if (x.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork && !x.Address.Equals(IPAddress.Loopback))
                         {
                             var edp = new IPEndPoint(x.Address, udpPort); //0 => Assign random free port from the dynamic section (49152-65535)
-                            UdpClient cl = new UdpClient(edp);
-                            cl.JoinMulticastGroup(Configuration.MulticastAddress);
+                            UdpClient cl = new UdpClient();
+                            cl.MulticastLoopback = false;
+                            int ttl = (int)cl.Client.GetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive);
+                            ttl += 5;
+                            cl.Client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, ttl);
+                            cl.ExclusiveAddressUse = false;
+                            cl.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                            cl.ExclusiveAddressUse = false;
+                            cl.Client.SetSocketOption(SocketOptionLevel.IP,
+                                SocketOptionName.AddMembership, new MulticastOption(Configuration.MulticastAddress,x.Address));
+                            cl.Client.Bind(edp);
                             clients.Add(cl);
                         }
                     }
@@ -78,12 +89,12 @@ namespace LANshare.Connection
             var endpoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
             List<UdpClient> advertisers = GenerateUdpClients(0);
             this.advertisers = advertisers;
+
             //Serialize user
-            IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-            MemoryStream ms = new MemoryStream();
-            formatter.Serialize(ms, Configuration.CurrentUser);
-            byte[] data = ms.ToArray();
-            
+            ConnectionMessage userMessage =
+                new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
+            byte[] data = ConnectionMessage.Serialize(userMessage);
+
             advertiserTask = Task.Run(()=>advertisers.AsParallel().ForAll((advertiser) =>
             {
                 
@@ -94,6 +105,11 @@ namespace LANshare.Connection
                 }
                 try
                 {
+                    Configuration.CurrentUser.online=false;
+                    formatter.Serialize(ms, Configuration.CurrentUser);
+                    data = formatter.ToArray();
+                    //Non me ne frega un cazzo se il pacchetto va perso, tanto chissene c'è il timer
+                    advertiser.Send(data,data.Length,endpoint);
                     advertiser.DropMulticastGroup(Configuration.MulticastAddress);
                 }
                 catch (ObjectDisposedException ex)
@@ -118,25 +134,47 @@ namespace LANshare.Connection
             {
                 listeners.AsParallel().ForAll((listener) =>
                 {
-                    IPEndPoint endPoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
+                    IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, 0);
                     while (!ct.IsCancellationRequested)
                     {
                         try
                         {
+                            endPoint.Address = IPAddress.Any;
+                            endPoint.Port = 0;
                             byte[] udpResult = listener.Receive(ref endPoint);
                             if (!endPoint.Address.Equals(((IPEndPoint) listener.Client.LocalEndPoint).Address))
                             {
-                                using (MemoryStream ms = new MemoryStream(udpResult))
+                                ConnectionMessage message = ConnectionMessage.Deserialize(udpResult);
+                                switch (message?.MessageType)
                                 {
+<<<<<<< HEAD
+                                    case MessageType.UserAdvertisement:
+                                        User u = message.Message as User;
+                                        userList.Add(userList.GetCount().ToString(), u,
+                                            DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
+                                        OnUserFound(u);
+                                        break;
+                                    //Ignore udp packets where MessageType is not what expected. Might be from different versions of the program
+=======
                                     IFormatter formatter =
                                         new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
                                     var user = (User) formatter.Deserialize(ms);
+                                    //TODO se l'user manda messaggio offline levalo dalla lista
+                                    
                                     user.userAddress = endPoint.Address;
-                                    userList.Add(userList.GetCount().ToString(), user,
-                                        DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
-                                    OnUserFound(user);
+                                    if(!user.online){
+                                        user.online=true;
+                                        var pairToRemove=userList.ToList().Where(x=>x.Item2.equals(user)).First();
+                                        userList.Remove(pairToRemove.Item1);
+                                    }else{
+                                        userList.Add(userList.GetCount().ToString(), user,
+                                            DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
+                                        OnUserFound(user);
+                                    }
+>>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
                                 }
                             }
+                            Thread.Sleep(500);
                         }
                         catch (SocketException ex)
                         {
@@ -162,7 +200,7 @@ namespace LANshare.Connection
         }
         public void StopAll()
         {
-            cts.Cancel();
+            cts?.Cancel();
             advertisers?.ForEach(x => x.Close());
             listeners?.ForEach(x => x.Close());
             advertiserTask?.Wait();
