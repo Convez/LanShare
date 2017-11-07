@@ -53,15 +53,11 @@ namespace LANshare
                 }));
             };
             //Aggiorno listview quando avviene l'evento
-            _comunication.UserExpired += (sender, args) =>
+            _comunication.UsersExpired += (sender, args) =>
             {
-                string s = args.NickName == ""
-                    ? args.Name + "(" + args.userAddress.ToString() + ")"
-                    : args.NickName + "(" + args.userAddress.ToString() + ")";
                 ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
                 {
-                    if (ConnectedUsers.Items.Contains(s))
-                        ConnectedUsers.Items.Remove(s);
+                    ConnectedUsers.ItemsSource = args;
                 }));
             };
 

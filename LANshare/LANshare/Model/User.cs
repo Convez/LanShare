@@ -19,18 +19,9 @@ namespace LANshare.Model
         }
         private string _name;
         public string NickName { get; set; }
-<<<<<<< HEAD
-<<<<<<< HEAD
-
         //Session Id
-        public string SessionId { get; set; }
-
-=======
-        public bool online;
->>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
-=======
-        public bool online;
->>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
+        public object SessionId { get; set; }
+        
         //User ip address
         [NonSerialized] public System.Net.IPAddress userAddress;
         // Tcp port listening for file upload requests for user
@@ -40,7 +31,6 @@ namespace LANshare.Model
             Name = name;
             TcpPortTo = tcpPortTo;
             NickName = nickName;
-            online=true;
         }
         
     }

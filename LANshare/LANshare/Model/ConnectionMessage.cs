@@ -12,6 +12,7 @@ namespace LANshare.Model
     public enum MessageType
     {
         UserAdvertisement,
+        UserDisconnectingNotification,
         ProfileImageRequest,
         ProfileImageResponse,
         FileUploadRequest,

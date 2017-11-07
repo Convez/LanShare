@@ -17,23 +17,30 @@ namespace LANshare.Connection
 {
     class LanComunication
     {
-        public ConcurrentDictionary<User, Timer> UsersOnNetwork;
         private CancellationTokenSource cts;
         private Task advertiserTask;
         private Task listenerTask;
 
-        //TODO create thread safe class to handle expiring user list
-        //MemoryCache is thread-safe
-        private MemoryCache userList;
+        private ExpiringDictionary<User> userList;
 
         private List<UdpClient> advertisers;
         private List<UdpClient> listeners;
 
+        /// <summary>
+        /// Called when a user is found. Provides the new user as argument.
+        /// </summary>
+        public event EventHandler<User> UserFound;
+
+        /// <summary>
+        /// Called when at least one user is expired. Provides as argument the new list of valid users
+        /// </summary>
+        public event EventHandler<List<User>> UsersExpired;
 
         public LanComunication()
         {
             cts = new CancellationTokenSource();
-            userList = new MemoryCache("lanShareUserList");
+            userList = new ExpiringDictionary<User>(Configuration.UserValidityMilliseconds);
+            userList.ElementsExpired += (sender, args) => OnUsersExpired(userList.GetAll());
         }
 
         private List<UdpClient> GenerateUdpClients(int udpPort)
@@ -105,9 +112,9 @@ namespace LANshare.Connection
                 }
                 try
                 {
-                    Configuration.CurrentUser.online=false;
-                    formatter.Serialize(ms, Configuration.CurrentUser);
-                    data = formatter.ToArray();
+                    userMessage = new ConnectionMessage(MessageType.UserDisconnectingNotification, false,
+                        Configuration.CurrentUser);
+                    data = ConnectionMessage.Serialize(userMessage);
                     //Non me ne frega un cazzo se il pacchetto va perso, tanto chissene c'è il timer
                     advertiser.Send(data,data.Length,endpoint);
                     advertiser.DropMulticastGroup(Configuration.MulticastAddress);
@@ -147,37 +154,18 @@ namespace LANshare.Connection
                                 ConnectionMessage message = ConnectionMessage.Deserialize(udpResult);
                                 switch (message?.MessageType)
                                 {
-<<<<<<< HEAD
                                     case MessageType.UserAdvertisement:
                                         User u = message.Message as User;
-                                        userList.Add(userList.GetCount().ToString(), u,
-                                            DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
-                                        OnUserFound(u);
+                                        if(userList.Add(u.SessionId,u)) 
+                                            OnUserFound(u);
+                                        break;
+                                    case MessageType.UserDisconnectingNotification:
+                                        User us = message.Message as User;
+                                        userList.Remove(us.SessionId);
                                         break;
                                     //Ignore udp packets where MessageType is not what expected. Might be from different versions of the program
-=======
-                                    IFormatter formatter =
-                                        new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                                    var user = (User) formatter.Deserialize(ms);
-                                    //TODO se l'user manda messaggio offline levalo dalla lista
-                                    
-                                    user.userAddress = endPoint.Address;
-                                    if(!user.online){
-                                        user.online=true;
-                                        var pairToRemove=userList.ToList().Where(x=>x.Item2.equals(user)).First();
-                                        userList.Remove(pairToRemove.Item1);
-                                    }else{
-                                        userList.Add(userList.GetCount().ToString(), user,
-                                            DateTime.Now.AddMilliseconds(Configuration.UserValidityMilliseconds));
-                                        OnUserFound(user);
-                                    }
-<<<<<<< HEAD
->>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
-=======
->>>>>>> 6c12d19fed146f384b9d839380d70a39b9bb7905
                                 }
                             }
-                            Thread.Sleep(500);
                         }
                         catch (SocketException ex)
                         {
@@ -212,7 +200,7 @@ namespace LANshare.Connection
 
         public List<User> GetUsers()
         {
-            return userList.ToList().Select(x=>(User)x.Value).ToList();
+            return userList.GetAll();
         }
 
         protected void OnUserFound(User u)
@@ -224,8 +212,15 @@ namespace LANshare.Connection
             }
         }
 
-        public event EventHandler<User> UserFound;
-        public event EventHandler<User> UserExpired;
+        protected void OnUsersExpired(List<User> newList)
+        {
+            EventHandler<List<User>> handler = UsersExpired;
+            if (handler != null)
+            {
+                handler(this, newList);
+            }
+        }
+
     }
 
 }
