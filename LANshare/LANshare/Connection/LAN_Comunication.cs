@@ -26,6 +26,16 @@ namespace LANshare.Connection
         private List<UdpClient> advertisers;
         private List<UdpClient> listeners;
 
+        private int _newSessionIdAvailable;
+        private int newSessionIdAvailable
+        {
+            get => _newSessionIdAvailable;
+            set => Interlocked.Exchange(ref _newSessionIdAvailable, value);
+
+        }
+
+        private int numNotified;
+        
         /// <summary>
         /// Called when a user is found. Provides the new user as argument.
         /// </summary>
@@ -41,6 +51,8 @@ namespace LANshare.Connection
             cts = new CancellationTokenSource();
             userList = new ExpiringDictionary<User>(Configuration.UserValidityMilliseconds);
             userList.ElementsExpired += (sender, args) => OnUsersExpired(userList.GetAll());
+            newSessionIdAvailable = 0;
+            numNotified = 0;
         }
 
         private List<UdpClient> GenerateUdpClients(int udpPort)
@@ -101,22 +113,34 @@ namespace LANshare.Connection
             ConnectionMessage userMessage =
                 new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
             byte[] data = ConnectionMessage.Serialize(userMessage);
-
             advertiserTask = Task.Run(()=>advertisers.AsParallel().ForAll((advertiser) =>
             {
-                
                 CancellationToken ct = cts.Token;
+                int newSessionIdNotified=0;
                 while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
                 {
                     Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
+                    if (newSessionIdAvailable == 1)
+                    {
+                        if (newSessionIdNotified == 0)
+                        {
+                            userMessage.Message = Configuration.CurrentUser;
+                            data = ConnectionMessage.Serialize(userMessage);
+                            newSessionIdNotified = 1;
+                            Interlocked.Increment(ref numNotified);
+                            if (numNotified == advertisers.Count)
+                            {
+                                newSessionIdAvailable = 0;
+                            }
+                        }
+                    }
+                    if (newSessionIdAvailable == 0 && newSessionIdNotified == 1)
+                    {
+                        newSessionIdNotified = 0;
+                    }
                 }
                 try
                 {
-                    userMessage = new ConnectionMessage(MessageType.UserDisconnectingNotification, false,
-                        Configuration.CurrentUser);
-                    data = ConnectionMessage.Serialize(userMessage);
-                    //Non me ne frega un cazzo se il pacchetto va perso, tanto chissene c'è il timer
-                    advertiser.Send(data,data.Length,endpoint);
                     advertiser.DropMulticastGroup(Configuration.MulticastAddress);
                 }
                 catch (ObjectDisposedException ex)
@@ -158,6 +182,15 @@ namespace LANshare.Connection
                                         User u = message.Message as User;
                                         if(userList.Add(u.SessionId,u)) 
                                             OnUserFound(u);
+                                        if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))
+                                        {
+                                            if (newSessionIdAvailable == 0)
+                                            {
+                                                Configuration.CurrentUser.SessionId = User.GenerateSessionId();
+                                                Interlocked.Exchange(ref numNotified, 0);
+                                                newSessionIdAvailable = 1;
+                                            }
+                                        }
                                         break;
                                     case MessageType.UserDisconnectingNotification:
                                         User us = message.Message as User;
@@ -192,7 +225,15 @@ namespace LANshare.Connection
         public void StopAll()
         {
             cts?.Cancel();
-            advertisers?.ForEach(x => x.Close());
+            advertisers?.ForEach(x =>
+            {
+                ConnectionMessage userMessage = new ConnectionMessage(MessageType.UserDisconnectingNotification, false,
+                    Configuration.CurrentUser);
+                var data = ConnectionMessage.Serialize(userMessage);
+                var endpoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
+                x.Send(data, data.Length, endpoint);
+                x.Close();
+            });
             listeners?.ForEach(x => x.Close());
             advertiserTask?.Wait();
             listenerTask?.Wait();

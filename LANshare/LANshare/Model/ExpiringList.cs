@@ -34,7 +34,7 @@ namespace LANshare.Model
             bool expired = false;
             for (int i = 0; i < list.Count; i++)
             {
-                if ((list[i].Value.Item2 - DateTime.Now)>= expireInterval)
+                if ((DateTime.Now - list[i].Value.Item2) >= expireInterval)
                 {
                     Tuple<T, DateTime> tup;
                     if (innerList.TryRemove(list[i].Key, out tup))
@@ -52,13 +52,12 @@ namespace LANshare.Model
         public bool Add(object key, T toAdd)
         {
             var newVal = new Tuple<T, DateTime>(toAdd, DateTime.Now);
-            bool alreadyPresent = false;
+            bool isNew = true;
             try
             {
-                
                 innerList.AddOrUpdate(key, newVal, (keyVal, oldVal) =>
                 {
-                    alreadyPresent = true;
+                    isNew = false;
                     return newVal;
                 });
             }
@@ -66,7 +65,7 @@ namespace LANshare.Model
             {
                 innerList.Clear();
             }
-            return alreadyPresent;
+            return isNew;
         }
 
         public void Remove(object key)

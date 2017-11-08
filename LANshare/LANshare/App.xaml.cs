@@ -23,11 +23,8 @@ namespace LANshare
             base.OnStartup(e);
 
             Model.Configuration.LoadConfiguration();
-            Random generator = new Random();
-            string randNum = generator.Next(int.MinValue, int.MaxValue).ToString();
-            HashAlgorithm hashAlg = SHA512.Create();
-            byte[] hashed = hashAlg.ComputeHash(Encoding.UTF8.GetBytes(randNum));
-            Model.Configuration.CurrentUser.SessionId = hashed;
+            
+            Model.Configuration.CurrentUser.SessionId = Model.User.GenerateSessionId();
 
             //Check se è attiva una sessione dell'udp advertiser/tcp listener (la parte del programma con la trayicon)
             bool alreadyRunning = false;
