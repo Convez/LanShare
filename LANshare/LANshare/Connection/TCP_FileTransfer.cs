@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Text;
@@ -16,159 +17,119 @@ namespace LANshare.Connection
     
     class TCP_FileTransfer
     {
+        private CancellationTokenSource shuttingDown;
 
-        /// <summary>
-        /// Rimane in ascolto per eventuali richeste di trasferimento file
-        /// </summary>
-        /// <param name="ct">Usato per fermare l'accettazione di nuove connessioni quando l'applicazione si chiude</param>
-        /// <returns></returns>
-        public async Task TransferRequestListener(CancellationToken ct)
+        private Task serverTask;
+
+        private List<TcpListener> listeners;
+
+        public TCP_FileTransfer()
         {
-            var timeout = TimeSpan.FromMilliseconds(Configuration.TCPConnectionTimeoutMilliseconds);
-            System.Net.IPEndPoint endpoint = new System.Net.IPEndPoint(System.Net.IPAddress.Any, Configuration.TcpPort);
-            TcpListener listener = new TcpListener(endpoint); ;
-            try
+            shuttingDown = new CancellationTokenSource();
+        }
+
+        private List<TcpListener> GenerateServers(int tcpPort)
+        {
+            List<TcpListener> servers = new List<TcpListener>();
+            foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
             {
-                listener.Start(40);
+                IPInterfaceProperties ipProperties = nic.GetIPProperties();
+                if (!ipProperties.MulticastAddresses.Any())
+                    continue; // most of VPN adapters will be skipped
+                if (!nic.SupportsMulticast)
+                    continue; // multicast is meaningless for this type of connection
+                if (OperationalStatus.Up != nic.OperationalStatus)
+                    continue; // this adapter is off or not connected
+                IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
+                if (p == null)
+                    continue; // IPv4 is not configured on this adapter
+                ipProperties.UnicastAddresses.ToList().ForEach(
+                    (addr) =>
+                    {
+                        if (addr.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            var edp = new IPEndPoint(addr.Address, tcpPort);
+                            TcpListener server = new TcpListener(edp);
+                            servers.Add(server);
+                        }
+                    }
+                 );
             }
-            catch (SocketException e)
+            return servers;
+        }
+
+        public void StartTcpServers()
+        {
+            listeners = GenerateServers(Configuration.TcpPort);
+            serverTask = Task.Run(() => listeners.AsParallel().ForAll((server) =>
             {
-                MessageBox.Show("Can't start server. Port occupied.");
-                return;
-            }
-            while (!ct.IsCancellationRequested)
-            {
-                var acceptClientResult = listener.BeginAcceptTcpClient(null, null);
-                acceptClientResult.AsyncWaitHandle.WaitOne(timeout);
-                if (acceptClientResult.IsCompleted)
+                CancellationToken shutDown = shuttingDown.Token;
+                try
+                {
+                    server.Start(50);
+                }
+                catch (SocketException ex)
+                {
+                    MessageBox.Show("Can't start server.\n" + ex.Message);
+                    return;
+                }
+                while(!shutDown.IsCancellationRequested)
                 {
                     try
                     {
-                        TcpClient currentClient = listener.EndAcceptTcpClient(acceptClientResult);
-                        //Escludi te stesso
-                        if (!((IPEndPoint) currentClient.Client.RemoteEndPoint).Address.Equals(Configuration.CurrentUser
-                            .userAddress))
-                        {
-                            Task.Run(async () =>
-                             {
-                                 await Task.Run(() => { ServeClient(currentClient, ct); });
-                             });
-                        }
-                        else
-                        {
-                            currentClient.Close();
-                            continue;
-                        }
+                        TcpClient clientAccepted = server.AcceptTcpClient();
+                        Task.Run(async () => await HandleClient(clientAccepted,shutDown));
                     }
-                    catch (Exception e)
+                    catch (SocketException)
                     {
-                        //Error connecting to the client. go on
+
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        
                     }
                 }
-            }
-            listener.Stop();
+            }));
         }
 
-        /// <summary>
-        /// Serve il client appena connesso
-        /// </summary>
-        /// <param name="cliSock">Socket del client</param>
-        /// <param name="ct"></param>
-        private void ServeClient(TcpClient cliSock, CancellationToken ct)
+        private async Task HandleClient(TcpClient client, CancellationToken ct)
         {
-            
-            using (NetworkStream ns = cliSock.GetStream())
+            using (NetworkStream ns = client.GetStream())
             {
-                ns.ReadTimeout = Configuration.TCPConnectionTimeoutMilliseconds;
-
-                //Get size of serialized counterpart data
-                byte[] sizeBuf = new byte[sizeof(int)];
-                int bytesRed = ns.Read(sizeBuf, 0, sizeBuf.Length);
-                if (bytesRed < 0) {
-                    MessageBox.Show("Cannot receive data from counterpart. Please check connection to the LAN and try again");
-                    return;
-                }
-                int size = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(sizeBuf, 0));
-
-                //Get client parameters (Identity and security)
-                byte[] formattedUser = new byte[size];
-                ns.Read(formattedUser, 0, formattedUser.Length);
-
-                IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                User counterpart;
-                using (MemoryStream ms = new MemoryStream(formattedUser)) {
-                    counterpart = (User)formatter.Deserialize(ms);
-                }
-                
-
-                //TODO Get number of elements
-                byte[] nElemBuf = new byte[sizeof(int)];
-                bytesRed = ns.Read(nElemBuf, 0, nElemBuf.Length);
-                if (bytesRed < 0) {
-                    MessageBox.Show("Cannot receive data from user " + counterpart.NickName!=""?counterpart.NickName:counterpart.Name + ". Please check connection to the LAN and try again");
-                    return;
-                }
-                int nElem = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(nElemBuf,0));
-
-                //TODO Ask user for confermation if necessary
-                MessageBox.Show("User " + counterpart.NickName != "" ? counterpart.NickName : counterpart.Name + " wants to send " + nElem.ToString() + " files/folders. Accept?");
-                
-                //TODO For each element get type, fileNameSize, fileName and transfer it
-
-
-            }
-        }
-
-        /// <summary>
-        /// Connette ad un host remoto e manda i file
-        /// </summary>
-        /// <param name="server">Dati dell'utente a cui connettersi</param>
-        /// <param name="filesToSend">Lista dei file da mandare</param>
-        /// <param name="ct">Usato per fermare la trasmissione dei file</param>
-        /// <returns></returns>
-        public async Task TransferRequestSender(User server, List<string> filesToSend, CancellationToken ct)
-        {
-            try
-            {
-                TcpClient client = new TcpClient(server.userAddress.ToString(), server.TcpPortTo);
-                using (NetworkStream ns = client.GetStream())
+                while (!ct.IsCancellationRequested)
                 {
-                    //TODO Send Info
-
-                    //Serialize user
-                    IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                    MemoryStream ms = new MemoryStream();
-                    formatter.Serialize(ms, Configuration.CurrentUser);
-                    byte[] data = ms.ToArray();
-                    //Send size of serialized data
-                    int sizeFormatted = IPAddress.HostToNetworkOrder(data.Length);
-                    byte[] sizeBuf = BitConverter.GetBytes(sizeFormatted);
-                    ns.Write(sizeBuf, 0, sizeBuf.Length);
-                    //Send serialized data
-                    ns.Write(data, 0, data.Length);
-
-                    //TODO Send number of elements to send
-                    int numFiles = IPAddress.HostToNetworkOrder(filesToSend.Count);
-                    byte[] nElemBuf = BitConverter.GetBytes(numFiles);
-                    ns.Write(nElemBuf, 0, nElemBuf.Length);
-                    Console.WriteLine("Sent "+ filesToSend.Count.ToString());
-                    //TODO Wait for ok
-
-
-
-
-                    //TODO For each element send type, fileNameSize, fileName and transfer it
-
+                    ns.ReadTimeout = Configuration.TCPConnectionTimeoutMilliseconds;
+                    ConnectionMessage message = await ReadMessage(ns);
                 }
             }
-            catch (SocketException e)
-            {
-                //Error connecting to client
-                //TODO Print error message
-            }
-        
         }
-        
+
+        private async Task<ConnectionMessage> ReadMessage(NetworkStream from)
+        {
+            byte[] messageSize = new byte[sizeof(long)];
+            int bytesRed = await from.ReadAsync(messageSize,0,messageSize.Length);
+            if (bytesRed < 0)
+            {
+                MessageBox.Show("Connection aborted");
+                return null;
+            }
+            long messageLength = BitConverter.ToInt64(messageSize, 0);
+            byte[] readVector = new byte[IPAddress.NetworkToHostOrder(messageLength)];
+            bytesRed = await from.ReadAsync(readVector, 0, readVector.Length);
+            return ConnectionMessage.Deserialize(readVector);
+        }
+
+        private async Task SendMessage(NetworkStream to, ConnectionMessage message)
+        {
+            using (MemoryStream ss = new MemoryStream())
+            {
+                byte[] data = ConnectionMessage.Serialize(message);
+                byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
+                await to.WriteAsync(dataSize, 0, data.Length);
+                await to.WriteAsync(data, 0, data.Length);
+                await to.FlushAsync();
+            }
+        }
         
     }
 }

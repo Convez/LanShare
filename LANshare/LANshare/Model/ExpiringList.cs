@@ -14,7 +14,10 @@ namespace LANshare.Model
         private readonly System.Timers.Timer innerTimer;
         private readonly TimeSpan expireInterval;
 
-        public event EventHandler<bool> ElementsExpired;
+        /// <summary>
+        /// Event argument is list of expired elements
+        /// </summary>
+        public event EventHandler<List<T>> ElementsExpired;
 
         public ExpiringDictionary(int expiringDelayMilliseconds)
         {
@@ -29,7 +32,7 @@ namespace LANshare.Model
 
         private void TimerElapsed(object sender, System.Timers.ElapsedEventArgs args)
         {
-            
+            var expire = new List<T>();
             var list = innerList.ToList();
             bool expired = false;
             for (int i = 0; i < list.Count; i++)
@@ -39,13 +42,14 @@ namespace LANshare.Model
                     Tuple<T, DateTime> tup;
                     if (innerList.TryRemove(list[i].Key, out tup))
                     {
+                        expire.Add(list[i].Value.Item1);
                         expired = true;
                     }
                 }
             }
             if (expired)
             {
-                OnElementsExpired(expired);
+                OnElementsExpired(expire);
             }
         }
 
@@ -71,7 +75,12 @@ namespace LANshare.Model
         public void Remove(object key)
         {
             Tuple<T, DateTime> t;
-            innerList.TryRemove(key,out t);
+            if (innerList.TryRemove(key, out t))
+            {
+                var l = new List<T>();
+                l.Add(t.Item1);
+                OnElementsExpired(l);
+            }
         }
 
         public T Get(object key)
@@ -86,13 +95,9 @@ namespace LANshare.Model
             return innerList.ToList().Select(a => a.Value.Item1).ToList();
         }
 
-        protected void OnElementsExpired(bool expired)
+        protected void OnElementsExpired(List<T> expired)
         {
-            EventHandler<bool> handler = ElementsExpired;
-            if (handler != null)
-            {
-                handler(this, expired);
-            }
+            ElementsExpired?.Invoke(this, expired);
         }
     }
 }

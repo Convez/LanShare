@@ -37,6 +37,11 @@ namespace LANshare.Model
             NickName = nickName;
         }
 
+        public string ToString()
+        {
+            return Name + " (" + userAddress.ToString() + ")";
+        }
+
         public static string GenerateSessionId()
         {
             Random generator = new Random();

@@ -1,6 +1,7 @@
 ﻿using LANshare.Connection;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
+using LANshare.Model;
 
 namespace LANshare
 {
@@ -26,49 +28,35 @@ namespace LANshare
         private Task _UDPlistener;
         private CancellationTokenSource _cts;
 
+        private ObservableCollection<string> userList;
+        private readonly object l = "";
         public ShowUsersWindow()
         {
             InitializeComponent();
-            
+            userList = new ObservableCollection<string>();
+            ConnectedUsers.ItemsSource = userList;
         }
 
-        protected override void OnInitialized(EventArgs e)
+        public void AddUser(object sender, User u)
         {
-            base.OnInitialized(e);
-
-            _cts = new CancellationTokenSource();
-            _comunication = new LanComunication();
-            //Aggiorno listview quando avviene l'evento
-            _comunication.UserFound += (sender, args) =>
+            ConnectedUsers.Dispatcher.Invoke(() =>
             {
-                string s = args.NickName == ""
-                    ? args.Name + "(" + args.userAddress.ToString() + ")"
-                    : args.NickName + "(" + args.userAddress.ToString() + ")";
-                //Usare il dispatcher per eseguire l'aggiornamento dell'interfaccia
-                //(Provare ad aggiornare gli items in un thread che non sia il proprietario fa esplodere il programma)
-                ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
+                lock (l)
                 {
-                    if (!ConnectedUsers.Items.Contains(s))
-                        ConnectedUsers.Items.Add(s);
-                }));
-            };
-            //Aggiorno listview quando avviene l'evento
-            _comunication.UsersExpired += (sender, args) =>
-            {
-                ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
-                {
-                    ConnectedUsers.ItemsSource = args;
-                }));
-            };
-
-            _UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.StartLanListen(); }); });
+                    userList.Add(u.ToString());
+                }
+            });
         }
-        protected override void OnClosed(EventArgs e)
+
+        public void RemoveUsers(object sender, List<User> li)
         {
-            _cts.Cancel();
-            _UDPlistener.Wait();
-            base.OnClosed(e);
-            Application.Current.Shutdown();
+            ConnectedUsers.Dispatcher.Invoke(() =>
+            {
+                lock (l)
+                {
+                    li.ForEach(u => userList.Remove(u.ToString()));
+                }
+            });
         }
     }
 }

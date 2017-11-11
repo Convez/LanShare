@@ -58,7 +58,14 @@ namespace LANshare
             _comunication.StartLanAdvertise();
             _comunication.StartLanListen();
 
+            ShowUsersWindow userWindow = new ShowUsersWindow();
+            _comunication.UserFound += userWindow.AddUser;
+            _comunication.UsersExpired += userWindow.RemoveUsers;
+            userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+            userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+            userWindow.Show();
         }
+
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);

@@ -50,7 +50,7 @@ namespace LANshare.Connection
         {
             cts = new CancellationTokenSource();
             userList = new ExpiringDictionary<User>(Configuration.UserValidityMilliseconds);
-            userList.ElementsExpired += (sender, args) => OnUsersExpired(userList.GetAll());
+            userList.ElementsExpired += (sender, args) => OnUsersExpired(args);
             newSessionIdAvailable = 0;
             numNotified = 0;
         }
@@ -180,6 +180,7 @@ namespace LANshare.Connection
                                 {
                                     case MessageType.UserAdvertisement:
                                         User u = message.Message as User;
+                                        u.userAddress = endPoint.Address;
                                         if(userList.Add(u.SessionId,u)) 
                                             OnUserFound(u);
                                         if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))
@@ -253,12 +254,12 @@ namespace LANshare.Connection
             }
         }
 
-        protected void OnUsersExpired(List<User> newList)
+        protected void OnUsersExpired(List<User> expired)
         {
             EventHandler<List<User>> handler = UsersExpired;
             if (handler != null)
             {
-                handler(this, newList);
+                handler(this, expired);
             }
         }
 
