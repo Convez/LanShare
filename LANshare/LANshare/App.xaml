@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:LANshare"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
+<<<<<<< HEAD
         <!-- Header text style -->
         <Style x:Key="headerTextStyle">
             <Setter Property="Label.VerticalAlignment" Value="Center"></Setter>
@@ -51,5 +52,8 @@
             <Setter Property="Margin" Value="0,10,0,0" />
             <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
+=======
+         
+>>>>>>> Enrico_TB
     </Application.Resources>
 </Application>

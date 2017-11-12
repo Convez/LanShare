@@ -30,7 +30,11 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="MulticastAddress" Type="System.String" Scope="Application">
+<<<<<<< HEAD
       <Value Profile="(Default)">239.165.41.74</Value>
+=======
+      <Value Profile="(Default)">239.192.41.74</Value>
+>>>>>>> Enrico_TB
     </Setting>
     <Setting Name="UdpPacketsIntervalMilliseconds" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">5000</Value>

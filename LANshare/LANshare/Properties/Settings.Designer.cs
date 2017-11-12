@@ -12,7 +12,11 @@ namespace LANshare.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+<<<<<<< HEAD
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+=======
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+>>>>>>> Enrico_TB
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -127,7 +131,11 @@ namespace LANshare.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("239.165.41.74")]
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("239.192.41.74")]
+>>>>>>> Enrico_TB
         public string MulticastAddress {
             get {
                 return ((string)(this["MulticastAddress"]));
@@ -172,5 +180,20 @@ namespace LANshare.Properties {
                 this["CustomSavePath"] = value;
             }
         }
+<<<<<<< HEAD
+=======
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Setting {
+            get {
+                return ((string)(this["Setting"]));
+            }
+            set {
+                this["Setting"] = value;
+            }
+        }
+>>>>>>> Enrico_TB
     }
 }

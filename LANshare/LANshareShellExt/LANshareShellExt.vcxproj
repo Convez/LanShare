@@ -72,12 +72,20 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+<<<<<<< HEAD
     <OutDir>..\x64\Debug</OutDir>
+=======
+    <OutDir>$(Platform)\$(Configuration)\</OutDir>
+>>>>>>> Enrico_TB
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+<<<<<<< HEAD
     <OutDir>..\x86\$(Configuration)\</OutDir>
+=======
+    <OutDir>x86\$(Configuration)\</OutDir>
+>>>>>>> Enrico_TB
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -6,7 +6,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+<<<<<<< HEAD
 
+=======
+>>>>>>> Enrico_TB
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -14,7 +17,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LANshare.Connection;
+<<<<<<< HEAD
 using LANshare.Model;
+=======
+>>>>>>> Enrico_TB
 
 namespace LANshare
 {
@@ -24,6 +30,7 @@ namespace LANshare
     public partial class TrayIconWindow : Window
     {
         private System.Windows.Forms.NotifyIcon _trayIcon;
+<<<<<<< HEAD
         private System.Windows.Forms.ContextMenu icon_menu;
         private bool is_private_mode = false; //should add the option to set true as default at startup
         private String privateMode = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
@@ -82,6 +89,38 @@ namespace LANshare
             }));
 
             InitializeComponent();
+=======
+
+        private LanComunication _comunication;
+
+        private TCP_Comunication _tcpComunication;
+
+
+        private CancellationTokenSource _cts;
+
+        public TrayIconWindow()
+        {
+            SetupNetwork();
+            InitializeComponent();
+        }
+
+        public TrayIconWindow(StartupEventArgs e)
+        {
+            SetupNetwork();
+            InitializeComponent();
+            StartSendingProcedure(this, e.Args.ToList());
+
+        }
+
+        private void SetupNetwork()
+        {
+            _comunication = new LanComunication();
+            _comunication.StartLanAdvertise();
+            _comunication.StartLanListen();
+            _tcpComunication = new TCP_Comunication();
+            _tcpComunication.StartTcpServers();
+            _tcpComunication.fileSendRequested += StartSendingProcedure;
+>>>>>>> Enrico_TB
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -96,6 +135,7 @@ namespace LANshare
                         "Media/switch.ico")
                 )
             };
+<<<<<<< HEAD
             _trayIcon.Visible = true;
             //Crea Context menu del trayicon
             icon_menu = new System.Windows.Forms.ContextMenu();
@@ -150,16 +190,38 @@ namespace LANshare
             
             
         }
+=======
+            //TODO Creare menu click tasto destro
+            _trayIcon.DoubleClick += ExitApplication;
+            _trayIcon.Visible = true;
+            _cts = new CancellationTokenSource();
+
+
+            //Showcase utilizzo enviroment di rete
+            ShowUsersWindow userWindow = new ShowUsersWindow();
+            _comunication.UserFound += userWindow.AddUser;
+            _comunication.UsersExpired += userWindow.RemoveUsers;
+            userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+            userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+            userWindow.Show();
+        }
+
+>>>>>>> Enrico_TB
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
             _cts.Cancel();
+<<<<<<< HEAD
             _UDPadvertiser.Wait();
+=======
+            _comunication.StopAll();
+>>>>>>> Enrico_TB
             Application.Current.Shutdown();
         }
         private void ExitApplication(object sender, EventArgs args)
         {
             _trayIcon.Visible = false;
+<<<<<<< HEAD
             
             this.Close();
         }
@@ -224,5 +286,17 @@ namespace LANshare
                 handler(this, u);
             }
         }
+=======
+            this.Close();
+        }
+
+        private void StartSendingProcedure(object sender, List<string> args)
+        {
+            string s = "";
+            args.ToList().ForEach(x => s += x+"\n");
+            MessageBox.Show(s);
+        }
+
+>>>>>>> Enrico_TB
     }
 }
