@@ -114,7 +114,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Connection\LAN_Comunication.cs" />
-    <Compile Include="Connection\TCP_FileTransfer.cs" />
+    <Compile Include="Connection\TCP_Comunication.cs" />
     <Page Include="ShowUsersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

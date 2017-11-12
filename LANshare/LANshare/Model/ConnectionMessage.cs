@@ -13,6 +13,8 @@ namespace LANshare.Model
     {
         UserAdvertisement,
         UserDisconnectingNotification,
+        IpcBaseFolder,
+        IpcElement,
         ProfileImageRequest,
         ProfileImageResponse,
         FileUploadRequest,

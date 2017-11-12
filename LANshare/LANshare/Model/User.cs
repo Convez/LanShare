@@ -37,7 +37,7 @@ namespace LANshare.Model
             NickName = nickName;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return Name + " (" + userAddress.ToString() + ")";
         }
