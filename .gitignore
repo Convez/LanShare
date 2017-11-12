@@ -39,4 +39,8 @@ obj/
 .ide
 .pdb
 LANshare/.vs/
+LANshare/.vs/LANshare/v15/
 .vs/
+
+#Other
+LANshare_ema/
