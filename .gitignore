@@ -37,3 +37,4 @@ bin/
 obj/
 x64/
 LANshareShellExt.tlog/
+*.pdb
