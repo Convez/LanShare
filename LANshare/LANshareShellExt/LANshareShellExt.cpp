@@ -51,13 +51,13 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
 	std::wstringstream ss = std::wstringstream();
-	ss << DllDirectory << L"\\LANshare.exe " << (*m_szSelectedFile) <<L"\0";
+	ss << DllDirectory << L"\\LANshare.exe\0";
 
 	std::wstring s = std::wstring();
 	std::getline(ss,s);
 	CreateProcess(
-		NULL,							//No exe (Use cmd)
-		&s[0],							//command line arguments (Path to exe + command line arguments)
+		&s[0],												//Path to exe
+		&((*m_szSelectedFile)[0]),							//Startup Arguments
 		NULL,
 		NULL,
 		FALSE,

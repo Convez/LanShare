@@ -15,7 +15,7 @@ using System.Windows;
 namespace LANshare.Connection
 {
     
-    class TCP_FileTransfer
+    class TCP_Comunication
     {
         private CancellationTokenSource shuttingDown;
 
@@ -23,7 +23,9 @@ namespace LANshare.Connection
 
         private List<TcpListener> listeners;
 
-        public TCP_FileTransfer()
+        public event EventHandler<List<string>> fileSendRequested;
+
+        public TCP_Comunication()
         {
             shuttingDown = new CancellationTokenSource();
         }
@@ -50,6 +52,7 @@ namespace LANshare.Connection
                         {
                             var edp = new IPEndPoint(addr.Address, tcpPort);
                             TcpListener server = new TcpListener(edp);
+                            server.Start(50);
                             servers.Add(server);
                         }
                     }
@@ -64,15 +67,6 @@ namespace LANshare.Connection
             serverTask = Task.Run(() => listeners.AsParallel().ForAll((server) =>
             {
                 CancellationToken shutDown = shuttingDown.Token;
-                try
-                {
-                    server.Start(50);
-                }
-                catch (SocketException ex)
-                {
-                    MessageBox.Show("Can't start server.\n" + ex.Message);
-                    return;
-                }
                 while(!shutDown.IsCancellationRequested)
                 {
                     try
@@ -94,20 +88,32 @@ namespace LANshare.Connection
 
         private async Task HandleClient(TcpClient client, CancellationToken ct)
         {
-            using (NetworkStream ns = client.GetStream())
+            ConnectionMessage message = await ReadMessage(client.Client);
+            switch (message.MessageType)
             {
-                while (!ct.IsCancellationRequested)
-                {
-                    ns.ReadTimeout = Configuration.TCPConnectionTimeoutMilliseconds;
-                    ConnectionMessage message = await ReadMessage(ns);
-                }
+                case MessageType.IpcBaseFolder:
+                    List<string> files = new List<string>();
+                    do
+                    {
+                        files.Add(message.Message as string);
+                        message = await ReadMessage(client.Client);
+                    } while (message.Next);
+                    files.Add(message.Message as string);
+                    OnSendRequested(files);
+                    break;
             }
+                
         }
 
-        private async Task<ConnectionMessage> ReadMessage(NetworkStream from)
+        private void OnSendRequested(List<string> l)
+        {
+            fileSendRequested?.Invoke(this, l);
+        }
+
+        private async Task<ConnectionMessage> ReadMessage(Socket from)
         {
             byte[] messageSize = new byte[sizeof(long)];
-            int bytesRed = await from.ReadAsync(messageSize,0,messageSize.Length);
+            int bytesRed = from.Receive(messageSize, messageSize.Length, SocketFlags.None);
             if (bytesRed < 0)
             {
                 MessageBox.Show("Connection aborted");
@@ -115,21 +121,62 @@ namespace LANshare.Connection
             }
             long messageLength = BitConverter.ToInt64(messageSize, 0);
             byte[] readVector = new byte[IPAddress.NetworkToHostOrder(messageLength)];
-            bytesRed = await from.ReadAsync(readVector, 0, readVector.Length);
-            return ConnectionMessage.Deserialize(readVector);
+            bytesRed = from.Receive(readVector, readVector.Length, SocketFlags.None);
+            return bytesRed<=0?null:ConnectionMessage.Deserialize(readVector);
         }
 
-        private async Task SendMessage(NetworkStream to, ConnectionMessage message)
+        private async Task SendMessage(Socket to, ConnectionMessage message)
         {
-            using (MemoryStream ss = new MemoryStream())
+            byte[] data = ConnectionMessage.Serialize(message);
+            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
+            int l = sizeof(long);
+           
+            to.Send(dataSize, dataSize.Length, SocketFlags.None);
+            to.Send(data, data.Length, SocketFlags.None);
+        }
+
+        public bool SendFileList(string[] files)
+        {
+            try
             {
-                byte[] data = ConnectionMessage.Serialize(message);
-                byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
-                await to.WriteAsync(dataSize, 0, data.Length);
-                await to.WriteAsync(data, 0, data.Length);
-                await to.FlushAsync();
+                TcpClient client = new TcpClient(IPAddress.Loopback.ToString(), Configuration.TcpPort);
+                ConnectionMessage message = new ConnectionMessage(MessageType.IpcBaseFolder, true, files[0]);
+                SendMessage(client.Client,message).Wait();
+                message.MessageType = MessageType.IpcElement;
+                for (int i = 1; i < files.Length - 1; i++)
+                {
+                    message.Message = files[i];
+                    SendMessage(client.Client, message).Wait();
+                }
+                message.Message = files[files.Length - 1];
+                message.Next = false;
+                SendMessage(client.Client, message).Wait();
+
+                client.Close();
+                return true;
+            }
+            catch (SocketException)
+            {
+                //Most likely failed to connect
+                return false;
             }
         }
-        
+
+
+        public static bool OtherInstanceRunning()
+        {
+            try
+            {
+                TcpListener l = new TcpListener(new IPEndPoint(IPAddress.Loopback, Configuration.TcpPort));
+                l.Start();
+                l.Stop();
+                return false;
+            }
+            catch (SocketException)
+            {
+                return true;
+            }
+        }
+
     }
 }

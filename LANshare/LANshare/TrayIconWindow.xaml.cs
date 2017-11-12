@@ -24,19 +24,36 @@ namespace LANshare
         private System.Windows.Forms.NotifyIcon _trayIcon;
 
         private LanComunication _comunication;
-        private Task _UDPadvertiser;
 
-        private TCP_FileTransfer _FileTransfer;
-        private Task _TCPlistener;
+        private TCP_Comunication _tcpComunication;
 
 
         private CancellationTokenSource _cts;
 
         public TrayIconWindow()
         {
+            SetupNetwork();
             InitializeComponent();
         }
-        
+
+        public TrayIconWindow(StartupEventArgs e)
+        {
+            SetupNetwork();
+            InitializeComponent();
+            StartSendingProcedure(this, e.Args.ToList());
+
+        }
+
+        private void SetupNetwork()
+        {
+            _comunication = new LanComunication();
+            _comunication.StartLanAdvertise();
+            _comunication.StartLanListen();
+            _tcpComunication = new TCP_Comunication();
+            _tcpComunication.StartTcpServers();
+            _tcpComunication.fileSendRequested += StartSendingProcedure;
+        }
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -54,10 +71,8 @@ namespace LANshare
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
 
-            _comunication = new LanComunication();
-            _comunication.StartLanAdvertise();
-            _comunication.StartLanListen();
 
+            //Showcase utilizzo enviroment di rete
             ShowUsersWindow userWindow = new ShowUsersWindow();
             _comunication.UserFound += userWindow.AddUser;
             _comunication.UsersExpired += userWindow.RemoveUsers;
@@ -77,6 +92,13 @@ namespace LANshare
         {
             _trayIcon.Visible = false;
             this.Close();
+        }
+
+        private void StartSendingProcedure(object sender, List<string> args)
+        {
+            string s = "";
+            args.ToList().ForEach(x => s += x+"\n");
+            MessageBox.Show(s);
         }
 
     }
