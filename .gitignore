@@ -39,3 +39,8 @@ x64/
 LANshareShellExt.tlog/
 *.pdb
 *.log
+
+#Other
+LANshare_ema/
+LANshare_en/
+LANshare/.vs/
