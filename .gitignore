@@ -38,3 +38,4 @@ obj/
 .db
 .ide
 .pdb
+*/*.VC.db*
