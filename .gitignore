@@ -28,14 +28,19 @@
 *.out
 *.app
 
+#Precompiled symbols database
+*.idb
+
 # Visual Studio generated folders
+.vs/
 bin/
 obj/
-*.opendb
+x64/
+LANshareShellExt.tlog/
+*.pdb
+*.log
 
-#Other Visual studio files
-.suo
-.db
-.ide
-.pdb
-*/*.VC.db*
+#Other
+LANshare_ema/
+LANshare_en/
+LANshare/.vs/
