@@ -44,26 +44,25 @@ namespace LANshare
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
-            _comunication = new LanComunication();
+            
             _cts = new CancellationTokenSource();
+            //_comunication = new LanComunication();
             ////Aggiorno listview quando avviene l'evento
-            //trayIconWindow.UserFoundT += (sender, args) =>
+            //_comunication.UserFound += (sender, args) =>
             //{
-
-            //        string s = args.NickName == ""
-            //            ? args.Name + "(" + args.userAddress.ToString() + ")"
-            //            : args.NickName + "(" + args.userAddress.ToString() + ")";
-            //        ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
-            //        {
-
-            //            if (!ConnectedUsers.Items.Contains(s))
-            //                ConnectedUsers.Items.Add(s);
-            //        }));
-
+            //    string s = args.NickName == ""
+            //        ? args.Name + "(" + args.userAddress.ToString() + ")"
+            //        : args.NickName + "(" + args.userAddress.ToString() + ")";
+            //    //Usare il dispatcher per eseguire l'aggiornamento dell'interfaccia
+            //    //(Provare ad aggiornare gli items in un thread che non sia il proprietario fa esplodere il programma)
+            //    ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
+            //    {
+            //        if (!ConnectedUsers.Items.Contains(s))
+            //            ConnectedUsers.Items.Add(s);
+            //    }));
             //};
-
-            ////aggiorno listview quando avviene l'evento
-            //trayIconWindow.UserExpiredT += (sender, args) =>
+            ////Aggiorno listview quando avviene l'evento
+            //_comunication.UserExpired += (sender, args) =>
             //{
             //    string s = args.NickName == ""
             //        ? args.Name + "(" + args.userAddress.ToString() + ")"
@@ -74,37 +73,8 @@ namespace LANshare
             //            ConnectedUsers.Items.Remove(s);
             //    }));
             //};
-
-            //Aggiorno listview quando avviene l'evento
-            _comunication.UserFound += (sender, args) =>
-            {
-
-                string s = args.NickName == ""
-                    ? args.Name + "(" + args.userAddress.ToString() + ")"
-                    : args.NickName + "(" + args.userAddress.ToString() + ")";
-                ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
-                {
-
-                    if (!ConnectedUsers.Items.Contains(s))
-                        ConnectedUsers.Items.Add(s);
-                }));
-
-            };
-
-            //aggiorno listview quando avviene l'evento
-            _comunication.UserExpired += (sender, args) =>
-            {
-                string s = args.NickName == ""
-                    ? args.Name + "(" + args.userAddress.ToString() + ")"
-                    : args.NickName + "(" + args.userAddress.ToString() + ")";
-                ConnectedUsers.Dispatcher.Invoke(new Action(delegate ()
-                {
-                    if (ConnectedUsers.Items.Contains(s))
-                        ConnectedUsers.Items.Remove(s);
-                }));
-            };
-
-            _UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
+            
+            //_UDPlistener = Task.Run(async () => { await Task.Run(() => { _comunication.LAN_Listen(_cts.Token); }); });
         }
         protected override void OnClosed(EventArgs e)
         {
