@@ -65,10 +65,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
-<<<<<<< HEAD
     <UseVSHostingProcess>true</UseVSHostingProcess>
-=======
->>>>>>> Enrico_TB
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -84,11 +81,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-<<<<<<< HEAD
-=======
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.ServiceModel" />
->>>>>>> Enrico_TB
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -108,20 +100,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-<<<<<<< HEAD
     <Compile Include="ShowUsersWindow.xaml.cs">
       <DependentUpon>ShowUsersWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TransfersWindow.xaml.cs">
       <DependentUpon>TransfersWindow.xaml</DependentUpon>
     </Compile>
-=======
-    <Compile Include="Model\ConnectionMessage.cs" />
-    <Compile Include="Model\ExpiringList.cs" />
-    <Compile Include="ShowUsersWindow.xaml.cs">
-      <DependentUpon>ShowUsersWindow.xaml</DependentUpon>
-    </Compile>
->>>>>>> Enrico_TB
     <Compile Include="TrayIconWindow.xaml.cs">
       <DependentUpon>TrayIconWindow.xaml</DependentUpon>
     </Compile>
@@ -130,22 +114,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Connection\LAN_Comunication.cs" />
-<<<<<<< HEAD
     <Compile Include="Connection\TCP_FileTransfer.cs" />
-=======
-    <Compile Include="Connection\TCP_Comunication.cs" />
->>>>>>> Enrico_TB
     <Page Include="ShowUsersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-<<<<<<< HEAD
     <Page Include="TransfersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-=======
->>>>>>> Enrico_TB
     <Page Include="TrayIconWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -180,7 +157,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<< HEAD
     <Resource Include="Media\1.jpg" />
     <Content Include="Media\switch.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -188,14 +164,5 @@
     <None Include="Resources\1.jpg" />
   </ItemGroup>
   <ItemGroup />
-=======
-    <Content Include="Media\switch.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
-  </ItemGroup>
->>>>>>> Enrico_TB
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

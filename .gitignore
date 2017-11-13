@@ -28,7 +28,6 @@
 *.out
 *.app
 
-<<<<<<< HEAD
 # Visual Studio generated folders
 bin/
 obj/
@@ -39,22 +38,3 @@ obj/
 .db
 .ide
 .pdb
-LANshare/.vs/
-LANshare/.vs/LANshare/v15/
-.vs/
-
-#Other
-LANshare_ema/
-=======
-#Precompiled symbols database
-*.idb
-
-# Visual Studio generated folders
-.vs/
-bin/
-obj/
-x64/
-LANshareShellExt.tlog/
-*.pdb
-*.log
->>>>>>> Enrico_TB

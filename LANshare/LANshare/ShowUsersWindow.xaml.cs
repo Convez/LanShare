@@ -1,13 +1,7 @@
 ﻿using LANshare.Connection;
-<<<<<<< HEAD
 using LANshare.Model;
 using System;
 using System.Collections.Generic;
-=======
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
->>>>>>> Enrico_TB
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,10 +15,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.ComponentModel;
-<<<<<<< HEAD
-=======
-using LANshare.Model;
->>>>>>> Enrico_TB
 
 namespace LANshare
 {
@@ -36,7 +26,6 @@ namespace LANshare
         private LanComunication _comunication;
         private Task _UDPlistener;
         private CancellationTokenSource _cts;
-<<<<<<< HEAD
         private TrayIconWindow trayIconWindow;
 
         public ShowUsersWindow()
@@ -132,38 +121,6 @@ namespace LANshare
         public void UsersUpdate(List<User> userlist)
         {
 
-=======
-
-        private ObservableCollection<string> userList;
-        private readonly object l = "";
-        public ShowUsersWindow()
-        {
-            InitializeComponent();
-            userList = new ObservableCollection<string>();
-            ConnectedUsers.ItemsSource = userList;
-        }
-
-        public void AddUser(object sender, User u)
-        {
-            ConnectedUsers.Dispatcher.Invoke(() =>
-            {
-                lock (l)
-                {
-                    userList.Add(u.ToString());
-                }
-            });
-        }
-
-        public void RemoveUsers(object sender, List<User> li)
-        {
-            ConnectedUsers.Dispatcher.Invoke(() =>
-            {
-                lock (l)
-                {
-                    li.ForEach(u => userList.Remove(u.ToString()));
-                }
-            });
->>>>>>> Enrico_TB
         }
     }
 }

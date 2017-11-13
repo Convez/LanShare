@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-<<<<<<< HEAD
         Title="People Online" Height="300" Width="300">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -33,13 +32,5 @@
         <Grid.Background>
             <ImageBrush ImageSource="Media/1.jpg"/>
         </Grid.Background>
-=======
-        Title="ShowUsersWindow" Height="300" Width="300">
-    <Grid>
-        <ListView Name="ConnectedUsers">
-
-        </ListView>
-        
->>>>>>> Enrico_TB
     </Grid>
 </Window>
