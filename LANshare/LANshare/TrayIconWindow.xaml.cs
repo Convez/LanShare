@@ -43,10 +43,13 @@ namespace LANshare
         public TrayIconWindow()
         {
             SetupNetwork();
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
+            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs args)
             {
-
-                var userWindow = new ShowUsersWindow();
+                ShowUsersWindow userWindow = new ShowUsersWindow();
+                _comunication.UserFound += userWindow.AddUser;
+                _comunication.UsersExpired += userWindow.RemoveUsers;
+                userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+                userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
                 userWindow.Show();
                 icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
 
@@ -88,7 +91,7 @@ namespace LANshare
             show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
             {
 
-                var userWindow = new ShowUsersWindow(this);
+                var userWindow = new ShowUsersWindow();
                 userWindow.Show();
                 icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
 
@@ -172,12 +175,12 @@ namespace LANshare
 
 
             //Showcase utilizzo enviroment di rete
-            ShowUsersWindow userWindow = new ShowUsersWindow();
-            _comunication.UserFound += userWindow.AddUser;
-            _comunication.UsersExpired += userWindow.RemoveUsers;
-            userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-            userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
-            userWindow.Show();
+            //ShowUsersWindow userWindow = new ShowUsersWindow();
+            //_comunication.UserFound += userWindow.AddUser;
+            //_comunication.UsersExpired += userWindow.RemoveUsers;
+            //userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+            //userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+            //userWindow.Show();
             
         }
 

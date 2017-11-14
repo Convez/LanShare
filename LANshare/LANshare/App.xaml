@@ -30,11 +30,15 @@
         </Style>
 
         <!-- List header style -->
+       
         <Style x:Key="listHeaderStyle" TargetType="{x:Type Border}">
             <Setter Property="Height" Value="35" />
             <Setter Property="Padding" Value="5" />
-            <Setter Property="Background" Value="DarkSeaGreen" />
-           <!--> <Setter Property="Opacity" Value="0.1"/> -->
+            <Setter Property="Background" Value="#E5102E11" />
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Top"/>
+            <Setter Property="Margin" Value="45,-5,43,0"/>
+            
         </Style>
 
         <!-- List header text style -->

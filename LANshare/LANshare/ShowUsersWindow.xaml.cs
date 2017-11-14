@@ -28,12 +28,16 @@ namespace LANshare
         private Task _UDPlistener;
         private CancellationTokenSource _cts;
 
-        private ObservableCollection<string> userList;
+        private ObservableCollection<User> userList;
         private readonly object l = "";
         public ShowUsersWindow()
         {
             InitializeComponent();
-            userList = new ObservableCollection<string>();
+            userList = new ObservableCollection<User>();
+            User u1 = new User("emacoded", "123.456.7.8");
+            User u2 = new User("emacoded2", "123.456.7.8");
+            userList.Add(u1);
+            userList.Add(u2);
             ConnectedUsers.ItemsSource = userList;
         }
 
@@ -43,7 +47,7 @@ namespace LANshare
             {
                 lock (l)
                 {
-                    userList.Add(u.ToString());
+                    userList.Add(u);
                 }
             });
         }
@@ -54,9 +58,10 @@ namespace LANshare
             {
                 lock (l)
                 {
-                    li.ForEach(u => userList.Remove(u.ToString()));
+                    li.ForEach(u => userList.Remove(u));
                 }
             });
         }
+
     }
 }

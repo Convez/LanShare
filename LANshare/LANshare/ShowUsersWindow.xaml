@@ -5,32 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-        Title="People Online" Height="300" Width="300">
+        Title="People Online" Height="500" Width="500" MinWidth="500" Visibility="Visible"  >
+    <Window.Background>
+        <ImageBrush ImageSource="Media/tree.jpg" TileMode="FlipXY"/>
+    </Window.Background>
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="40"/>
             <ColumnDefinition />
-            <ColumnDefinition Width="230"/>
-            <ColumnDefinition />
+            <ColumnDefinition Width="40"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            
+
             <RowDefinition Height="40"/>
             <RowDefinition/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource listHeaderStyle}">
-            <Label Style="{StaticResource listHeaderTextStyle}">Names</Label>
+        <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource listHeaderStyle}" >
+            <Label Style="{StaticResource listHeaderTextStyle}" FontFamily="Gadugi" FontWeight="Bold" FontSize="14" Foreground="#FFF9F9DD" >monkeys online</Label>
         </Border>
         <Border BorderBrush="Aquamarine" Grid.Column="1" Grid.Row="1">
-            <ListView Name="ConnectedUsers" >
+            <ListView Name="ConnectedUsers" Background="#B2EDF7BF" FontFamily="Gadugi" FontSize="14" MinWidth="210" >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="300"/>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="100" />
 
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="{Binding IpAddress}" Margin="10" HorizontalAlignment="Right"/>
+
+                        </Grid>
+                       
+                    </DataTemplate>
+                </ListView.ItemTemplate>
             </ListView>
         </Border>
 
         <Grid.Background>
-            <ImageBrush ImageSource="Media/1.jpg"/>
+            <ImageBrush ImageSource="Media/tree.jpg" Stretch="UniformToFill"/>
         </Grid.Background>
     </Grid>
 </Window>
