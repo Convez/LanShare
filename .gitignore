@@ -30,6 +30,14 @@
 
 #Precompiled symbols database
 *.idb
+#Visual studio files
+*.ide
+*.pdb
+*.log
+*.htm
+*.suo
+*.VC.db
+*.db
 
 # Visual Studio generated folders
 .vs/
@@ -37,10 +45,10 @@ bin/
 obj/
 x64/
 LANshareShellExt.tlog/
-*.pdb
-*.log
+
 
 #Other
 LANshare_ema/
 LANshare_en/
 LANshare/.vs/
+

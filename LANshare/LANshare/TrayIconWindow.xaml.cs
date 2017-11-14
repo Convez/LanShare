@@ -46,7 +46,7 @@ namespace LANshare
             show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
             {
 
-                var userWindow = new ShowUsersWindow(this);
+                var userWindow = new ShowUsersWindow();
                 userWindow.Show();
                 icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
 
@@ -116,7 +116,8 @@ namespace LANshare
             sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs a)
             {
 
-                var transfersWindow = new TransfersWindow(this);
+                var transfersWindow = new TransfersWindow();
+                //must subscribe to events
                 transfersWindow.Show();
                 icon_menu.MenuItems.RemoveAt(3);
 
@@ -177,6 +178,7 @@ namespace LANshare
             userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
             userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
             userWindow.Show();
+            
         }
 
         protected override void OnClosed(EventArgs e)
