@@ -43,52 +43,30 @@ namespace LANshare
         public TrayIconWindow()
         {
             SetupNetwork();
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs args)
-            {
-                ShowUsersWindow userWindow = new ShowUsersWindow();
-                _comunication.UserFound += userWindow.AddUser;
-                _comunication.UsersExpired += userWindow.RemoveUsers;
-                userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-                userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
-                userWindow.Closing += (o, a) => RestoreShowWindowItem();
-                userWindow.Show();
-                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
-
-            }));
-
-            privacy = new System.Windows.Forms.MenuItem("Private Mode: " + privateMode, new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-                System.Windows.Forms.MenuItem m = sender as System.Windows.Forms.MenuItem;
-                if (privateMode == "off")
-                {
-                    privateMode = "on";
-                    is_private_mode = true;
-                }
-                else
-                {
-                    privateMode = "off";
-                    is_private_mode = false;
-                }
-                m.Text = "Private Mode: " + privateMode;
-
-            }));
-
-            exit = new System.Windows.Forms.MenuItem("Exit", ExitApplication);
-
-            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-
-                var transfersWindow = new TransfersWindow(this);
-                transfersWindow.Show();
-                icon_menu.MenuItems.RemoveAt(3);
-
-            }));
+            SetupTrayIcon();
             InitializeComponent();
         }
 
         public TrayIconWindow(StartupEventArgs e)
         {
             SetupNetwork();
+            SetupTrayIcon();
+            InitializeComponent();
+            StartSendingProcedure(this, e.Args.ToList());
+
+        }
+
+        private void SetupNetwork()
+        {
+            _comunication = new LanComunication();
+            _comunication.StartLanAdvertise();
+            _comunication.StartLanListen();
+            _tcpComunication = new TCP_Comunication();
+            _tcpComunication.StartTcpServers();
+            _tcpComunication.fileSendRequested += StartSendingProcedure;
+        }
+        private void SetupTrayIcon()
+        {
             show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
             {
 
@@ -126,21 +104,9 @@ namespace LANshare
                 icon_menu.MenuItems.RemoveAt(3);
 
             }));
-            InitializeComponent();
-            StartSendingProcedure(this, e.Args.ToList());
+
 
         }
-
-        private void SetupNetwork()
-        {
-            _comunication = new LanComunication();
-            _comunication.StartLanAdvertise();
-            _comunication.StartLanListen();
-            _tcpComunication = new TCP_Comunication();
-            _tcpComunication.StartTcpServers();
-            _tcpComunication.fileSendRequested += StartSendingProcedure;
-        }
-
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -174,14 +140,6 @@ namespace LANshare
             _trayIcon.DoubleClick += ExitApplication;
             _trayIcon.Visible = true;
 
-
-            //Showcase utilizzo enviroment di rete
-            //ShowUsersWindow userWindow = new ShowUsersWindow();
-            //_comunication.UserFound += userWindow.AddUser;
-            //_comunication.UsersExpired += userWindow.RemoveUsers;
-            //userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-            //userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
-            //userWindow.Show();
             
         }
 
