@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-        Title="People Online" Height="500" Width="500" MinWidth="500" Visibility="Visible"  >
+        Height="500" Width="500" MinWidth="500" Visibility="Visible" >
     <Window.Background>
         <ImageBrush ImageSource="Media/tree.jpg" TileMode="FlipXY"/>
     </Window.Background>
@@ -23,11 +23,11 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Column="1" Grid.Row="0" Style="{StaticResource listHeaderStyle}" >
-            <Label Style="{StaticResource listHeaderTextStyle}" FontFamily="Gadugi" FontWeight="Bold" FontSize="14" Foreground="#FFF9F9DD" >monkeys online</Label>
+        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource listHeaderStyle}" >
+            <Label Style="{StaticResource listHeaderTextStyle}" FontFamily="Gadugi" FontWeight="Bold" Foreground="#FFF9F9DD" HorizontalAlignment="Center" Margin="130,-5" VerticalAlignment="Stretch" FontSize="16" Width="142" HorizontalContentAlignment="Center">monkeys online</Label>
         </Border>
         <Border BorderBrush="Aquamarine" Grid.Column="1" Grid.Row="1">
-            <ListView Name="ConnectedUsers" Background="#B2EDF7BF" FontFamily="Gadugi" FontSize="14" MinWidth="210" >
+            <ListView Name="ConnectedUsers" Background="#B2EDF7BF" FontFamily="Gadugi" FontSize="14" MinWidth="210" Margin="0" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -41,7 +41,7 @@
                             <TextBlock Grid.Column="2" Text="{Binding IpAddress}" Margin="10" HorizontalAlignment="Right"/>
 
                         </Grid>
-                       
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

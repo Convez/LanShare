@@ -50,6 +50,7 @@ namespace LANshare
                 _comunication.UsersExpired += userWindow.RemoveUsers;
                 userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
                 userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+                userWindow.Closing += (o, a) => RestoreShowWindowItem();
                 userWindow.Show();
                 icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
 
@@ -244,6 +245,8 @@ namespace LANshare
             }
 
         }
+
+            
 
     }
 }
