@@ -32,6 +32,11 @@ namespace LANshare
             InitializeComponent();
         }
 
+        public void AddTransfer(object sender, Tranfer t)
+        {
+
+        }
+
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);

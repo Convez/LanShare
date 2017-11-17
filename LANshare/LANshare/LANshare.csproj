@@ -118,7 +118,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\ConnectionMessage.cs" />
     <Compile Include="Model\ExpiringList.cs" />
-    <Compile Include="Model\Transaction.cs" />
+    <Compile Include="Model\Transfer.cs" />
     <Compile Include="ShowUsersWindow.xaml.cs">
       <DependentUpon>ShowUsersWindow.xaml</DependentUpon>
     </Compile>

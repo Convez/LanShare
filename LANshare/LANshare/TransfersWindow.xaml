@@ -36,8 +36,8 @@
                                 <ColumnDefinition Width="100" />
 
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Column="2" Text="{Binding IpAddress}" Margin="10" HorizontalAlignment="Right"/>
+                            <TextBlock Grid.Column="0" Text="{Binding OtherUserName}" Margin="10" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>
 
                         </Grid>
 
