@@ -119,6 +119,9 @@
     <Compile Include="Model\ConnectionMessage.cs" />
     <Compile Include="Model\ExpiringList.cs" />
     <Compile Include="Model\Transfer.cs" />
+    <Compile Include="SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShowUsersWindow.xaml.cs">
       <DependentUpon>ShowUsersWindow.xaml</DependentUpon>
     </Compile>
@@ -134,6 +137,10 @@
     </Compile>
     <Compile Include="Connection\LAN_Comunication.cs" />
     <Compile Include="Connection\TCP_Comunication.cs" />
+    <Page Include="SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ShowUsersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

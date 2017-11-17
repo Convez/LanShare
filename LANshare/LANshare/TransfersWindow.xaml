@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
-        mc:Ignorable="d" Height="500" Width="600">
+        mc:Ignorable="d" Height="500" Width="600" WindowStartupLocation="Manual" Left="700" Top="100">
     <Window.Background>
         <ImageBrush ImageSource="Media/tree.jpg" TileMode="FlipXY"/>
     </Window.Background>

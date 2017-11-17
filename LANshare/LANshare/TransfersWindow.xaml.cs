@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using LANshare.Model;
 
 namespace LANshare
 {
@@ -32,7 +33,7 @@ namespace LANshare
             InitializeComponent();
         }
 
-        public void AddTransfer(object sender, Tranfer t)
+        public void AddTransfer(object sender, Transfer t)
         {
 
         }
@@ -40,10 +41,7 @@ namespace LANshare
         protected override void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            if (trayIconWindow != null)
-            {
-                trayIconWindow.RestoreSendingItem();
-            }
+            
         }
     }
 }

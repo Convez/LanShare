@@ -27,7 +27,9 @@ namespace LANshare
         private String privateMode = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
         private System.Windows.Forms.MenuItem show_window;
         private System.Windows.Forms.MenuItem sending;
+        private System.Windows.Forms.MenuItem notSending;
         private System.Windows.Forms.MenuItem privacy;
+        private System.Windows.Forms.MenuItem settings;
         private System.Windows.Forms.MenuItem exit;
         private int transfers = 0; //number of active transations
 
@@ -67,12 +69,16 @@ namespace LANshare
         }
         private void SetupTrayIcon()
         {
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
+            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs args)
             {
-
-                var userWindow = new ShowUsersWindow();
+                ShowUsersWindow userWindow = new ShowUsersWindow();
+                _comunication.UserFound += userWindow.AddUser;
+                _comunication.UsersExpired += userWindow.RemoveUsers;
+                userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+                userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+                userWindow.Closing += (o, a) => RestoreShowWindowItem();
                 userWindow.Show();
-                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
+                icon_menu.MenuItems.Remove(show_window); //menuitem is removed to avoid opening multiple instances of the users window       
 
             }));
 
@@ -95,18 +101,43 @@ namespace LANshare
 
             exit = new System.Windows.Forms.MenuItem("Exit", ExitApplication);
 
-            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs a)
+            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs args)
             {
 
-                var transfersWindow = new TransfersWindow();
-                //must subscribe to events
+                TransfersWindow transfersWindow = new TransfersWindow();
+                //must subscribe to some _communication events and unsubscribe on closing
+                transfersWindow.Closing += (o, a) => RestoreSendingItem();
                 transfersWindow.Show();
-                icon_menu.MenuItems.RemoveAt(3);
+                icon_menu.MenuItems.Remove(sending);
+
 
             }));
 
+            notSending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs args)
+            {
+
+                TransfersWindow transfersWindow = new TransfersWindow();
+                //must subscribe to some _communication events and unsubscribe on closing
+                transfersWindow.Closing += (o, a) => RestoreSendingItem();
+                transfersWindow.Show();
+                icon_menu.MenuItems.Remove(sending);
+
+
+            }));
+
+            settings = new System.Windows.Forms.MenuItem("Settings", new EventHandler(delegate (Object sender, System.EventArgs args)
+            {
+
+                SettingsWindow settingsWindow = new SettingsWindow();
+                //must subscribe to some _communication events and unsubscribe on closing
+                settingsWindow.Closing += (o, a) => RestoreSettingsItem();
+                settingsWindow.Show();
+                icon_menu.MenuItems.Remove(settings);
+
+            }));
 
         }
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -126,8 +157,14 @@ namespace LANshare
 
             icon_menu.MenuItems.Add(1, privacy);
 
-            icon_menu.MenuItems.Add(2, exit);
-            NotifyTransferOpened();
+            icon_menu.MenuItems.Add(2, new System.Windows.Forms.MenuItem("No active file transfers"));
+
+            icon_menu.MenuItems.Add(3, settings);
+
+            icon_menu.MenuItems.Add(4, exit);
+
+            
+            NotifyTransferOpened(); //debug only
 
             _trayIcon.ContextMenu = icon_menu;
 
@@ -163,17 +200,32 @@ namespace LANshare
             MessageBox.Show(s);
         }
 
-        public void RestoreShowWindowItem()
+        private void RestoreShowWindowItem()
         {
             icon_menu.MenuItems.Add(0, show_window);
         } //called after the users window is closed to reinsert the relative menu item in context menu
 
         //called after transactions window is closed to reinsert relative menuitem in context menu
-        public void RestoreSendingItem()
+        private void RestoreSendingItem()
         {
-            if (transfers > 0) icon_menu.MenuItems.Add(3, sending);
+            int i = icon_menu.MenuItems.Count;
+            if (transfers > 0)
+            {
+                if (icon_menu.MenuItems.Contains(settings)) icon_menu.MenuItems.Add(i - 2, sending);
+                else icon_menu.MenuItems.Add(i - 1, sending);
+            }
+            else
+            {
+                if (icon_menu.MenuItems.Contains(settings)) icon_menu.MenuItems.Add(i - 2, new System.Windows.Forms.MenuItem("No active file transfers"));
+                else    icon_menu.MenuItems.Add(i - 1, new System.Windows.Forms.MenuItem("No active file transfers"));
+            }
         }
 
+        private void RestoreSettingsItem()
+        {
+            int i = icon_menu.MenuItems.Count;
+            icon_menu.MenuItems.Add(i - 1, settings);
+        }
         // to be called when a new transfer (one way stream of files that are either sent to the same user or received from the same user) is set up.. 
         //so we might at most have 2 different transfer connected to another user, one of the files being sent and one of the files being received. 
         //group transactions are not considered for the sake of the transactions counter as they are counted separately for each of the participants in the group.
@@ -182,7 +234,8 @@ namespace LANshare
         {
             if (transfers == 0)
             {
-                icon_menu.MenuItems.Add(3, sending);
+                
+                RestoreSendingItem();
             }
             transfers++;
 
@@ -199,7 +252,9 @@ namespace LANshare
             }
             else if (transfers == 0)
             {
-                icon_menu.MenuItems.RemoveAt(3);
+                icon_menu.MenuItems.Remove(sending);
+                int i = icon_menu.MenuItems.Count;
+                icon_menu.MenuItems.Add(i - 1, new System.Windows.Forms.MenuItem("No active file transfers"));
             }
 
         }
