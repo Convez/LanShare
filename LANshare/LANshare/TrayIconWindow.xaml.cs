@@ -51,7 +51,7 @@ namespace LANshare
                 userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
                 userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
                 userWindow.Show();
-                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
+                //icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
 
             }));
 
@@ -127,17 +127,16 @@ namespace LANshare
             }));
             InitializeComponent();
             StartSendingProcedure(this, e.Args.ToList());
-
         }
 
         private void SetupNetwork()
         {
-            _comunication = new LanComunication();
-            _comunication.StartLanAdvertise();
-            _comunication.StartLanListen();
             _tcpComunication = new TCP_Comunication();
             _tcpComunication.StartTcpServers();
             _tcpComunication.fileSendRequested += StartSendingProcedure;
+            _comunication = new LanComunication();
+            _comunication.StartLanAdvertise();
+            _comunication.StartLanListen();
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -149,7 +148,7 @@ namespace LANshare
             {
                 Icon = new System.Drawing.Icon(
                     System.IO.Path.Combine(
-                        System.IO.Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]), //Directory where executable is (NEVER NULL)
+                        AppDomain.CurrentDomain.BaseDirectory, //Directory where executable is (NEVER NULL)
                         "Media/switch.ico")
                 )
             };
@@ -164,9 +163,7 @@ namespace LANshare
 
             _trayIcon.ContextMenu = icon_menu;
 
-
-            //TODO Creare menu click tasto destro
-            //_trayIcon.DoubleClick += ExitApplication;
+            
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
             //TODO Creare menu click tasto destro
@@ -199,9 +196,17 @@ namespace LANshare
 
         private void StartSendingProcedure(object sender, List<string> args)
         {
+
+            //TODO Show user list
             string s = "";
             args.ToList().ForEach(x => s += x+"\n");
+            //TODO Respond to window outcome
             MessageBox.Show(s);
+
+            //TODO Add to uploads list
+
+
+            
         }
 
         public void RestoreShowWindowItem()

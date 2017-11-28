@@ -31,7 +31,6 @@ namespace LANshare.Connection
         {
             get => _newSessionIdAvailable;
             set => Interlocked.Exchange(ref _newSessionIdAvailable, value);
-
         }
 
         private int numNotified;

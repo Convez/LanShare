@@ -57,7 +57,7 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 	std::getline(ss,s);
 	CreateProcess(
 		&s[0],												//Path to exe
-		&((*m_szSelectedFile)[0]),							//Startup Arguments
+		&(*m_szSelectedFile)[0],												//Startup Arguments
 		NULL,
 		NULL,
 		FALSE,
@@ -133,6 +133,7 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 			{
 				if(PathRemoveFileSpec(tmp)!=0)
 				{
+					ss << L"\"" << "rumore" << L"\" ";
 					ss << L"\"" << tmp << L"\" ";
 				}
 			}
@@ -165,6 +166,10 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 //IT passes the hmenu handle. The indexmenu parameter is set to the index to be used for the first menu item that it is to be added
 IFACEMETHODIMP LANshareShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags)
 {
+	if(CMF_VERBSONLY & uFlags)
+	{
+		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));
+	}
 	if(CMF_DEFAULTONLY&uFlags)
 	{
 		return MAKE_HRESULT(SEVERITY_SUCCESS, 0, USHORT(0));

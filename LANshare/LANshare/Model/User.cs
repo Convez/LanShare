@@ -19,19 +19,8 @@ namespace LANshare.Model
             get => _name;
             set => _name = Environment.ExpandEnvironmentVariables(value);
         }
-        public string IpAddress
-        {
-            //get => userAddress.ToString();
-            //DEBUG ONLY start
-            get => _ipaddr;
-            set => _ipaddr = value;
-            //DEBUG ONLY end
 
-        }
         private string _name;
-        //DEBUG ONLY start
-        private string _ipaddr;
-        //DEBUG ONLY end
         public string NickName { get; set; }
 
         //Session Id
@@ -49,13 +38,6 @@ namespace LANshare.Model
             TcpPortTo = tcpPortTo;
             NickName = nickName;
         }
-        //DEBUG ONLY start
-        public User(string name, string ip)
-        {
-            Name = name;
-            IpAddress = ip;
-        }
-        //DEBUG ONLY end
 
         public override string ToString()
         {
