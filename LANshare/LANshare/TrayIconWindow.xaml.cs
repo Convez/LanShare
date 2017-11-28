@@ -108,7 +108,7 @@ namespace LANshare
             sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs args)
             {
                 TransfersWindow tw = OnButtonClick<TransfersWindow>();
-                tw.Closing += (o, a) => RestoreSendingItem();
+                tw.Closing += (o, a) => RefreshSendingItem();
                 //must subscribe to some _communication events and unsubscribe on closing
 
             }));
@@ -186,7 +186,7 @@ namespace LANshare
         }
 
         //called after transactions window is closed to reinsert relative menuitem in context menu
-        private void RestoreSendingItem()
+        private void RefreshSendingItem()
         {
 
             int i = icon_menu.MenuItems.Count;
@@ -247,7 +247,7 @@ namespace LANshare
             transfers++;
             if (transfers == 1)
             {
-                RestoreSendingItem();
+                RefreshSendingItem();
             }
         }
 
@@ -264,13 +264,13 @@ namespace LANshare
                 }
                 else if (transfers == 0)
                 {
-                    RestoreSendingItem();
+                    RefreshSendingItem();
                 }
             } catch (ApplicationException e)
             {
                 Console.WriteLine("ERROR: transfers count went negative" + e.Message);
                 //get actual transfers number here
-                if (transfers == 0) RestoreSendingItem();
+                if (transfers == 0) RefreshSendingItem();
 
             }
 
