@@ -121,19 +121,9 @@ namespace LANshare
                 
             }));
             InitializeComponent();
-            StartSendingProcedure(this, e.Args.ToList());
 
         }
-
-        private void SetupNetwork()
-        {
-            _comunication = new LanComunication();
-            _comunication.StartLanAdvertise();
-            _comunication.StartLanListen();
-            _tcpComunication = new TCP_Comunication();
-            _tcpComunication.StartTcpServers();
-            _tcpComunication.fileSendRequested += StartSendingProcedure;
-        }
+        
 
         protected override void OnInitialized(EventArgs e)
         {
@@ -168,9 +158,6 @@ namespace LANshare
             
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
-            //TODO Creare menu click tasto destro
-            _trayIcon.DoubleClick += ExitApplication;
-            _trayIcon.Visible = true;
 
 
         }
