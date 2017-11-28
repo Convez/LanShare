@@ -27,12 +27,14 @@ namespace LANshare
         private String privateMode = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
         private System.Windows.Forms.MenuItem show_window;
         private System.Windows.Forms.MenuItem sending;
+        private System.Windows.Forms.MenuItem notSending;
         private System.Windows.Forms.MenuItem privacy;
+        private System.Windows.Forms.MenuItem settings;
         private System.Windows.Forms.MenuItem exit;
         private int transfers = 0; //number of active transations
 
 
-        
+
         private LanComunication _comunication;
 
         private TCP_Comunication _tcpComunication;
@@ -43,59 +45,46 @@ namespace LANshare
         public TrayIconWindow()
         {
             SetupNetwork();
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs args)
-            {
-                ShowUsersWindow userWindow = new ShowUsersWindow();
-                _comunication.UserFound += userWindow.AddUser;
-                _comunication.UsersExpired += userWindow.RemoveUsers;
-                userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-                userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
-                userWindow.Show();
-                //icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
-
-            }));
-
-            privacy = new System.Windows.Forms.MenuItem("Private Mode: " + privateMode, new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-                System.Windows.Forms.MenuItem m = sender as System.Windows.Forms.MenuItem;
-                if (privateMode == "off")
-                {
-                    privateMode = "on";
-                    is_private_mode = true;
-                }
-                else
-                {
-                    privateMode = "off";
-                    is_private_mode = false;
-                }
-                m.Text = "Private Mode: " + privateMode;
-
-            }));
-
-            exit = new System.Windows.Forms.MenuItem("Exit", ExitApplication);
-
-            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-
-                var transfersWindow = new TransfersWindow(this);
-                transfersWindow.Show();
-                icon_menu.MenuItems.RemoveAt(3);
-
-            }));
+            SetupTrayIcon();
             InitializeComponent();
         }
 
         public TrayIconWindow(StartupEventArgs e)
         {
             SetupNetwork();
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs a)
+            SetupTrayIcon();
+            InitializeComponent();
+            StartSendingProcedure(this, e.Args.ToList());
+
+        }
+
+        private void SetupNetwork()
+        {
+            _comunication = new LanComunication();
+            _comunication.StartLanAdvertise();
+            _comunication.StartLanListen();
+            _tcpComunication = new TCP_Comunication();
+            _tcpComunication.StartTcpServers();
+            _tcpComunication.fileSendRequested += StartSendingProcedure;
+        }
+        private void SetupTrayIcon()
+        {
+            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs args)
             {
-
-                var userWindow = new ShowUsersWindow();
-                userWindow.Show();
-                icon_menu.MenuItems.RemoveAt(0); //menuitem is removed to avoid opening multiple instances of the users window       
-
-            }));
+                try
+                {
+                    ShowUsersWindow userWindow = OnButtonClick<ShowUsersWindow>();
+                    _comunication.UserFound += userWindow.AddUser;
+                    _comunication.UsersExpired += userWindow.RemoveUsers;
+                    userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+                    userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+                }
+                catch(ArgumentNullException e)
+                {
+                    Console.WriteLine("null window." + e.Message);
+                    //manage someway.. shutdown app?
+                }
+             }));
 
             privacy = new System.Windows.Forms.MenuItem("Private Mode: " + privateMode, new EventHandler(delegate (Object sender, System.EventArgs a)
             {
@@ -116,27 +105,34 @@ namespace LANshare
 
             exit = new System.Windows.Forms.MenuItem("Exit", ExitApplication);
 
-            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs a)
+            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs args)
             {
+                TransfersWindow tw = OnButtonClick<TransfersWindow>();
+                tw.Closing += (o, a) => RestoreSendingItem();
+                //must subscribe to some _communication events and unsubscribe on closing
 
-                var transfersWindow = new TransfersWindow();
-                //must subscribe to events
-                transfersWindow.Show();
-                icon_menu.MenuItems.RemoveAt(3);
+            }));
 
+            notSending = new System.Windows.Forms.MenuItem("No active file transfers");
+
+            settings = new System.Windows.Forms.MenuItem("Settings", new EventHandler(delegate (Object sender, System.EventArgs args)
+            {
+                OnButtonClick<SettingsWindow>();
+                
             }));
             InitializeComponent();
             StartSendingProcedure(this, e.Args.ToList());
+
         }
 
         private void SetupNetwork()
         {
-            _tcpComunication = new TCP_Comunication();
-            _tcpComunication.StartTcpServers();
-            _tcpComunication.fileSendRequested += StartSendingProcedure;
             _comunication = new LanComunication();
             _comunication.StartLanAdvertise();
             _comunication.StartLanListen();
+            _tcpComunication = new TCP_Comunication();
+            _tcpComunication.StartTcpServers();
+            _tcpComunication.fileSendRequested += StartSendingProcedure;
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -158,8 +154,14 @@ namespace LANshare
 
             icon_menu.MenuItems.Add(1, privacy);
 
-            icon_menu.MenuItems.Add(2, exit);
-            NotifyTransferOpened();
+            icon_menu.MenuItems.Add(2, notSending);
+
+            icon_menu.MenuItems.Add(3, settings);
+
+            icon_menu.MenuItems.Add(4, exit);
+
+
+            NotifyTransferOpened(); //debug only
 
             _trayIcon.ContextMenu = icon_menu;
 
@@ -171,14 +173,6 @@ namespace LANshare
             _trayIcon.Visible = true;
 
 
-            //Showcase utilizzo enviroment di rete
-            //ShowUsersWindow userWindow = new ShowUsersWindow();
-            //_comunication.UserFound += userWindow.AddUser;
-            //_comunication.UsersExpired += userWindow.RemoveUsers;
-            //userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-            //userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
-            //userWindow.Show();
-            
         }
 
         protected override void OnClosed(EventArgs e)
@@ -200,7 +194,6 @@ namespace LANshare
             //TODO Show user list
             string s = "";
             args.ToList().ForEach(x => s += x+"\n");
-            //TODO Respond to window outcome
             MessageBox.Show(s);
 
             //TODO Add to uploads list
@@ -209,46 +202,124 @@ namespace LANshare
             
         }
 
-        public void RestoreShowWindowItem()
-        {
-            icon_menu.MenuItems.Add(0, show_window);
-        } //called after the users window is closed to reinsert the relative menu item in context menu
-
         //called after transactions window is closed to reinsert relative menuitem in context menu
-        public void RestoreSendingItem()
+        private void RestoreSendingItem()
         {
-            if (transfers > 0) icon_menu.MenuItems.Add(3, sending);
+
+            int i = icon_menu.MenuItems.Count;
+            if (transfers == 1)
+            {
+                bool ignoreAction = false;
+                try { icon_menu.MenuItems.Remove(notSending); }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine("error in removing element.\n" + e.Message);
+                    int w = Application.Current.Windows.OfType<TransfersWindow>().Count();  //check if there is an istance of the window open
+                    if (icon_menu.MenuItems.Contains(sending) || w == 1) ignoreAction = true; //in caso non si apresente l'elemento notSending è altamente probabile sia invece presente l'elemento sending che verrà rimosso per non crearne molteplici 
+                }
+
+                finally
+                {
+                    if (!ignoreAction)
+                    {
+                        if (icon_menu.MenuItems.Contains(settings)) icon_menu.MenuItems.Add(i - 2, sending);
+                        else icon_menu.MenuItems.Add(i - 1, sending);
+                    }
+                }
+
+            }
+            else if (transfers == 0)
+            {
+                bool ignoreAction = false;
+                try { icon_menu.MenuItems.Remove(sending); }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine("error in removing element.\n" + e.Message);
+                    int w = Application.Current.Windows.OfType<TransfersWindow>().Count();
+                    if (icon_menu.MenuItems.Contains(sending) || w == 1) ignoreAction = true;
+                }
+
+                finally
+                {
+                    if (!ignoreAction)
+                    {
+                        if (icon_menu.MenuItems.Contains(settings)) icon_menu.MenuItems.Add(i - 2, notSending);
+                        else icon_menu.MenuItems.Add(i - 1, notSending);
+                    }
+                }
+
+            }
+
         }
 
+   
         // to be called when a new transfer (one way stream of files that are either sent to the same user or received from the same user) is set up.. 
         //so we might at most have 2 different transfer connected to another user, one of the files being sent and one of the files being received. 
         //group transactions are not considered for the sake of the transactions counter as they are counted separately for each of the participants in the group.
 
         public void NotifyTransferOpened()
         {
-            if (transfers == 0)
-            {
-                icon_menu.MenuItems.Add(3, sending);
-            }
             transfers++;
-
+            if (transfers == 1)
+            {
+                RestoreSendingItem();
+            }
         }
 
         //to be called when a transfer has finished (a transfer is considered finished when all the files that were being sent to (or received from) a certain user have successfully completed
         public void NotifyTransferClosed()
         {
-            transfers--;
-            if (transfers < 0)
+            try
             {
-                //an error has occured, recheck number of transactions
-                Console.WriteLine("error in transaction count");
-            }
-            else if (transfers == 0)
+                transfers--;
+                if (transfers < 0)
+                {
+                    //an error has occured, recheck number of transactions
+                    throw new ApplicationException("error in transfer count");
+                }
+                else if (transfers == 0)
+                {
+                    RestoreSendingItem();
+                }
+            } catch (ApplicationException e)
             {
-                icon_menu.MenuItems.RemoveAt(3);
+                Console.WriteLine("ERROR: transfers count went negative" + e.Message);
+                //get actual transfers number here
+                if (transfers == 0) RestoreSendingItem();
+
             }
 
+
         }
+        private T OnButtonClick<T>() where T: Window, new()
+        {
+            int w = Application.Current.Windows.OfType<T>().Count();
+            if (w == 1)
+            {
+                Application.Current.Windows.OfType<T>().First().Activate();
+                return Application.Current.Windows.OfType<T>().First();
+            }
+            else if (w > 1)
+            {
+                while (w > 1)
+                {
+                    Application.Current.Windows.OfType<T>().First().Close();
+                    w = Application.Current.Windows.OfType<T>().Count();
+                }
+                Application.Current.Windows.OfType<T>().First().Activate();
+                return Application.Current.Windows.OfType<T>().First();
+            }
+            else if (w == 0)
+            {
+                T window = new T();              
+                window.Show();
+                return window;
+            }
+            return null;
+        }
+       
 
     }
 }
