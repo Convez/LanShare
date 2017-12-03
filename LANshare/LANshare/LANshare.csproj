@@ -183,13 +183,15 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\1.jpg" />
-    <Resource Include="Media\GrayLangur.jpg" />
-    <Resource Include="Media\monkey2.jpg" />
-    <Content Include="Media\switch.ico">
+    <None Include="Resources\personalPic.jpg" />
+    <None Include="Resources\Image1.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\1.jpg" />
+    <Resource Include="Media\Images\GrayLangur.jpg" />
+    <Resource Include="Media\Images\UserImages\defaultPic.jpg" />
+    <Content Include="Media\Images\ApplicationImages\switch.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Media\tree.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\tree.jpg" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

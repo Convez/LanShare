@@ -13,6 +13,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LANshare.Connection;
+using LANshare.Model;
+using LANshare.Properties;
 
 namespace LANshare
 {
@@ -32,6 +34,7 @@ namespace LANshare
         private System.Windows.Forms.MenuItem settings;
         private System.Windows.Forms.MenuItem exit;
         private int transfers = 0; //number of active transations
+        
 
 
 
@@ -133,7 +136,7 @@ namespace LANshare
                 Icon = new System.Drawing.Icon(
                     System.IO.Path.Combine(
                         System.IO.Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]), //Directory where executable is (NEVER NULL)
-                        "Media/switch.ico")
+                        "Media/Images/ApplicationImages/switch.ico")
                 )
             };
             icon_menu = new System.Windows.Forms.ContextMenu();
@@ -303,6 +306,5 @@ namespace LANshare
             return null;
         }
        
-
     }
 }

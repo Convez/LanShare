@@ -34,10 +34,8 @@ namespace LANshare
         {
             InitializeComponent();
             userList = new ObservableCollection<User>();
-            User u1 = new User("emacoded", "123.456.7.8");
-            User u2 = new User("emacoded2", "123.456.7.8");
-            userList.Add(u1);
-            userList.Add(u2);
+            User local = Model.Configuration.CurrentUser;
+            userList.Add(local);
             ConnectedUsers.ItemsSource = userList;
         }
 

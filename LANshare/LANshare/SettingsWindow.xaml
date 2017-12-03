@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LANshare"
+        xmlns:local="clr-namespace:LANshare"        
         mc:Ignorable="d"
         Title="SettingsWindow" Height="500" Width="600">
     <Grid>
@@ -20,32 +20,45 @@
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource listHeaderStyle}" >
-            <Label Style="{StaticResource listHeaderTextStyle}" FontFamily="Gadugi" FontWeight="Bold" Foreground="#FFF9F9DD" HorizontalAlignment="Center" Margin="14,-5,30,-5" VerticalAlignment="Stretch" FontSize="16" Width="158" HorizontalContentAlignment="Center">My Settings</Label>
+        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" >
+            <Label Style="{StaticResource windowHeaderTextStyle}" Width="158" >My Settings</Label>
         </Border>
-        <Border BorderBrush="Aquamarine" Grid.Column="1" Grid.Row="1">
-            <ListView Name="Personal_Settings" Background="#B2EDF7BF" FontFamily="Gadugi" FontSize="14" MinWidth="210" Margin="0" >
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"/>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="100" />
+        <Border Grid.Column="1" Grid.Row="1">
+            <Grid Background="#B2EDF7BF">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                                <!--<Image Name="ProfilePic" Grid.Column="1" Height="75" Width="75" Margin="15" Stretch="UniformToFill" Source="{Binding Picture}" VerticalAlignment="Top"/>-->
+                 
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Right">Profile Picture :</TextBlock>
+                <Ellipse Name="PersonalPic" Grid.Column="1" Height="100" Width="100">
+                    <Ellipse.Fill>
+                        <ImageBrush  ImageSource="{Binding ProfilePicture}"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="1"  HorizontalAlignment="Right">Name :</TextBlock>
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="1" Text="{Binding Name}" />
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Nickname :</TextBlock>
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="2" Text="{Binding NickName}" />
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right">Privacy Mode :</TextBlock>
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding PrivacyMode}" />
+                            
+            </Grid>
 
-                            </Grid.ColumnDefinitions>
-                            <!--<TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Column="2" Text="{Binding IpAddress}" Margin="10" HorizontalAlignment="Right"/>
-                            -->
-                        </Grid>
-
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
         </Border>
 
         <Grid.Background>
-            <ImageBrush ImageSource="Media/tree.jpg" Stretch="UniformToFill"/>
+            <ImageBrush ImageSource="Media/Images/ApplicationImages/tree.jpg" Stretch="UniformToFill"/>
         </Grid.Background>
     </Grid>
 </Window>

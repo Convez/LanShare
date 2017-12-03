@@ -29,9 +29,9 @@
             <Setter Property="Foreground" Value="White" />
         </Style>
 
-        <!-- List header style -->
+        <!-- window header style -->
        
-        <Style x:Key="listHeaderStyle" TargetType="{x:Type Border}">
+        <Style x:Key="windowHeaderStyle" TargetType="{x:Type Border}">
             <!--<Setter Property="HorizontalAlignment" Value="Center"/>-->
             <Setter Property="Height" Value="35" />
             <Setter Property="Padding" Value="5" />
@@ -41,11 +41,16 @@
 
         </Style>
 
-        <!-- List header text style -->
-        <Style x:Key="listHeaderTextStyle" TargetType="{x:Type Label}">
-            <Setter Property="Foreground" Value="White" />
+        <!-- window header text style -->
+        <Style x:Key="windowHeaderTextStyle" TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="#FFF9F9DD" />
+            <Setter Property="FontFamily" Value="Gadugi"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="20"/>
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,-7,0,-7" />
         </Style>
 
         <!-- Button style -->
@@ -55,5 +60,16 @@
             <Setter Property="Margin" Value="0,10,0,0" />
             <Setter Property="HorizontalAlignment" Value="Right" />
         </Style>
+
+        <!-- Textfield text style -->
+        <Style x:Key="textfieldStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="FontSize" Value="19"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontFamily" Value="Gadugi"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
     </Application.Resources>
 </Application>

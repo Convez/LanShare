@@ -8,12 +8,22 @@ using System.Runtime.Serialization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Windows.Media;
+using System.Drawing;
+using System.Windows.Media.Imaging;
 
 namespace LANshare.Model
 {
     [Serializable]
     public class User 
     {
+        private string _name;
+        private string _nickname;
+        private EUserAdvertisementMode _privacymode;
+        private ImageSource _profilepicture;
+        
+
+
         public string Name
         {
             get => _name;
@@ -21,19 +31,51 @@ namespace LANshare.Model
         }
         public string IpAddress
         {
-            //get => userAddress.ToString();
-            //DEBUG ONLY start
-            get => _ipaddr;
-            set => _ipaddr = value;
-            //DEBUG ONLY end
-
+            get => userAddress.ToString();
+            
         }
-        private string _name;
-        //DEBUG ONLY start
-        private string _ipaddr;
-        //DEBUG ONLY end
-        public string NickName { get; set; }
+        
+        public string NickName
+        {
+            get
+            {
+                if (_nickname == null) return " ";
+                else return _nickname;
+            }
+            set
+            {
+                _nickname = value;
+                if(this==Model.Configuration.CurrentUser)
+                {
+                    LANshare.Properties.Settings.Default.UserNickName = _nickname;
+                }
+            }
+        }
 
+        public String PrivacyMode
+        {
+            get { return _privacymode.ToString(); }
+            set
+            {
+                if (_privacymode == EUserAdvertisementMode.Private) _privacymode = EUserAdvertisementMode.Public;
+                else _privacymode = EUserAdvertisementMode.Private;
+                if (this == Model.Configuration.CurrentUser) LANshare.Properties.Settings.Default.UserAdvertisementMode = _privacymode;
+            }
+        }
+
+        public ImageSource ProfilePicture
+        {
+            get
+            {
+                Uri ProfilePicUri = new Uri("Media/Images/UserImages/defaultPic");
+                ImageSource i = new BitmapImage(ProfilePicUri);
+                return i;
+            }
+            set
+            {
+
+            }
+        }
         //Session Id
         public object SessionId { get=>_sessionId; set=>Interlocked.Exchange(ref _sessionId,value); }
 
@@ -49,13 +91,6 @@ namespace LANshare.Model
             TcpPortTo = tcpPortTo;
             NickName = nickName;
         }
-        //DEBUG ONLY start
-        public User(string name, string ip)
-        {
-            Name = name;
-            IpAddress = ip;
-        }
-        //DEBUG ONLY end
 
         public override string ToString()
         {
