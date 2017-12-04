@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d" Height="500" Width="600" WindowStartupLocation="Manual" Left="700" Top="100">
     <Window.Background>
-        <ImageBrush ImageSource="Media/Images/ApplicationImages/tree.jpg" TileMode="FlipXY"/>
+        <SolidColorBrush Color="White"/>
     </Window.Background>
-    <Grid>
+    <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40"/>
             <ColumnDefinition />
@@ -26,7 +26,7 @@
             <Label Style="{StaticResource windowHeaderTextStyle}" Width="142" >File Transfers</Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1">
-            <ListView Name="ActiveTransactions" Background="#B2EDF7BF" FontFamily="Gadugi" FontSize="14" MinWidth="210" Margin="0" >
+            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransactions" BorderBrush="{x:Null}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -46,8 +46,5 @@
             </ListView>
         </Border>
 
-        <Grid.Background>
-            <ImageBrush ImageSource="Media/Images/ApplicationImages/tree.jpg" Stretch="UniformToFill"/>
-        </Grid.Background>
     </Grid>
 </Window>

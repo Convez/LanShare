@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:LANshare"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
+
         <!-- Header text style -->
         <Style x:Key="headerTextStyle">
             <Setter Property="Label.VerticalAlignment" Value="Center"></Setter>
@@ -35,7 +36,6 @@
             <!--<Setter Property="HorizontalAlignment" Value="Center"/>-->
             <Setter Property="Height" Value="35" />
             <Setter Property="Padding" Value="5" />
-            <Setter Property="Background" Value="#E5102E11" />
             <Setter Property="VerticalAlignment" Value="Top"/>
 
 
@@ -43,7 +43,7 @@
 
         <!-- window header text style -->
         <Style x:Key="windowHeaderTextStyle" TargetType="{x:Type Label}">
-            <Setter Property="Foreground" Value="#FFF9F9DD" />
+            <Setter Property="Foreground" Value="LightGray" />
             <Setter Property="FontFamily" Value="Gadugi"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="20"/>
@@ -63,12 +63,33 @@
 
         <!-- Textfield text style -->
         <Style x:Key="textfieldStyle" TargetType="{x:Type TextBlock}">
-            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Foreground" Value="LightGray"/>
             <Setter Property="FontSize" Value="19"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontFamily" Value="Gadugi"/>
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+        <!--window style-->
+        <Style x:Key="windowStyle" TargetType="{x:Type Grid}">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- View style -->
+        <Style x:Key="viewStyle" TargetType="{x:Type Grid}">
+            <Setter Property="Background" Value="#CC000000" />
+
+        </Style>
+        <Style x:Key="listViewStyle" TargetType="{x:Type ListView}">
+            <Setter Property="Background" Value="#CC000000" />
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="FontSize" Value="19"/>
+            <Setter Property="FontFamily" Value="Gadugi"/>
+
         </Style>
 
     </Application.Resources>

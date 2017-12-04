@@ -63,7 +63,7 @@ namespace LANshare.Model
             UserAdvertisementMode = Properties.Settings.Default.UserAdvertisementMode;
             AdvertisedUserMode = Properties.Settings.Default.AdvertisedUserMode;
             DefaultSavePath = Path.GetFullPath(Environment.ExpandEnvironmentVariables(Properties.Settings.Default.DefaultSavePath));
-            CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort ,Properties.Settings.Default.UserNickName);
+            CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort , new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative), Properties.Settings.Default.UserNickName);
             CurrentUser.userAddress = Dns.GetHostAddresses(Dns.GetHostName())
                 .FirstOrDefault((ip) => ip.AddressFamily == AddressFamily.InterNetwork);
             UserValidityMilliseconds = Properties.Settings.Default.UserValidityMilliseconds;

@@ -19,9 +19,8 @@ namespace LANshare.Model
     {
         private string _name;
         private string _nickname;
+        [NonSerialized] private ImageSource _profilepicture;
         private EUserAdvertisementMode _privacymode;
-        private ImageSource _profilepicture;
-        
 
 
         public string Name
@@ -67,13 +66,13 @@ namespace LANshare.Model
         {
             get
             {
-                Uri ProfilePicUri = new Uri("Media/Images/UserImages/defaultPic");
-                ImageSource i = new BitmapImage(ProfilePicUri);
-                return i;
+                
+                return _profilepicture;
             }
             set
             {
-
+                _profilepicture = value;
+              
             }
         }
         //Session Id
@@ -85,11 +84,12 @@ namespace LANshare.Model
         
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
-        public User(string name, int tcpPortTo , string nickName=null)
+        public User(string name, int tcpPortTo , Uri profilePicUri, string nickName=null)
         {
             Name = name;
             TcpPortTo = tcpPortTo;
             NickName = nickName;
+            _profilepicture = new BitmapImage(profilePicUri);
         }
 
         public override string ToString()

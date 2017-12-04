@@ -186,8 +186,12 @@
     <None Include="Resources\personalPic.jpg" />
     <None Include="Resources\Image1.jpg" />
     <Resource Include="Media\Images\ApplicationImages\1.jpg" />
-    <Resource Include="Media\Images\GrayLangur.jpg" />
     <Resource Include="Media\Images\UserImages\defaultPic.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\coal.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\black.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\exitbutton.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\fullscreenbutton.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\minimizebutton.jpg" />
     <Content Include="Media\Images\ApplicationImages\switch.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

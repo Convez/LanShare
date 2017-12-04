@@ -7,9 +7,9 @@
         mc:Ignorable="d"
         Height="500" Width="500" MinWidth="600" Visibility="Visible" WindowStartupLocation="Manual" Left="70" Top="100">
     <Window.Background>
-        <ImageBrush ImageSource="Media/Images/ApplicationImages/tree.jpg" TileMode="FlipXY"/>
+        <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg" TileMode="FlipXY"/>
     </Window.Background>
-    <Grid>
+    <Grid Style="{StaticResource windowStyle}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="40"/>
             <ColumnDefinition />
@@ -27,7 +27,7 @@
             <Label Style="{StaticResource windowHeaderTextStyle}" Width="180" >monkeys online</Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1">
-            <ListView Name="ConnectedUsers" Background="#B2EDF7BF" FontFamily="Gadugi" FontSize="14" MinWidth="210" Margin="0" >
+            <ListView  Style="{StaticResource listViewStyle}" Name="ConnectedUsers" BorderBrush="{x:Null}"   >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid>
@@ -47,8 +47,5 @@
             </ListView>
         </Border>
 
-        <Grid.Background>
-            <ImageBrush ImageSource="Media/Images/ApplicationImages/tree.jpg" Stretch="UniformToFill"/>
-        </Grid.Background>
     </Grid>
 </Window>

@@ -21,30 +21,27 @@ namespace LANshare
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        protected String name;
-        protected String nickname;
         
         public SettingsWindow()
         {
             InitializeComponent();
-            Bitmap img;
-            //ImageSource i = new ImageSource(LANshare.Properties.Resources.personalPic);
-
-            //if (!LANshare.Properties.Settings.Default.PersonalPic) img = new Bitmap(LANshare.Properties.Resources.defaultPic);
-            //else img = LANshare.Properties.Resources.personalPic;
-
-            //ImageSource i=
-
-            name=Model.Configuration.CurrentUser.Name;
-            nickname = Model.Configuration.CurrentUser.NickName;
-            Console.WriteLine(nickname);
             User localuser = Model.Configuration.CurrentUser;
-
             this.DataContext = localuser;
 
-            
-
         }
-        
+
+        private void Exit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+        private void Minimiza_Button_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+        private void Maximize_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else    WindowState = WindowState.Maximized;
+        }
     }
 }
