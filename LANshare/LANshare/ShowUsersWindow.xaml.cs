@@ -60,7 +60,25 @@ namespace LANshare
                 }
             });
         }
-        protected override void OnClosed(EventArgs e) => base.OnClosed(e);
+
+        private void Exit_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+        private void Minimiza_Button_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+        private void Maximize_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else WindowState = WindowState.Maximized;
+        }
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
 
     }
 }

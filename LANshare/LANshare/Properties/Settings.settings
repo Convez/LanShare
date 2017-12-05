@@ -44,8 +44,8 @@
     <Setting Name="CustomSavePath" Type="System.String" Scope="User">
       <Value Profile="(Default)">%USERPROFILE%\Documents\LANshare</Value>
     </Setting>
-    <Setting Name="PersonalPic" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="DefaultPic" Type="System.String" Scope="User">
+      <Value Profile="(Default)">%USERPROFILE%\Documents\LANshare\LANshare\x64\Debug\Media\Images\UserImages\defaultPic.jpg</Value>
     </Setting>
   </Settings>
 </SettingsFile>

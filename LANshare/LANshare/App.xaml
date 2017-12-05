@@ -71,6 +71,20 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
 
+        <Style x:Key="StandardStyle" TargetType="{x:Type Window}">
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome CaptionHeight="0"
+                                  GlassFrameThickness="10"
+                                  NonClientFrameEdges="None"
+                                  ResizeBorderThickness="5"
+                                            
+                                            />
+                </Setter.Value>
+            </Setter>
+        </Style>
+           
+
         <!--window style-->
         <Style x:Key="windowStyle" TargetType="{x:Type Grid}">
             <Setter Property="Background">
@@ -78,6 +92,7 @@
                     <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg"/>
                 </Setter.Value>
             </Setter>
+ 
         </Style>
         <!-- View style -->
         <Style x:Key="viewStyle" TargetType="{x:Type Grid}">

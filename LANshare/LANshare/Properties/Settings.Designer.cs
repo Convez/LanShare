@@ -175,13 +175,14 @@ namespace LANshare.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool PersonalPic {
+        [global::System.Configuration.DefaultSettingValueAttribute("%USERPROFILE%\\Documents\\LANshare\\LANshare\\x64\\Debug\\Media\\Images\\UserImages\\defau" +
+            "ltPic.jpg")]
+        public string DefaultPic {
             get {
-                return ((bool)(this["PersonalPic"]));
+                return ((string)(this["DefaultPic"]));
             }
             set {
-                this["PersonalPic"] = value;
+                this["DefaultPic"] = value;
             }
         }
     }

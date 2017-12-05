@@ -43,5 +43,10 @@ namespace LANshare
             if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
             else    WindowState = WindowState.Maximized;
         }
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
     }
 }

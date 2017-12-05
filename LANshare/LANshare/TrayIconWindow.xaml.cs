@@ -140,9 +140,9 @@ namespace LANshare
                 )
             };
             icon_menu = new System.Windows.Forms.ContextMenu();
-
+            
             icon_menu.MenuItems.Add(0, show_window);
-
+            
             icon_menu.MenuItems.Add(1, privacy);
 
             icon_menu.MenuItems.Add(2, notSending);
@@ -150,7 +150,7 @@ namespace LANshare
             icon_menu.MenuItems.Add(3, settings);
 
             icon_menu.MenuItems.Add(4, exit);
-
+            
 
             NotifyTransferOpened(); //debug only
 
@@ -305,6 +305,10 @@ namespace LANshare
             }
             return null;
         }
-       
+
+        private void Menu_Close(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Close");
+        }
     }
 }

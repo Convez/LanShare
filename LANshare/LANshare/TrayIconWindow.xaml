@@ -6,5 +6,11 @@
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
         Title="TrayIconWindow" Height="300" Width="300"
-        Visibility="Hidden" ShowActivated="False" ShowInTaskbar="False">
+        >
+    <!--<Window.Resources>
+        <ContextMenu x:Key="NotifierContextMenu" Placement="MousePoint">
+            <MenuItem Header="exit" Click="Menu_Close"/>
+        </ContextMenu>
+    </Window.Resources>-->
+
 </Window>

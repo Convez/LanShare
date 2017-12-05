@@ -84,12 +84,67 @@ namespace LANshare.Model
         
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
-        public User(string name, int tcpPortTo , Uri profilePicUri, string nickName=null)
+        public User(string name, int tcpPortTo , Uri profilePicUri=null, string nickName=null)
         {
             Name = name;
             TcpPortTo = tcpPortTo;
             NickName = nickName;
-            _profilepicture = new BitmapImage(profilePicUri);
+            if(profilePicUri==null)
+            {
+                if(this==Model.Configuration.CurrentUser)
+                {
+                    try
+                    {
+                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/customPic.jpg", UriKind.Relative));
+
+                    }
+                    catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
+                    {
+                        try
+                        {
+                            _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative));
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            _profilepicture = null;
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        _profilepicture = null;
+                    }
+                }
+            }else
+            {
+                try
+                {
+                    _profilepicture = new BitmapImage(profilePicUri);
+                }
+                catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
+                {
+                    try
+                    {
+                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        _profilepicture = null;
+                    }
+                }
+            }
+            
+            
+            //new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative)
         }
 
         public override string ToString()

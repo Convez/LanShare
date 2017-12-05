@@ -20,28 +20,38 @@ namespace LANshare
     /// </summary>
     public partial class TransfersWindow : Window
     {
-        private TrayIconWindow trayIconWindow;
 
         public TransfersWindow()
         {
             InitializeComponent();
         }
 
-        public TransfersWindow(TrayIconWindow trayIconWindow)
-        {
-            this.trayIconWindow = trayIconWindow;
-            InitializeComponent();
-        }
+
 
         public void AddTransfer(object sender, Transfer t)
         {
 
         }
 
-        protected override void OnClosed(EventArgs e)
+        private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {
-            base.OnClosed(e);
-            
+            Close();
         }
+        private void Minimiza_Button_Click(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+        private void Maximize_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else WindowState = WindowState.Maximized;
+        }
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+
     }
 }
