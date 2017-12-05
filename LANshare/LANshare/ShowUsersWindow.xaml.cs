@@ -30,13 +30,35 @@ namespace LANshare
 
         private ObservableCollection<User> userList;
         private readonly object l = "";
+
+        public event EventHandler<List<User>> usersSelected;
         public ShowUsersWindow()
         {
             InitializeComponent();
             userList = new ObservableCollection<User>();
             ConnectedUsers.ItemsSource = userList;
+            SendButton.Click += SendButtonClicked;
         }
-
+        public ShowUsersWindow(List<User> starting)
+        {
+            InitializeComponent();
+            userList = new ObservableCollection<User>(starting);
+            ConnectedUsers.ItemsSource = userList;
+            SendButton.Click += SendButtonClicked;
+        }
+        private void SendButtonClicked(object sender,EventArgs args)
+        {
+            List<User> selectedUsers = ConnectedUsers.SelectedItems.OfType<User>().ToList();
+            if (selectedUsers.Count <= 0)
+            {
+                MessageBox.Show("Select at least one user");
+            }
+            else
+            {
+                usersSelected?.Invoke(this, selectedUsers);
+                Close();
+            }
+        }
         public void AddUser(object sender, User u)
         {
             ConnectedUsers.Dispatcher.Invoke(() =>
@@ -58,7 +80,6 @@ namespace LANshare
                 }
             });
         }
-        protected override void OnClosed(EventArgs e) => base.OnClosed(e);
 
     }
 }

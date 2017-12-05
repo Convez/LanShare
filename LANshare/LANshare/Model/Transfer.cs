@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace LANshare.Model
@@ -11,7 +12,9 @@ namespace LANshare.Model
         private User _user;
         private bool _sending; //true= files are being sent , false= files are being received
         private int _percentage;
-        
+        private Task<bool> transferTask;
+        private CancellationTokenSource cts;
+
         public User OtherUser
         {
             get => _user;
@@ -30,13 +33,16 @@ namespace LANshare.Model
             set => _percentage = value;
         }
 
-        public Transfer(User u, bool sending , object[] args )
+        public Transfer(User u, bool sending , List<string> files)
         {
             _user = u;
             _sending = sending;
 
         }
-        
 
+        public void CancelUpload()
+        {
+            
+        }
     }
 }
