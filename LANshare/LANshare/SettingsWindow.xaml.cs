@@ -25,8 +25,7 @@ namespace LANshare
         public SettingsWindow()
         {
             InitializeComponent();
-            User localuser = Model.Configuration.CurrentUser;
-            this.DataContext = localuser;
+            this.DataContext = Model.Configuration.CurrentUser;
 
         }
 

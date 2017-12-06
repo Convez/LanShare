@@ -53,13 +53,7 @@ namespace LANshare.Model
 
         public String PrivacyMode
         {
-            get { return _privacymode.ToString(); }
-            set
-            {
-                if (_privacymode == EUserAdvertisementMode.Private) _privacymode = EUserAdvertisementMode.Public;
-                else _privacymode = EUserAdvertisementMode.Private;
-                if (this == Model.Configuration.CurrentUser) LANshare.Properties.Settings.Default.UserAdvertisementMode = _privacymode;
-            }
+            get => _privacymode.ToString(); 
         }
 
         public ImageSource ProfilePicture
@@ -159,6 +153,15 @@ namespace LANshare.Model
             HashAlgorithm hashAlg = SHA512.Create();
             byte[] hashed = hashAlg.ComputeHash(Encoding.UTF8.GetBytes(randNum));
             return Encoding.UTF8.GetString(hashed);
+        }
+        public void SetPrivacyMode()
+        {
+            if (this == Model.Configuration.CurrentUser)
+            {
+                if (_privacymode == EUserAdvertisementMode.Private) _privacymode = EUserAdvertisementMode.Public;       //allows to set privacy only for local user
+                else _privacymode = EUserAdvertisementMode.Private;
+                LANshare.Properties.Settings.Default.UserAdvertisementMode = _privacymode;
+            }
         }
     }
 }
