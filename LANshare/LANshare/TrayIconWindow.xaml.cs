@@ -34,7 +34,8 @@ namespace LANshare
         private System.Windows.Forms.MenuItem settings;
         private System.Windows.Forms.MenuItem exit;
         private int transfers = 0; //number of active transations
-        
+        private ContextMenu menu;
+
 
 
 
@@ -50,9 +51,12 @@ namespace LANshare
             SetupNetwork();
             //SetupTrayIcon();
             InitializeComponent();
-            this.DataContext = Model.Configuration.CurrentUser;
-            MenuItem pMenuIt = (MenuItem)this.FindResource("privacymi");
-            pMenuIt.DataContext = Configuration.CurrentUser;
+            menu = (ContextMenu)this.FindResource("NotifierContextMenu");
+            menu.DataContext = Model.Configuration.CurrentUser;
+            this.DataContext = this;
+            //this.DataContext = Model.Configuration.CurrentUser;
+            //MenuItem pMenuIt = (MenuItem)this.FindResource("privacymi");
+            //pMenuIt.DataContext = Configuration.CurrentUser;
             //pMenuIt.
         }
 
@@ -247,7 +251,7 @@ namespace LANshare
 
         public void NotifyTransferOpened()
         {
-            //transfers++;
+            transfers++;
             //if (transfers == 1)
             //{
             //    RefreshSendingItem();
@@ -257,25 +261,26 @@ namespace LANshare
         //to be called when a transfer has finished (a transfer is considered finished when all the files that were being sent to (or received from) a certain user have successfully completed
         public void NotifyTransferClosed()
         {
-            //try
-            //{
-            //    transfers--;
-            //    if (transfers < 0)
-            //    {
-            //        //an error has occured, recheck number of transactions
-            //        throw new ApplicationException("error in transfer count");
-            //    }
-            //    else if (transfers == 0)
-            //    {
-            //        RefreshSendingItem();
-            //    }
-            //} catch (ApplicationException e)
-            //{
-            //    Console.WriteLine("ERROR: transfers count went negative" + e.Message);
-            //    //get actual transfers number here
-            //    if (transfers == 0) RefreshSendingItem();
+            try
+            {
+                transfers--;
+                if (transfers < 0)
+                {
+                    //an error has occured, recheck number of transactions
+                    throw new ApplicationException("error in transfer count");
+                }
+                //else if (transfers == 0)
+                //{
+                //    RefreshSendingItem();
+                //}
+            }
+            catch (ApplicationException e)
+            {
+                Console.WriteLine("ERROR: transfers count went negative" + e.Message);
+                //get actual transfers number here
+                //if (transfers == 0) RefreshSendingItem();
 
-            //}
+            }
 
 
         }
@@ -324,6 +329,10 @@ namespace LANshare
         {
             OnButtonClick<SettingsWindow>();
         }
+        private void OpenTransfers(object sender, RoutedEventArgs e)
+        {
+            OnButtonClick<TransfersWindow>();
+        }
 
         private void Menu_Open(object sender, RoutedEventArgs e)
         {
@@ -338,8 +347,13 @@ namespace LANshare
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                ContextMenu menu = (ContextMenu)this.FindResource("NotifierContextMenu");
-                menu.IsOpen = true;
+                if (!menu.IsOpen) menu.IsOpen = true;
+                else menu.IsOpen = false;
+            }
+            if(e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                ShowPeople(sender, null);
+                OpenTransfers(sender, null);
             }
         }
 
