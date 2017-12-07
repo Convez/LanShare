@@ -11,22 +11,28 @@ using System.Threading;
 using System.Windows.Media;
 using System.Drawing;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
 
 namespace LANshare.Model
 {
     [Serializable]
-    public class User 
+    public class User : INotifyPropertyChanged
     {
         private string _name;
         private string _nickname;
         [NonSerialized] private ImageSource _profilepicture;
         private EUserAdvertisementMode _privacymode;
+        public event PropertyChangedEventHandler PropertyChanged;
 
 
         public string Name
         {
             get => _name;
-            set => _name = Environment.ExpandEnvironmentVariables(value);
+            set
+            {
+                _name = Environment.ExpandEnvironmentVariables(value);
+                OnPropertyChanged("Name");
+            }
         }
         public string IpAddress
         {
@@ -48,12 +54,20 @@ namespace LANshare.Model
                 {
                     LANshare.Properties.Settings.Default.UserNickName = _nickname;
                 }
+                OnPropertyChanged("NickName");
             }
         }
 
         public String PrivacyMode
         {
-            get => _privacymode.ToString(); 
+            get
+            {
+                if(this== Configuration.CurrentUser)
+                {
+                    return LANshare.Properties.Settings.Default.UserAdvertisementMode.ToString(); //this is realtime check
+                }
+                else return _privacymode.ToString(); //this is for checking another's user privacymode
+            }
         }
 
         public ImageSource ProfilePicture
@@ -66,7 +80,7 @@ namespace LANshare.Model
             set
             {
                 _profilepicture = value;
-              
+                OnPropertyChanged("ProfilePicture");
             }
         }
         //Session Id
@@ -136,9 +150,7 @@ namespace LANshare.Model
                     }
                 }
             }
-            
-            
-            //new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative)
+
         }
 
         public override string ToString()
@@ -158,10 +170,18 @@ namespace LANshare.Model
         {
             if (this == Model.Configuration.CurrentUser)
             {
-                if (_privacymode == EUserAdvertisementMode.Private) _privacymode = EUserAdvertisementMode.Public;       //allows to set privacy only for local user
+                if (Properties.Settings.Default.UserAdvertisementMode == EUserAdvertisementMode.Private) _privacymode = EUserAdvertisementMode.Public;       //allows to set privacy only for local user
                 else _privacymode = EUserAdvertisementMode.Private;
-                LANshare.Properties.Settings.Default.UserAdvertisementMode = _privacymode;
+                Properties.Settings.Default.UserAdvertisementMode = _privacymode;
+                Properties.Settings.Default.Save();
+                OnPropertyChanged("PrivacyMode");
             }
+        }
+
+        private void OnPropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
     }
 }

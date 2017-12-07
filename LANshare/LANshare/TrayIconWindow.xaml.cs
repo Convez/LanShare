@@ -52,8 +52,13 @@ namespace LANshare
             //SetupTrayIcon();
             InitializeComponent();
             menu = (ContextMenu)this.FindResource("NotifierContextMenu");
-            menu.DataContext = Model.Configuration.CurrentUser;
-            this.DataContext = this;
+            //menu.DataContext = Model.Configuration.CurrentUser;
+            menu.DataContext = new
+            {
+                Configuration.CurrentUser.PrivacyMode,
+                transfers,
+                
+            };
             //this.DataContext = Model.Configuration.CurrentUser;
             //MenuItem pMenuIt = (MenuItem)this.FindResource("privacymi");
             //pMenuIt.DataContext = Configuration.CurrentUser;
