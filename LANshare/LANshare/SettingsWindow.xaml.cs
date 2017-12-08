@@ -33,7 +33,7 @@ namespace LANshare
         {
             Close();
         }
-        private void Minimiza_Button_Click(object sender, RoutedEventArgs e)
+        private void Minimize_Button_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
@@ -46,6 +46,19 @@ namespace LANshare
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
+        }
+
+        private void Edit(object sender, RoutedEventArgs e)
+        {
+            
+            InputWindow i = new InputWindow( "Choose your nickname:" );
+            if (i.ShowDialog()==true)
+            {
+                Model.Configuration.CurrentUser.NickName = i.Input;
+
+            }
+                
+                
         }
     }
 }

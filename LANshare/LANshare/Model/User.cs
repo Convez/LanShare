@@ -22,7 +22,7 @@ namespace LANshare.Model
         private string _nickname;
         [NonSerialized] private ImageSource _profilepicture;
         private EUserAdvertisementMode _privacymode;
-        public event PropertyChangedEventHandler PropertyChanged;
+        [field: NonSerializedAttribute()] public event PropertyChangedEventHandler PropertyChanged;
 
 
         public string Name
@@ -180,8 +180,12 @@ namespace LANshare.Model
 
         private void OnPropertyChanged(string property)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(property));
+            }
+            
         }
     }
 }

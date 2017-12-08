@@ -66,7 +66,7 @@ namespace LANshare
         {
             Close();
         }
-        private void Minimiza_Button_Click(object sender, RoutedEventArgs e)
+        private void Minimize_Button_Click(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }

@@ -25,7 +25,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
-            <Button Width="22" Height="22" Click="Minimiza_Button_Click" Margin="5,0,0,0" >
+            <Button Width="22" Height="22" Click="Minimize_Button_Click" Margin="5,0,0,0" >
                 <Button.Background>
                     <ImageBrush ImageSource="Media/Images/ApplicationImages/minimizebutton.jpg"/>
                 </Button.Background>
@@ -43,7 +43,7 @@
 
         </StackPanel>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" Grid.ColumnSpan="2" >
+        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" >
             <Label Style="{StaticResource windowHeaderTextStyle}" Width="158" BorderBrush="#FFABADB3" >My Settings</Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1" >
@@ -73,6 +73,11 @@
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="1" Text="{Binding Name}" />
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Nickname :</TextBlock>
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="2" Text="{Binding NickName}" />
+                <Button Name="EditNickButton" Width="22" Height="22" Click="Edit" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/fullscreenbutton.jpg"/>
+                    </Button.Background>
+                </Button>
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right">Privacy Mode :</TextBlock>
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding PrivacyMode}" />
 
