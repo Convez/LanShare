@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using LANshare.Connection;
 using LANshare.Model;
 using LANshare.Properties;
+using System.ComponentModel;
 
 namespace LANshare
 {
@@ -38,6 +39,7 @@ namespace LANshare
             SetupNetwork();
             InitializeComponent();
             menu = (ContextMenu)this.FindResource("NotifierContextMenu");
+            Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
             menu.DataContext = new
             {
                 Configuration.CurrentUser.PrivacyMode,
@@ -51,7 +53,7 @@ namespace LANshare
             SetupNetwork();
             InitializeComponent();
             menu = (ContextMenu)this.FindResource("NotifierContextMenu");
-            //menu += Configuration.CurrentUser.PropertyChanged;
+            Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
             menu.DataContext = new
             {
                 Configuration.CurrentUser.PrivacyMode,
@@ -197,10 +199,6 @@ namespace LANshare
             OnButtonClick<TransfersWindow>();
         }
 
-        //private void Menu_Open(object sender, RoutedEventArgs e)
-        //{
-        //    MessageBox.Show("Open");
-        //}
 
         void notifier_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
@@ -216,7 +214,13 @@ namespace LANshare
             }
         }
 
-
+        private void PrivacyBinding(object sender , PropertyChangedEventArgs e)
+        {
+            //MenuItem m = (MenuItem)menu.FindName("PrivacyItem");
+            MenuItem m = (MenuItem) menu.Items[1];
+            String mode= Configuration.CurrentUser.PrivacyMode;
+            m.Header = mode;
+        }
 
     }
 }

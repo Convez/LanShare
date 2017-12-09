@@ -61,26 +61,35 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-
-                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Right">Profile Picture :</TextBlock>
-                <Ellipse  Grid.Column="1" Height="80" Width="80" VerticalAlignment="Center">
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Right">User :</TextBlock>
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="0" Text="{Binding Name}" />
+                
+                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="1"  HorizontalAlignment="Right">Profile Picture :</TextBlock>
+                <Ellipse  Grid.Column="1" Grid.Row="1" Height="80" Width="80" VerticalAlignment="Center">
                     <Ellipse.Fill>
                         <ImageBrush  ImageSource="{Binding ProfilePicture}"/>
                     </Ellipse.Fill>
                 </Ellipse>
-                <!--<Image Grid.Column="1" Source="{Binding ProfilePicture}"  VerticalAlignment="Center"/>-->
-                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="1"  HorizontalAlignment="Right">Name :</TextBlock>
-                <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="1" Text="{Binding Name}" />
+                <Button Grid.Column="2" Grid.Row="1" Name="EditPicButton" Width="30" Height="30" Click="Edit" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/fullscreenbutton.jpg"/>
+                    </Button.Background>
+                </Button>
+
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Nickname :</TextBlock>
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="2" Text="{Binding NickName}" />
-                <Button Name="EditNickButton" Width="22" Height="22" Click="Edit" >
+                <Button Grid.Column="2" Grid.Row="2" Name="EditNickButton" Width="30" Height="30" Click="Edit" >
                     <Button.Background>
                         <ImageBrush ImageSource="Media/Images/ApplicationImages/fullscreenbutton.jpg"/>
                     </Button.Background>
                 </Button>
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right">Privacy Mode :</TextBlock>
                 <TextBlock Style="{StaticResource textfieldStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding PrivacyMode}" />
-
+                <Button Grid.Column="2" Grid.Row="3" Name="EditPrivButton" Width="30" Height="30" Click="Edit" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/fullscreenbutton.jpg"/>
+                    </Button.Background>
+                </Button>
             </Grid>
 
         </Border>

@@ -50,13 +50,25 @@ namespace LANshare
 
         private void Edit(object sender, RoutedEventArgs e)
         {
-            
-            InputWindow i = new InputWindow( "Choose your nickname:" );
-            if (i.ShowDialog()==true)
+            Button b = (Button)sender;
+            switch(b.Name)
             {
-                Model.Configuration.CurrentUser.NickName = i.Input;
-
+                case "EditNickButton":
+                    InputWindow i = new InputWindow("Choose your nickname:");
+                    if (i.ShowDialog() == true)
+                    {
+                        Configuration.CurrentUser.NickName = i.Input;
+                    }
+                    break;
+                case "EditPrivButton":
+                    Configuration.CurrentUser.SetPrivacyMode();
+                    break;
+                case "EditNicButton":
+                    //make chose the file
+                    break;
             }
+
+            
                 
                 
         }

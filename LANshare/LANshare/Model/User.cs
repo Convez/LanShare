@@ -53,6 +53,7 @@ namespace LANshare.Model
                 if(this==Model.Configuration.CurrentUser)
                 {
                     LANshare.Properties.Settings.Default.UserNickName = _nickname;
+                    Properties.Settings.Default.Save();
                 }
                 OnPropertyChanged("NickName");
             }
@@ -62,11 +63,11 @@ namespace LANshare.Model
         {
             get
             {
-                if(this== Configuration.CurrentUser)
-                {
-                    return LANshare.Properties.Settings.Default.UserAdvertisementMode.ToString(); //this is realtime check
-                }
-                else return _privacymode.ToString(); //this is for checking another's user privacymode
+                //if(this== Configuration.CurrentUser)
+                //{
+                //    return LANshare.Properties.Settings.Default.UserAdvertisementMode.ToString(); //this is realtime check
+                //}
+                return _privacymode.ToString(); //this is for checking another's user privacymode
             }
         }
 
@@ -92,11 +93,12 @@ namespace LANshare.Model
         
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
-        public User(string name, int tcpPortTo , Uri profilePicUri=null, string nickName=null)
+        public User(string name, int tcpPortTo , EUserAdvertisementMode privacymode, Uri profilePicUri=null, string nickName=null)
         {
             Name = name;
             TcpPortTo = tcpPortTo;
             NickName = nickName;
+            _privacymode = privacymode;
             if(profilePicUri==null)
             {
                 if(this==Model.Configuration.CurrentUser)
@@ -180,12 +182,8 @@ namespace LANshare.Model
 
         private void OnPropertyChanged(string property)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(property));
-            }
-            
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+
         }
     }
 }
