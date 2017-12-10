@@ -63,11 +63,7 @@ namespace LANshare.Model
         {
             get
             {
-                //if(this== Configuration.CurrentUser)
-                //{
-                //    return LANshare.Properties.Settings.Default.UserAdvertisementMode.ToString(); //this is realtime check
-                //}
-                return _privacymode.ToString(); //this is for checking another's user privacymode
+                return _privacymode.ToString(); 
             }
         }
 
@@ -105,14 +101,14 @@ namespace LANshare.Model
                 {
                     try
                     {
-                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/customPic.jpg", UriKind.Relative));
+                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/"+ Properties.Settings.Default.CustomPic , UriKind.Relative));
 
                     }
                     catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
                     {
                         try
                         {
-                            _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative));
+                            _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic , UriKind.Relative));
                         }
                         catch (Exception ex)
                         {
@@ -125,7 +121,7 @@ namespace LANshare.Model
                 {
                     try
                     {
-                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative));
+                        _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
                     }
                     catch (Exception ex)
                     {
@@ -143,7 +139,7 @@ namespace LANshare.Model
                 {
                     try
                     {
-                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/defaultPic.jpg", UriKind.Relative));
+                        _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
                     }
                     catch (Exception ex)
                     {

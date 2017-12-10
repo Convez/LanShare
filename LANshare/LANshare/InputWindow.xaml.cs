@@ -32,10 +32,19 @@ namespace LANshare
         {
             _input = null;
             _input = InputField.Text;
-            //control the input
-            //if input is default text return null or ok not selectable
+            if (_input == null) this.DialogResult = false;
+            else
+            {
+
+            }
             this.DialogResult = true;
 
+        }
+        public void TextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox tb = (TextBox)sender;
+            tb.Text = string.Empty;
+            tb.GotFocus -= TextBox_GotFocus;
         }
 
         public String Input

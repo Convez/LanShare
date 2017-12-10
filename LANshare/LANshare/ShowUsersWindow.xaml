@@ -57,7 +57,8 @@
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" HorizontalAlignment="Left"/>
                             <TextBlock Grid.Column="2" Text="{Binding IpAddress}" Margin="10" HorizontalAlignment="Right"/>
-
+                            <TextBlock Grid.Column="0" Text="name" Margin="10" HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="2" Text="ipaddress" Margin="10" HorizontalAlignment="Right"/>
                         </Grid>
 
                     </DataTemplate>

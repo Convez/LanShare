@@ -24,7 +24,7 @@
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
             
-            <Button Width="22" Height="22" Click="Exit_Button_Click" Margin="5,0,0,0" >
+            <Button  Width="22" Height="22" Click="Exit_Button_Click" Margin="5,0,0,0" >
                 <Button.Background>
                     <ImageBrush ImageSource="Media/Images/ApplicationImages/exitbutton.jpg"/>
                 </Button.Background>
@@ -49,9 +49,9 @@
                     <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF9E9E9E" Foreground="Black" FontFamily="Gadugi" FontSize="14" />
-                <Button Grid.Row="2" Grid.Column="1" Width="50" Background="#FF2C2C2C" Click="Exit_Button_Click">Cancel</Button>
-                <Button Grid.Row="2" Grid.Column="2" Width="50" Background="#FF2C2C2C" Click="SubmitInput">OK</Button>
+                <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF9E9E9E" Foreground="Black" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" />
+                <Button Style="{StaticResource StandardButton}" Grid.Row="2" Grid.Column="1" Width="50" Background="#FF2C2C2C" Click="Exit_Button_Click">Cancel</Button>
+                <Button Style="{StaticResource StandardButton}" Grid.Row="2" Grid.Column="2" Width="50" Background="#FF2C2C2C" Click="SubmitInput">OK</Button>
 
             </Grid>
 

@@ -6,29 +6,29 @@
     <Application.Resources>
 
         <!-- Header text style -->
-        <Style x:Key="headerTextStyle">
+        <!--<Style x:Key="headerTextStyle">
             <Setter Property="Label.VerticalAlignment" Value="Center"></Setter>
             <Setter Property="Label.FontFamily" Value="Trebuchet MS"></Setter>
             <Setter Property="Label.FontWeight" Value="Bold"></Setter>
             <Setter Property="Label.FontSize" Value="18"></Setter>
             <Setter Property="Label.Foreground" Value="#0066cc"></Setter>
-        </Style>
+        </Style>-->
 
         <!-- Label style -->
-        <Style x:Key="labelStyle" TargetType="{x:Type Label}">
+        <!--<Style x:Key="labelStyle" TargetType="{x:Type Label}">
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="0,0,0,5" />
-        </Style>
+        </Style>-->
 
         <!-- DataGrid header style -->
-        <Style x:Key="columnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
+        <!--<Style x:Key="columnHeaderStyle" TargetType="{x:Type DataGridColumnHeader}">
             <Setter Property="Height" Value="35" />
             <Setter Property="Padding" Value="5" />
             <Setter Property="Background" Value="#4E87D4" />
             <Setter Property="Foreground" Value="White" />
-        </Style>
+        </Style>-->
 
         <!-- window header style -->
        
@@ -54,22 +54,34 @@
         </Style>
 
         <!-- Button style -->
-        <Style x:Key="buttonStyle" TargetType="{x:Type Button}">
+        <!--<Style x:Key="buttonStyle" TargetType="{x:Type Button}">
             <Setter Property="Width" Value="125" />
             <Setter Property="Height" Value="25" />
             <Setter Property="Margin" Value="0,10,0,0" />
             <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>-->
+
+        <!-- Textfield style for static texts -->
+        <Style x:Key="StaticTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="FontSize" Value="16"/>
+            <!--<Setter Property="FontWeight" Value="Bold"/>-->
+            <Setter Property="FontFamily" Value="Gadugi"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
 
-        <!-- Textfield text style -->
-        <Style x:Key="textfieldStyle" TargetType="{x:Type TextBlock}">
+        <!-- Textfield style for relevant text fields -->
+        <Style x:Key="RelevantTextStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="LightGray"/>
-            <Setter Property="FontSize" Value="19"/>
+            <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontFamily" Value="Gadugi"/>
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
+
+        <!--standard style for every window-->
 
         <Style x:Key="StandardStyle" TargetType="{x:Type Window}">
             <Setter Property="WindowChrome.WindowChrome">
@@ -85,7 +97,7 @@
         </Style>
            
 
-        <!--window style-->
+        <!--style of main grid-->
         <Style x:Key="windowStyle" TargetType="{x:Type Grid}">
             <Setter Property="Background">
                 <Setter.Value>
@@ -94,11 +106,13 @@
             </Setter>
  
         </Style>
-        <!-- View style -->
+        <!-- style of grid with displayed info -->
         <Style x:Key="viewStyle" TargetType="{x:Type Grid}">
             <Setter Property="Background" Value="#CC000000" />
 
         </Style>
+        
+        <!--style of listview item-->
         <Style x:Key="listViewStyle" TargetType="{x:Type ListView}">
             <Setter Property="Background" Value="#CC000000" />
             <Setter Property="Foreground" Value="LightGray"/>
@@ -106,6 +120,8 @@
             <Setter Property="FontFamily" Value="Gadugi"/>
 
         </Style>
+        
+        <!--style for context menus-->
         <Style x:Key="{x:Type ContextMenu}" TargetType="{x:Type ContextMenu}">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
@@ -119,6 +135,29 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="{x:Type Button}" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#00DDDDDD" />
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="FontFamily" Value="Gadugi" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="TextElement.Foreground" Value="Coral"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--control for menu items--> 
         <ControlTemplate x:Key="{x:Static MenuItem.TopLevelItemTemplateKey}" TargetType="{x:Type MenuItem}">
             <Border Name="Border" >
                 <Grid>

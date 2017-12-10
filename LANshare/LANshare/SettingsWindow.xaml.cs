@@ -60,17 +60,20 @@ namespace LANshare
                         Configuration.CurrentUser.NickName = i.Input;
                     }
                     break;
-                case "EditPrivButton":
-                    Configuration.CurrentUser.SetPrivacyMode();
-                    break;
                 case "EditNicButton":
                     //make chose the file
                     break;
-            }
-
-            
-                
-                
+            }    
         }
+        private void PrivacySetter(object sender, RoutedEventArgs e)
+        {
+            MenuItem m = (MenuItem)sender;
+            if (m.Header.ToString() != Configuration.CurrentUser.PrivacyMode)
+            {
+                Configuration.CurrentUser.SetPrivacyMode();
+            }
+        }
+
+      
     }
 }
