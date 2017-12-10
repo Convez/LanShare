@@ -50,8 +50,8 @@
                     <RowDefinition/>
                 </Grid.RowDefinitions>
                 <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF9E9E9E" Foreground="Black" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" />
-                <Button Style="{StaticResource StandardButton}" Grid.Row="2" Grid.Column="1" Width="50" Background="#FF2C2C2C" Click="Exit_Button_Click">Cancel</Button>
-                <Button Style="{StaticResource StandardButton}" Grid.Row="2" Grid.Column="2" Width="50" Background="#FF2C2C2C" Click="SubmitInput">OK</Button>
+                <Button  Grid.Row="2" Grid.Column="1" Width="50" Background="#FF2C2C2C" Click="Exit_Button_Click">Cancel</Button>
+                <Button  Grid.Row="2" Grid.Column="2" Width="50" Background="#FF2C2C2C" Click="SubmitInput">OK</Button>
 
             </Grid>
 

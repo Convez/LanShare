@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LANshare"
         xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
-        Title="TrayIconWindow" Height="300" Width="300" Visibility="Hidden"
+        Title="TrayIconWindow"  Visibility="Hidden"
         
         >
     <Window.Resources>
