@@ -55,7 +55,8 @@ namespace LANshare
             {
                 case "EditNickButton":
                     InputWindow i = new InputWindow("Choose your nickname:");
-                    if (i.ShowDialog() == true)
+                    i.ShowDialog();
+                    if (i.DialogResult == true)
                     {
                         Configuration.CurrentUser.NickName = i.Input;
                     }

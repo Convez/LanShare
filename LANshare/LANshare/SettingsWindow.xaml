@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:LANshare"        
         mc:Ignorable="d"
         Title="SettingsWindow"  Foreground="{x:Null}"
-        Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown" >
+        Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown" 
+        WindowStartupLocation="CenterScreen" >
     <Window.Background>
         <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg" TileMode="FlipXY"/>
     </Window.Background>
@@ -19,7 +20,7 @@
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="70"/>
             <RowDefinition/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
@@ -43,7 +44,7 @@
 
         </StackPanel>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" >
+        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" VerticalAlignment="Stretch" >
             <Label Style="{StaticResource windowHeaderTextStyle}" Width="158" BorderBrush="#FFABADB3" >My Settings</Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1" >
@@ -115,8 +116,8 @@
                     </Button.Style>
                     <Button.ContextMenu>
                         <ContextMenu>
-                            <MenuItem Foreground="LightGray" Header="Public" Click="PrivacySetter" />
-                            <MenuItem Foreground="LightGray" Header="Private" Click="PrivacySetter" />
+                            <MenuItem Foreground="LightGray" Header="Public" Click="PrivacySetter" FontStyle="Normal" />
+                            <MenuItem Foreground="LightGray" Header="Private" Click="PrivacySetter" FontStyle="Normal" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>

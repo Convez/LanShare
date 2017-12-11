@@ -16,7 +16,7 @@
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="70"/>
             <RowDefinition/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
@@ -40,7 +40,7 @@
 
         </StackPanel>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" >
+        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" VerticalAlignment="Stretch" >
             <Label Style="{StaticResource windowHeaderTextStyle}" Width="142" >File Transfers</Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1">

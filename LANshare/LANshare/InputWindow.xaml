@@ -5,21 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-        Title="InputWindow" Height="200" Width="300"
+        Title="InputWindow" 
         Style="{StaticResource StandardStyle}" 
-        MouseDown="Window_MouseDown">
+        Width="300" Height="200"
+        MouseDown="Window_MouseDown" WindowStartupLocation="CenterScreen"
+        >
     <Grid Background="#FF131313">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30"/>
             <ColumnDefinition />
-            <ColumnDefinition Width="60" />
+            <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="50"/>
             <RowDefinition/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
@@ -32,9 +34,9 @@
 
         </StackPanel>
 
-        <Border Grid.Column="0"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" HorizontalAlignment="Left" Grid.ColumnSpan="2" >
+        <Border Grid.Column="0"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" HorizontalAlignment="Left" Grid.ColumnSpan="2" VerticalAlignment="Center" >
             <Label Style="{StaticResource windowHeaderTextStyle}" HorizontalAlignment="Left" >
-                <TextBlock Name="Title" HorizontalAlignment="Left" > Title </TextBlock>
+                <TextBlock Name="Title" HorizontalAlignment="Left" FontWeight="Regular" FontSize="18" > Title </TextBlock>
             </Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1" >
@@ -42,16 +44,17 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition/>
-                    <ColumnDefinition/>
+                    <ColumnDefinition Width="55"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
                     <RowDefinition/>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF9E9E9E" Foreground="Black" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" />
-                <Button  Grid.Row="2" Grid.Column="1" Width="50" Background="#FF2C2C2C" Click="Exit_Button_Click">Cancel</Button>
-                <Button  Grid.Row="2" Grid.Column="2" Width="50" Background="#FF2C2C2C" Click="SubmitInput">OK</Button>
+                <TextBlock Name="HintField"  Text="{Binding Hint}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"  Foreground="Coral" Background="{x:Null}" />
+                <Button  Grid.Row="2" Grid.Column="1" Width="40" Click="Exit_Button_Click" HorizontalAlignment="Right" >Cancel</Button>
+                <Button  Grid.Row="2" Grid.Column="2" Width="40" Background="#FF2C2C2C" Click="SubmitInput" HorizontalAlignment="Right">OK</Button>
 
             </Grid>
 

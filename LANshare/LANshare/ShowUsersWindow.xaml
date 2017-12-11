@@ -17,7 +17,7 @@
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="70"/>
             <RowDefinition/>
             <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
@@ -41,7 +41,7 @@
 
         </StackPanel>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" >
+        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" VerticalAlignment="Stretch"  >
             <Label Style="{StaticResource windowHeaderTextStyle}" Width="180" >People Online</Label>
         </Border>
         <Border Grid.Column="1" Grid.Row="1">
@@ -50,15 +50,19 @@
                     <DataTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="300"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="200"/>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="100" />
 
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Name}" Margin="10" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Column="2" Text="{Binding IpAddress}" Margin="10" HorizontalAlignment="Right"/>
-                            <TextBlock Grid.Column="0" Text="name" Margin="10" HorizontalAlignment="Left"/>
-                            <TextBlock Grid.Column="2" Text="ipaddress" Margin="10" HorizontalAlignment="Right"/>
+                            <Ellipse  Grid.Column="0" Height="30" Width="30" VerticalAlignment="Center">
+                                <Ellipse.Fill>
+                                    <ImageBrush  ImageSource="{Binding ProfilePicture}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Grid.Column="1" Text="{Binding Name}"  HorizontalAlignment="Left"/>
+                            <TextBlock Grid.Column="3" Text="{Binding IpAddress}" HorizontalAlignment="Right"/>
                         </Grid>
 
                     </DataTemplate>
