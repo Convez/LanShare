@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="Model\ConnectionMessage.cs" />
     <Compile Include="Model\ExpiringList.cs" />
+    <Compile Include="Model\Notification.cs" />
     <Compile Include="Model\RatioConverter.cs" />
     <Compile Include="Model\Transfer.cs" />
     <Compile Include="NotificationWindow.xaml.cs">

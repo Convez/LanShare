@@ -16,6 +16,10 @@ using LANshare.Connection;
 using LANshare.Model;
 using LANshare.Properties;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Collections;
+using System.Windows.Interop;
+using System.Drawing;
 
 namespace LANshare
 {
@@ -25,8 +29,10 @@ namespace LANshare
     public partial class TrayIconWindow : Window
     {
         private System.Windows.Forms.NotifyIcon _trayIcon;
-        private int transfers = 0; //number of active transations
-        private ContextMenu menu;
+        private int _transfers = 0; //number of active transations
+        private ContextMenu _menu;
+        private int _privacyMenuItemPosition = 1; //this must be update if position in the privacy menu item is changed in xaml
+        private LinkedList<Notification> _notificationsQueue;
 
         private LanComunication _comunication;
 
@@ -38,12 +44,12 @@ namespace LANshare
         {
             SetupNetwork();
             InitializeComponent();
-            menu = (ContextMenu)this.FindResource("NotifierContextMenu");
+            _menu = (ContextMenu)this.FindResource("NotifierContextMenu");
             Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
-            menu.DataContext = new
+            _menu.DataContext = new
             {
                 Configuration.CurrentUser.PrivacyMode,
-                transfers,
+                _transfers,
 
             };
         }
@@ -52,12 +58,12 @@ namespace LANshare
         {
             SetupNetwork();
             InitializeComponent();
-            menu = (ContextMenu)this.FindResource("NotifierContextMenu");
+            _menu = (ContextMenu)this.FindResource("NotifierContextMenu");
             Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
-            menu.DataContext = new
+            _menu.DataContext = new
             {
                 Configuration.CurrentUser.PrivacyMode,
-                transfers,
+                _transfers,
 
             };
             StartSendingProcedure(this, e.Args.ToList());
@@ -91,7 +97,8 @@ namespace LANshare
             _trayIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(notifier_MouseDown);
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
-            
+            _notificationsQueue = new LinkedList<Notification>();
+            UnseenNotificationsPopup();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -123,7 +130,7 @@ namespace LANshare
 
         public void NotifyTransferOpened()
         {
-            transfers++;
+            _transfers++;
         }
 
         //to be called when a transfer has finished (a transfer is considered finished when all the files that were being sent to (or received from) a certain user have successfully completed
@@ -131,8 +138,8 @@ namespace LANshare
         {
             try
             {
-                transfers--;
-                if (transfers < 0)
+                _transfers--;
+                if (_transfers < 0)
                 {
                     //an error has occured, recheck number of transactions
                     throw new ApplicationException("error in transfer count");
@@ -149,7 +156,7 @@ namespace LANshare
 
 
         }
-        private T OnButtonClick<T>() where T: Window, new()
+        private T OpenWindow<T>() where T: Window, new()
         {
             int w = Application.Current.Windows.OfType<T>().Count();
             if (w == 1)
@@ -178,7 +185,7 @@ namespace LANshare
 
         private void ShowPeople(object sender, RoutedEventArgs e)
         {
-            ShowUsersWindow userWindow = OnButtonClick<ShowUsersWindow>();
+            ShowUsersWindow userWindow = OpenWindow<ShowUsersWindow>();
             _comunication.UserFound += userWindow.AddUser;
             _comunication.UsersExpired += userWindow.RemoveUsers;
             userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
@@ -192,11 +199,11 @@ namespace LANshare
 
         private void OpenSettings(object sender, RoutedEventArgs e)
         {
-            OnButtonClick<SettingsWindow>();
+            OpenWindow<SettingsWindow>();
         }
         private void OpenTransfers(object sender, RoutedEventArgs e)
         {
-            OnButtonClick<TransfersWindow>();
+            OpenWindow<TransfersWindow>();
         }
 
 
@@ -204,8 +211,8 @@ namespace LANshare
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right)
             {
-                if (!menu.IsOpen) menu.IsOpen = true;
-                else menu.IsOpen = false;
+                if (!_menu.IsOpen) _menu.IsOpen = true;
+                else _menu.IsOpen = false;
             }
             if(e.Button == System.Windows.Forms.MouseButtons.Left)
             {
@@ -217,9 +224,81 @@ namespace LANshare
         private void PrivacyBinding(object sender , PropertyChangedEventArgs e)
         {
             //MenuItem m = (MenuItem)menu.FindName("PrivacyItem");
-            MenuItem m = (MenuItem) menu.Items[1];
+            MenuItem m = (MenuItem) _menu.Items[_privacyMenuItemPosition];
             String mode= Configuration.CurrentUser.PrivacyMode;
             m.Header = mode;
+        }
+
+        public void NewNotification(Notification notification)
+        {
+            if(notification.MsgType==Notification.NotificationType.transferRequest || notification.MsgType == Notification.NotificationType.transferAbort)
+            {
+                System.Media.SystemSounds.Exclamation.Play();
+            }
+            int w = Application.Current.Windows.OfType<NotificationWindow>().Count();
+            if (w == 1)
+            {
+                _notificationsQueue.AddLast(notification);
+                NotificationWindow n= Application.Current.Windows.OfType<NotificationWindow>().First();
+                n.NewNotificationInQueue();
+
+            }
+            else if (w == 0)
+            {
+                NotificationWindow n = new NotificationWindow(notification, _notificationsQueue.Count());
+                n.Closing += OnNotificationClosed;
+                n.Show();
+            }
+        }
+
+        public void OnNotificationClosed(object sender, CancelEventArgs a)
+        {  
+            _notificationsQueue.RemoveFirst();
+            if(_notificationsQueue.Count>0)
+            {
+                NotificationWindow n = new NotificationWindow( _notificationsQueue.First() , _notificationsQueue.Count());
+                n.Closing += OnNotificationClosed;
+                n.Show();
+                
+            }
+        }
+
+        private void UnseenNotificationsPopup()
+        {
+            //RectangleF rectF = new RectangleF(0, 0, 40, 40);
+            //Bitmap bitmap = new Bitmap(40, 40, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            //Graphics g = Graphics.FromImage(bitmap);
+            //g.FillRectangle(System.Drawing.Brushes.White, 0, 0, 40, 40);
+            //g.DrawString("5", new Font("Arial", 25), System.Drawing.Brushes.Black, new PointF(0, 0));
+
+            //IntPtr hBitmap = bitmap.GetHbitmap();
+
+            //ImageSource wpfBitmap =
+            //    Imaging.CreateBitmapSourceFromHBitmap(
+            //        hBitmap, IntPtr.Zero, Int32Rect.Empty,
+            //        BitmapSizeOptions.FromEmptyOptions());
+
+            //TaskbarItemInfo.Overlay = wpfBitmap;
+            //_trayIcon.
+            Graphics canvas;
+            Bitmap iconBitmap = new Bitmap(16, 16);
+            canvas = Graphics.FromImage(iconBitmap);
+
+            canvas.DrawIcon(YourProject.Resources.YourIcon, 0, 0);
+
+            StringFormat format = new StringFormat();
+            format.Alignment = StringAlignment.Center;
+
+            canvas.DrawString(
+                "2",
+                new Font( Gadugi , System.Drawing.FontStyle.Bold),
+                new SolidBrush(Color.FromArgb(40, 40, 40)),
+                new RectangleF(0, 3, 16, 13),
+                format
+            );
+
+            _trayIcon.Icon = Icon.FromHandle(iconBitmap.GetHicon());
+
         }
 
     }
