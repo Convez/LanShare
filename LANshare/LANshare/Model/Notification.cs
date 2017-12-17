@@ -11,7 +11,7 @@ namespace LANshare.Model
         private NotificationType _messageType;
         private String _title;
         private String _subjectOfNotification;
-        public enum NotificationType { transferRequest, transferCompletion, transferAbort, userOnline }
+        public enum NotificationType { transferRequest, transferCompletion, transferAbort, userOnline } //teniamo userOnline? va trattato diversaente come notifica..
 
         public Notification( string title, NotificationType messageType, String subjectOfNotification)
         {
