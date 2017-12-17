@@ -25,7 +25,7 @@ namespace LANshare
         private System.Windows.Forms.MenuItem exit;
         private int transfers = 0; //number of active transations
 
-
+        private List<IFileTransferHelper> ongoingTransfers = new List<IFileTransferHelper>();
 
         private LanComunication _comunication;
 
@@ -56,7 +56,7 @@ namespace LANshare
             _comunication.StartLanListen();
             _tcpComunication = new TCP_Comunication();
             _tcpComunication.StartTcpServers();
-            _tcpComunication.fileSendRequested += StartSendingProcedure;
+            _tcpComunication.FileSendRequested += StartSendingProcedure;
         }
         private void SetupTrayIcon()
         {
@@ -186,7 +186,13 @@ namespace LANshare
         {
             foreach(User u in to)
             {
-                
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    FileUploadHelper uploader = new FileUploadHelper();
+                    uploader.InitFileSend(u, what, cts.Token);
+                    ongoingTransfers.Add(uploader);
+                });
             }
         }
 
