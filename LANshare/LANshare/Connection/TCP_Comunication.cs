@@ -25,8 +25,11 @@ namespace LANshare.Connection
 
         private List<TcpListener> listeners;
 
-        public event EventHandler<List<string>> fileSendRequested;
+        public event EventHandler<List<string>> FileSendRequested;
 
+        public event EventHandler<IFileTransferHelper> UploadAccepted;
+        
+        
         public TCP_Comunication()
         {
             shuttingDown = new CancellationTokenSource();
@@ -88,6 +91,12 @@ namespace LANshare.Connection
             }));
         }
 
+        public void StopAll()
+        {
+            shuttingDown.Cancel();
+            serverTask.Wait();
+        }
+
         public void RequestImage(User from)
         {
             TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
@@ -100,12 +109,12 @@ namespace LANshare.Connection
                 p = AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"tmp\\";
                 Directory.CreateDirectory(p);
                 FileStream f = new FileStream(p+from.SessionId+".jpg", FileMode.OpenOrCreate, FileAccess.Write);
-                ReceiveFile(f,
-                    client);
+                new FileDownloadHelper().ReceiveFile(f, client);
                 f.Close();
                 from.ProfileImage = new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
             }
         }
+
         private void HandleClient(TcpClient client, CancellationToken ct)
         {
             ConnectionMessage message = ReadMessage(client);
@@ -128,7 +137,7 @@ namespace LANshare.Connection
                         ConnectionMessage response =
                             new ConnectionMessage(MessageType.ProfileImageResponse, true, null);
                         SendMessage(client, response);
-                        SendFile(f,client);
+                        new FileUploadHelper().SendFile(f,client);
                         f.Close();
                     }
                     catch (Exception ex)
@@ -141,90 +150,24 @@ namespace LANshare.Connection
                         }
                     }
                     break;
+                case MessageType.FileUploadRequest:
+                    //TODO Ask user for permission
+                    //TODO Ask for path to save files
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                    message = new ConnectionMessage(MessageType.FileUploadResponse, true, null);
+                    SendMessage(client, message);
+                    message = ReadMessage(client);
+                    if (message.MessageType != MessageType.TotalUploadSize)
+                        break;
+                    FileDownloadHelper helper = new FileDownloadHelper();
+                    OnUploadAccepted(helper);
+                    helper.HandleFileDownload(client, path, (long)message.Message);
+                    break;
             }
+            client.Close();
         }
 
-        private void ReceiveFile(FileStream to, TcpClient from)
-        {
-            ConnectionMessage message = ReadMessage(from);
-            byte[] data;
-            while (message.Next)
-            {
-                data = message.Message as byte[];
-                to.Write(data, 0, data.Length);
-                message = ReadMessage(from);
-            }
-        }
-        private void SendFile(FileStream from,TcpClient to)
-        {
-            byte[] block = new byte[2048];
-            int bytesRed = from.Read(block, 0, block.Length);
-            do
-            {
-                ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadResponse, true, block);
-                SendMessage(to, message);
-                bytesRed = from.Read(block, 0, block.Length);
-            } while (bytesRed > 0);
-            ConnectionMessage mess = new ConnectionMessage(MessageType.FileUploadResponse, false, null);
-            SendMessage(to, mess);
-
-        }
-
-        private void OnSendRequested(List<string> l)
-        {
-            fileSendRequested?.Invoke(this, l);
-        }
-
-        private ConnectionMessage ReadMessage(Socket from)
-        {
-            byte[] messageSize = new byte[sizeof(long)];
-            int bytesRed = from.Receive(messageSize, messageSize.Length, SocketFlags.None);
-            if (bytesRed < 0)
-            {
-                MessageBox.Show("Connection aborted");
-                return null;
-            }
-            long messageLength = BitConverter.ToInt64(messageSize, 0);
-            byte[] readVector = new byte[IPAddress.NetworkToHostOrder(messageLength)];
-            bytesRed = from.Receive(readVector, readVector.Length, SocketFlags.None);
-            return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
-        }
-
-        private ConnectionMessage ReadMessage(TcpClient from)
-        {
-            NetworkStream ns = from.GetStream();
-            byte[] messageSize = new byte[sizeof(long)];
-            int bytesRed = ns.Read(messageSize, 0, messageSize.Length);
-            if (bytesRed <= 0)
-            {
-                MessageBox.Show("Connection aborted");
-                return null;
-            }
-            long messageLength = BitConverter.ToInt64(messageSize, 0);
-            byte[] readVector = new byte[IPAddress.NetworkToHostOrder(messageLength)];
-            bytesRed = ns.Read(readVector, 0, readVector.Length);
-            return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
-        }
-
-        private void SendMessage(TcpClient to, ConnectionMessage message)
-        {
-            NetworkStream ns = to.GetStream();
-            byte[] data = ConnectionMessage.Serialize(message);
-            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
-            ns.Write(dataSize, 0, dataSize.Length);
-            ns.Write(data, 0, data.Length);
-            ns.Flush();
-        }
-
-        private void SendMessage(Socket to, ConnectionMessage message)
-        {
-            byte[] data = ConnectionMessage.Serialize(message);
-            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
-
-            to.Send(dataSize, dataSize.Length, SocketFlags.None);
-            to.Send(data, data.Length, SocketFlags.None);
-        }
-
+        
         public bool SendFileList(string[] files)
         {
             try
@@ -252,7 +195,31 @@ namespace LANshare.Connection
                 return false;
             }
         }
+        internal static ConnectionMessage ReadMessage(TcpClient from)
+        {
+            NetworkStream ns = from.GetStream();
+            byte[] messageSize = new byte[sizeof(long)];
+            int bytesRed = ns.Read(messageSize, 0, messageSize.Length);
+            if (bytesRed <= 0)
+            {
+                MessageBox.Show("Connection aborted");
+                return null;
+            }
+            long messageLength = BitConverter.ToInt64(messageSize, 0);
+            byte[] readVector = new byte[IPAddress.NetworkToHostOrder(messageLength)];
+            bytesRed = ns.Read(readVector, 0, readVector.Length);
+            return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
+        }
 
+        internal static void SendMessage(TcpClient to, ConnectionMessage message)
+        {
+            NetworkStream ns = to.GetStream();
+            byte[] data = ConnectionMessage.Serialize(message);
+            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
+            ns.Write(dataSize, 0, dataSize.Length);
+            ns.Write(data, 0, data.Length);
+            ns.Flush();
+        }
 
         public static bool OtherInstanceRunning()
         {
@@ -268,6 +235,17 @@ namespace LANshare.Connection
                 return true;
             }
         }
+        
 
+        private void OnSendRequested(List<string> l)
+        {
+            FileSendRequested?.Invoke(this, l);
+        }
+
+        protected virtual void OnUploadAccepted(IFileTransferHelper t)
+        {
+            UploadAccepted?.Invoke(this, t);
+        }
+        
     }
 }

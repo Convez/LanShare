@@ -18,7 +18,12 @@ namespace LANshare.Model
         ProfileImageRequest,
         ProfileImageResponse,
         FileUploadRequest,
-        FileUploadResponse
+        FileUploadResponse,
+        NewDirectory,
+        EndDirectory,
+        NewFile,
+        FileChunk,
+        TotalUploadSize
     }
     
     [Serializable]

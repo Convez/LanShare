@@ -133,8 +133,9 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 			{
 				if(PathRemoveFileSpec(tmp)!=0)
 				{
-					ss << L"\"" << "rumore" << L"\" ";
-					ss << L"\"" << tmp << L"\" ";
+					ss << L"\"" << "rumore" << L" \" ";
+					
+					ss << L"\"" << tmp << L" \" ";
 				}
 			}
 			for(int i=0;i<nFiles;i++)
@@ -143,7 +144,7 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 				if (DragQueryFile(hDrop, i, tmp, ARRAYSIZE(tmp))!=0)
 				{
 
-					ss <<L"\"" << PathFindFileName(tmp) <<L"\" ";
+					ss <<L"\"" << PathFindFileName(tmp) <<L" \" ";
 					hr = S_OK;
 				}
 			}

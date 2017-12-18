@@ -27,6 +27,8 @@ namespace LANshare
         private LinkedList<Notification> _notificationsQueue;
         private Icon _icon;
 
+        private List<IFileTransferHelper> ongoingTransfers = new List<IFileTransferHelper>();
+
         private LanComunication _comunication;
 
         private TCP_Comunication _tcpComunication;
@@ -69,7 +71,7 @@ namespace LANshare
             _comunication.StartLanListen();
             _tcpComunication = new TCP_Comunication();
             _tcpComunication.StartTcpServers();
-            _tcpComunication.fileSendRequested += StartSendingProcedure;
+            _tcpComunication.FileSendRequested += StartSendingProcedure;
         }
 
         protected override void OnInitialized(EventArgs e)
@@ -125,7 +127,13 @@ namespace LANshare
         {
             foreach(User u in to)
             {
-                
+                System.Threading.Tasks.Task.Run(() =>
+                {
+                    CancellationTokenSource cts = new CancellationTokenSource();
+                    FileUploadHelper uploader = new FileUploadHelper();
+                    ongoingTransfers.Add(uploader);
+                    uploader.InitFileSend(u, what, cts.Token);
+                });
             }
         }
 
