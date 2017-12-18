@@ -38,9 +38,10 @@
 *.suo
 *.VC.db
 *.db
+*.db*
 
 # Visual Studio generated folders
-.vs/
+.vs/*
 bin/
 obj/
 x64/

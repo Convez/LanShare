@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using LANshare.Connection;
 using LANshare.Model;
 using LANshare.Properties;
@@ -69,7 +60,6 @@ namespace LANshare
 
             };
             StartSendingProcedure(this, e.Args.ToList());
-
         }
 
         private void SetupNetwork()
@@ -87,7 +77,7 @@ namespace LANshare
             base.OnInitialized(e);
 
             _icon = new Icon(System.IO.Path.Combine(
-                        System.IO.Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]), //Directory where executable is (NEVER NULL)
+                        AppDomain.CurrentDomain.BaseDirectory, //Directory where executable is (NEVER NULL)
                         "Media/Images/ApplicationImages/switch.ico"));
             //Crea TrayIcon
             _trayIcon = new System.Windows.Forms.NotifyIcon
@@ -117,10 +107,28 @@ namespace LANshare
 
         private void StartSendingProcedure(object sender, List<string> args)
         {
-            string s = "";
-            args.ToList().ForEach(x => s += x + "\n");
-            MessageBox.Show(s);
+            Dispatcher.Invoke(() =>
+            {
+                ShowUsersWindow suw = new ShowUsersWindow(_comunication.GetUsers());
+                _comunication.UserFound += suw.AddUser;
+                _comunication.UsersExpired += suw.RemoveUsers;
+                suw.Closing += (o, a) => _comunication.UserFound -= suw.AddUser;
+                suw.Closing += (o, a) => _comunication.UsersExpired -= suw.RemoveUsers;
+                suw.usersSelected += (send, arg) =>
+                {
+                    StartUpload(args, arg);
+                };
+            });
         }
+
+        private void StartUpload(List<string>what, List<User> to)
+        {
+            foreach(User u in to)
+            {
+                
+            }
+        }
+
 
         //called after transactions window is closed to reinsert relative menuitem in context menu
  
