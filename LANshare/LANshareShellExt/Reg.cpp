@@ -166,6 +166,13 @@ HRESULT RegisterShellExtContextMenuHandler(const CLSID& clsid, PCWSTR pszFriendl
 		// Set the default value of the key.
 		hr = SetHKCRRegistryKeyAndValue(szSubkey, NULL, pszFriendlyName);
 	}
+	wchar_t szSubkey1[MAX_PATH];
+	pszFileType = L"lnkfile";
+	hr = StringCchPrintf(szSubkey1, ARRAYSIZE(szSubkey1),L"%s\\shellex\\ContextMenuHandlers\\%s", pszFileType, szCLSID);
+	if(SUCCEEDED(hr))
+	{
+		hr = SetHKCRRegistryKeyAndValue(szSubkey1, NULL, pszFriendlyName);
+	}
 
 	return hr;
 }
@@ -214,6 +221,15 @@ HRESULT UnregisterShellExtContextMenuHandler( const CLSID& clsid)
 		hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey));
 	}
 
+	wchar_t szSubkey1[MAX_PATH];
+	pszFileType = L"lnkfile";
+	// Remove the HKCR\<File Type>\shellex\ContextMenuHandlers\{<CLSID>} key.
+	hr = StringCchPrintf(szSubkey1, ARRAYSIZE(szSubkey1),
+		L"%s\\shellex\\ContextMenuHandlers\\%s", pszFileType, szCLSID);
+	if (SUCCEEDED(hr))
+	{
+		hr = HRESULT_FROM_WIN32(RegDeleteTree(HKEY_CLASSES_ROOT, szSubkey1));
+	}
 	return hr;
 }
 

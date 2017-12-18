@@ -62,7 +62,7 @@ namespace LANshare.Model
                 innerList.AddOrUpdate(key, newVal, (keyVal, oldVal) =>
                 {
                     isNew = false;
-                    return newVal;
+                    return new Tuple<T, DateTime>(oldVal.Item1,DateTime.Now);
                 });
             }
             catch (OverflowException)

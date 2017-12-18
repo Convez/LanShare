@@ -31,7 +31,6 @@ namespace LANshare.Connection
         {
             get => _newSessionIdAvailable;
             set => Interlocked.Exchange(ref _newSessionIdAvailable, value);
-
         }
 
         private int numNotified;
@@ -180,9 +179,12 @@ namespace LANshare.Connection
                                 {
                                     case MessageType.UserAdvertisement:
                                         User u = message.Message as User;
-                                        u.userAddress = endPoint.Address;
-                                        if(userList.Add(u.SessionId,u)) 
+                                        u.UserAddress = endPoint.Address;
+                                        if (userList.Add(u.SessionId, u))
+                                        {
+                                            u.SetupImage();
                                             OnUserFound(u);
+                                        }
                                         if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))
                                         {
                                             if (newSessionIdAvailable == 0)

@@ -24,6 +24,7 @@ namespace LANshare
 
             Model.Configuration.LoadConfiguration();
             Model.Configuration.CurrentUser.SessionId = Model.User.GenerateSessionId();
+
             //Check se è attiva una sessione dell'udp advertiser/tcp listener (la parte del programma con la trayicon)
             bool alreadyRunning = Connection.TCP_Comunication.OtherInstanceRunning();
 
