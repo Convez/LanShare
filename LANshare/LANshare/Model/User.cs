@@ -12,7 +12,8 @@ using System.Threading;
 using System.Windows.Media;
 using System.Drawing;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
+using System.Windows.Threading;
+using LANshare.Connection;
 
 namespace LANshare.Model
 {
@@ -37,7 +38,7 @@ namespace LANshare.Model
         }
         public string IpAddress
         {
-            get => userAddress.ToString();
+            get => UserAddress.ToString();
             
         }
         
@@ -67,28 +68,20 @@ namespace LANshare.Model
                 return _privacymode.ToString(); 
             }
         }
-        [NonSerialized]
+
         public ImageSource ProfilePicture
         {
-            get
-            {
-                
-                return _profilepicture;
-            }
+            get => _profilepicture;
             set
             {
                 _profilepicture = value;
-                _profile.Freeze();
+                _profilepicture.Freeze();
                 OnPropertyChanged("ProfilePicture");
             }
        }
 
         
        
-
-        private string _name;
-        public string NickName { get; set; }
-
         //Session Id
         public object SessionId { get=>_sessionId; set=>Interlocked.Exchange(ref _sessionId,value); }
 
@@ -101,8 +94,7 @@ namespace LANshare.Model
             get => _userAddress;
             set => _userAddress = value;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        
 
 
         // Tcp port listening for file upload requests for user
@@ -171,7 +163,7 @@ namespace LANshare.Model
 
         public void SetupImage()
         {
-            ProfileImage = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"Media\\default_pic.jpg", UriKind.Absolute));
+            ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"Media\\default_pic.jpg", UriKind.Absolute));
             TCP_Comunication com = new TCP_Comunication();
             Task.Run(() => com.RequestImage(this));
         }
