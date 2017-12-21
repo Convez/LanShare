@@ -11,7 +11,7 @@ using System.Collections.ObjectModel;
 using System.Collections;
 using System.Windows.Interop;
 using System.Drawing;
-
+using System.Windows.Controls;
 
 namespace LANshare
 {
@@ -61,6 +61,7 @@ namespace LANshare
                 _transfers,
 
             };
+
             StartSendingProcedure(this, e.Args.ToList());
         }
 

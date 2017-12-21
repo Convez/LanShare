@@ -111,7 +111,7 @@ namespace LANshare.Connection
                 FileStream f = new FileStream(p+from.SessionId+".jpg", FileMode.OpenOrCreate, FileAccess.Write);
                 new FileDownloadHelper().ReceiveFile(f, client);
                 f.Close();
-                from.ProfileImage = new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
+                from.ProfilePicture = new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
             }
         }
 
@@ -150,9 +150,11 @@ namespace LANshare.Connection
                         }
                     }
                     break;
-                case MessageType.FileUploadRequest:
+                case MessageType.FileUploadRequest: //someone wants to send the user a file
                     //TODO Ask user for permission
+
                     //TODO Ask for path to save files
+
                     string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                     message = new ConnectionMessage(MessageType.FileUploadResponse, true, null);
                     SendMessage(client, message);
