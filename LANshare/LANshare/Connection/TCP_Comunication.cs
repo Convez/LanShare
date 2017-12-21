@@ -30,10 +30,6 @@ namespace LANshare.Connection
         public event EventHandler<IFileTransferHelper> UploadAccepted;
         
         
-        public TCP_Comunication()
-        {
-            shuttingDown = new CancellationTokenSource();
-        }
 
         private List<TcpListener> GenerateServers(int tcpPort)
         {
@@ -50,6 +46,7 @@ namespace LANshare.Connection
                 IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
                 if (p == null)
                     continue; // IPv4 is not configured on this adapter
+               
                 ipProperties.UnicastAddresses.ToList().ForEach(
                     (addr) =>
                     {
@@ -68,6 +65,9 @@ namespace LANshare.Connection
 
         public void StartTcpServers()
         {
+            shuttingDown = new CancellationTokenSource();
+            if (Configuration.UserAdvertisementMode == EUserAdvertisementMode.Private)
+                return;
             listeners = GenerateServers(Configuration.TcpPort);
             serverTask = Task.Run(() => listeners.AsParallel().ForAll((server) =>
             {
@@ -90,11 +90,12 @@ namespace LANshare.Connection
                 }
             }));
         }
-
+        
         public void StopAll()
         {
-            shuttingDown.Cancel();
-            serverTask.Wait();
+            shuttingDown?.Cancel();
+            listeners?.ForEach((l)=>l.Stop());
+            serverTask?.Wait();
         }
 
         public void RequestImage(User from)

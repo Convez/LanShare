@@ -86,6 +86,9 @@ namespace LANshare.Model
         public static void RestoreDefaultConfiguration()
         {
             Properties.Settings.Default.Reset();
+            Properties.Settings.Default.Save();
+            Properties.Settings.Default.Reload();
+            LoadConfiguration();
         }
     }
 }

@@ -104,6 +104,8 @@ namespace LANshare.Connection
         /// <param name="ct">Usato per fermare l'invio dei pacchetti quando l'applicazione si chiude</param>
         public void StartLanAdvertise()
         {
+            if (Configuration.UserAdvertisementMode == EUserAdvertisementMode.Private)
+                return;
             var endpoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
             List<UdpClient> advertisers = GenerateUdpClients(0);
             this.advertisers = advertisers;
@@ -225,9 +227,9 @@ namespace LANshare.Connection
             });
             
         }
-        public void StopAll()
+
+        public void GoPrivate()
         {
-            cts?.Cancel();
             advertisers?.ForEach(x =>
             {
                 ConnectionMessage userMessage = new ConnectionMessage(MessageType.UserDisconnectingNotification, false,
@@ -237,8 +239,13 @@ namespace LANshare.Connection
                 x.Send(data, data.Length, endpoint);
                 x.Close();
             });
-            listeners?.ForEach(x => x.Close());
             advertiserTask?.Wait();
+        }
+        public void StopAll()
+        {
+            cts?.Cancel();
+            GoPrivate();
+            listeners?.ForEach(x => x.Close());
             listenerTask?.Wait();
         }
 
