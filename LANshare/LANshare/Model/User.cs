@@ -10,33 +10,81 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Media;
+using System.Drawing;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
-using LANshare.Connection;
+using System.ComponentModel;
 
 namespace LANshare.Model
 {
     [Serializable]
     public class User : INotifyPropertyChanged
     {
+        private string _name;
+        private string _nickname;
+        [NonSerialized] private ImageSource _profilepicture;
+        private EUserAdvertisementMode _privacymode;
+        [field: NonSerializedAttribute()] public event PropertyChangedEventHandler PropertyChanged;
+
+
         public string Name
         {
             get => _name;
-            set => _name = Environment.ExpandEnvironmentVariables(value);
-        }
-
-        [NonSerialized]
-        private ImageSource _profile;
-        public ImageSource ProfileImage
-        {
-            get => _profile;
             set
             {
-                _profile = value;
-                _profile.Freeze();
-                OnPropertyChanged(this,"ProfileImage");
+                _name = Environment.ExpandEnvironmentVariables(value);
+                OnPropertyChanged("Name");
             }
         }
+        public string IpAddress
+        {
+            get => userAddress.ToString();
+            
+        }
+        
+        public string NickName
+        {
+            get
+            {
+                if (_nickname == null) return " ";
+                else return _nickname;
+            }
+            set
+            {
+                _nickname = value;
+                if(this==Model.Configuration.CurrentUser)
+                {
+                    LANshare.Properties.Settings.Default.UserNickName = _nickname;
+                    Properties.Settings.Default.Save();
+                }
+                OnPropertyChanged("NickName");
+            }
+        }
+
+        public String PrivacyMode
+        {
+            get
+            {
+                return _privacymode.ToString(); 
+            }
+        }
+        [NonSerialized]
+        public ImageSource ProfilePicture
+        {
+            get
+            {
+                
+                return _profilepicture;
+            }
+            set
+            {
+                _profilepicture = value;
+                _profile.Freeze();
+                OnPropertyChanged("ProfilePicture");
+            }
+       }
+
+        
+       
 
         private string _name;
         public string NickName { get; set; }
@@ -59,11 +107,66 @@ namespace LANshare.Model
 
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
-        public User(string name, int tcpPortTo , string nickName=null)
+        public User(string name, int tcpPortTo , EUserAdvertisementMode privacymode, Uri profilePicUri=null, string nickName=null)
         {
             Name = name;
             TcpPortTo = tcpPortTo;
             NickName = nickName;
+            _privacymode = privacymode;
+            if(profilePicUri==null)
+            {
+                if(this==Model.Configuration.CurrentUser)
+                {
+                    try
+                    {
+                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/"+ Properties.Settings.Default.CustomPic , UriKind.Relative));
+
+                    }
+                    catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
+                    {
+                        try
+                        {
+                            _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic , UriKind.Relative));
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            _profilepicture = null;
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        _profilepicture = null;
+                    }
+                }
+            }else
+            {
+                try
+                {
+                    _profilepicture = new BitmapImage(profilePicUri);
+                }
+                catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
+                {
+                    try
+                    {
+                        _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        _profilepicture = null;
+                    }
+                }
+            }
+
         }
 
         public void SetupImage()
@@ -96,6 +199,23 @@ namespace LANshare.Model
             HashAlgorithm hashAlg = SHA512.Create();
             byte[] hashed = hashAlg.ComputeHash(Encoding.UTF8.GetBytes(randNum));
             return BitConverter.ToString(hashed).Replace("-","");
+        }
+        public void SetPrivacyMode()
+        {
+            if (this == Model.Configuration.CurrentUser)
+            {
+                if (Properties.Settings.Default.UserAdvertisementMode == EUserAdvertisementMode.Private) _privacymode = EUserAdvertisementMode.Public;       //allows to set privacy only for local user
+                else _privacymode = EUserAdvertisementMode.Private;
+                Properties.Settings.Default.UserAdvertisementMode = _privacymode;
+                Properties.Settings.Default.Save();
+                OnPropertyChanged("PrivacyMode");
+            }
+        }
+
+        private void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+
         }
     }
 }

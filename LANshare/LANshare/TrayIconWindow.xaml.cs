@@ -5,6 +5,13 @@ using System.Threading;
 using System.Windows;
 using LANshare.Connection;
 using LANshare.Model;
+using LANshare.Properties;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Collections;
+using System.Windows.Interop;
+using System.Drawing;
+
 
 namespace LANshare
 {
@@ -14,16 +21,11 @@ namespace LANshare
     public partial class TrayIconWindow : Window
     {
         private System.Windows.Forms.NotifyIcon _trayIcon;
-        private System.Windows.Forms.ContextMenu icon_menu;
-        private bool is_private_mode = false; //should add the option to set true as default at startup
-        private String privateMode = "off"; //there should be some function to link is_privacy_mode to priv and also to set  certain value as default at startup
-        private System.Windows.Forms.MenuItem show_window;
-        private System.Windows.Forms.MenuItem sending;
-        private System.Windows.Forms.MenuItem notSending;
-        private System.Windows.Forms.MenuItem privacy;
-        private System.Windows.Forms.MenuItem settings;
-        private System.Windows.Forms.MenuItem exit;
-        private int transfers = 0; //number of active transations
+        private int _transfers = 0; //number of active transations
+        private ContextMenu _menu;
+        private int _privacyMenuItemPosition = 1; //this must be update if position in the privacy menu item is changed in xaml
+        private LinkedList<Notification> _notificationsQueue;
+        private Icon _icon;
 
         private List<IFileTransferHelper> ongoingTransfers = new List<IFileTransferHelper>();
 
@@ -31,21 +33,34 @@ namespace LANshare
 
         private TCP_Comunication _tcpComunication;
 
-
         private CancellationTokenSource _cts;
 
         public TrayIconWindow()
         {
             SetupNetwork();
-            SetupTrayIcon();
             InitializeComponent();
+            _menu = (ContextMenu)this.FindResource("NotifierContextMenu");
+            Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
+            _menu.DataContext = new
+            {
+                Configuration.CurrentUser.PrivacyMode,
+                _transfers,
+
+            };
         }
 
         public TrayIconWindow(StartupEventArgs e)
         {
             SetupNetwork();
-            SetupTrayIcon();
             InitializeComponent();
+            _menu = (ContextMenu)this.FindResource("NotifierContextMenu");
+            Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
+            _menu.DataContext = new
+            {
+                Configuration.CurrentUser.PrivacyMode,
+                _transfers,
+
+            };
             StartSendingProcedure(this, e.Args.ToList());
         }
 
@@ -58,99 +73,25 @@ namespace LANshare
             _tcpComunication.StartTcpServers();
             _tcpComunication.FileSendRequested += StartSendingProcedure;
         }
-        private void SetupTrayIcon()
-        {
-            show_window = new System.Windows.Forms.MenuItem("Open LANgur Share", new EventHandler(delegate (Object sender, System.EventArgs args)
-            {
-                try
-                {
-                    ShowUsersWindow userWindow = OnButtonClick<ShowUsersWindow>();
-                    _comunication.UserFound += userWindow.AddUser;
-                    _comunication.UsersExpired += userWindow.RemoveUsers;
-                    userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-                    userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
-                }
-                catch(ArgumentNullException e)
-                {
-                    Console.WriteLine("null window." + e.Message);
-                    //manage someway.. shutdown app?
-                }
-             }));
-
-            privacy = new System.Windows.Forms.MenuItem("Private Mode: " + privateMode, new EventHandler(delegate (Object sender, System.EventArgs a)
-            {
-                System.Windows.Forms.MenuItem m = sender as System.Windows.Forms.MenuItem;
-                if (privateMode == "off")
-                {
-                    privateMode = "on";
-                    is_private_mode = true;
-                }
-                else
-                {
-                    privateMode = "off";
-                    is_private_mode = false;
-                }
-                m.Text = "Private Mode: " + privateMode;
-
-            }));
-
-            exit = new System.Windows.Forms.MenuItem("Exit", ExitApplication);
-
-            sending = new System.Windows.Forms.MenuItem("View file transfer progress", new EventHandler(delegate (Object sender, System.EventArgs args)
-            {
-                TransfersWindow tw = OnButtonClick<TransfersWindow>();
-                tw.Closing += (o, a) => RestoreSendingItem();
-                //must subscribe to some _communication events and unsubscribe on closing
-
-            }));
-
-            notSending = new System.Windows.Forms.MenuItem("No active file transfers");
-
-            settings = new System.Windows.Forms.MenuItem("Settings", new EventHandler(delegate (Object sender, System.EventArgs args)
-            {
-                OnButtonClick<SettingsWindow>();
-                
-            }));
-            InitializeComponent();
-
-        }
-        
 
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
 
+            _icon = new Icon(System.IO.Path.Combine(
+                        AppDomain.CurrentDomain.BaseDirectory, //Directory where executable is (NEVER NULL)
+                        "Media/Images/ApplicationImages/switch.ico"));
             //Crea TrayIcon
             _trayIcon = new System.Windows.Forms.NotifyIcon
             {
-                Icon = new System.Drawing.Icon(
-                    System.IO.Path.Combine(
-                        AppDomain.CurrentDomain.BaseDirectory, //Directory where executable is (NEVER NULL)
-                        "Media/switch.ico")
-                )
+                Icon = _icon
             };
-            icon_menu = new System.Windows.Forms.ContextMenu();
 
-            icon_menu.MenuItems.Add(0, show_window);
-
-            icon_menu.MenuItems.Add(1, privacy);
-
-            icon_menu.MenuItems.Add(2, notSending);
-
-            icon_menu.MenuItems.Add(3, settings);
-
-            icon_menu.MenuItems.Add(4, exit);
-
-
-            NotifyTransferOpened(); //debug only
-
-            _trayIcon.ContextMenu = icon_menu;
-
-            
+            _trayIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(notifier_MouseDown);
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
-
-
+            _notificationsQueue = new LinkedList<Notification>();
+            UnseenNotificationsIconOverlay();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -160,7 +101,7 @@ namespace LANshare
             _comunication.StopAll();
             Application.Current.Shutdown();
         }
-        private void ExitApplication(object sender, EventArgs args)
+        private void ExitApplication(object sender, RoutedEventArgs args)
         {
             _trayIcon.Visible = false;
             this.Close();
@@ -190,65 +131,15 @@ namespace LANshare
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     FileUploadHelper uploader = new FileUploadHelper();
-                    uploader.InitFileSend(u, what, cts.Token);
                     ongoingTransfers.Add(uploader);
+                    uploader.InitFileSend(u, what, cts.Token);
                 });
             }
         }
 
 
         //called after transactions window is closed to reinsert relative menuitem in context menu
-        private void RestoreSendingItem()
-        {
-
-            int i = icon_menu.MenuItems.Count;
-            if (transfers == 1)
-            {
-                bool ignoreAction = false;
-                try { icon_menu.MenuItems.Remove(notSending); }
-
-                catch (Exception e)
-                {
-                    Console.WriteLine("error in removing element.\n" + e.Message);
-                    int w = Application.Current.Windows.OfType<TransfersWindow>().Count();  //check if there is an istance of the window open
-                    if (icon_menu.MenuItems.Contains(sending) || w == 1) ignoreAction = true; //in caso non si apresente l'elemento notSending è altamente probabile sia invece presente l'elemento sending che verrà rimosso per non crearne molteplici 
-                }
-
-                finally
-                {
-                    if (!ignoreAction)
-                    {
-                        if (icon_menu.MenuItems.Contains(settings)) icon_menu.MenuItems.Add(i - 2, sending);
-                        else icon_menu.MenuItems.Add(i - 1, sending);
-                    }
-                }
-
-            }
-            else if (transfers == 0)
-            {
-                bool ignoreAction = false;
-                try { icon_menu.MenuItems.Remove(sending); }
-
-                catch (Exception e)
-                {
-                    Console.WriteLine("error in removing element.\n" + e.Message);
-                    int w = Application.Current.Windows.OfType<TransfersWindow>().Count();
-                    if (icon_menu.MenuItems.Contains(sending) || w == 1) ignoreAction = true;
-                }
-
-                finally
-                {
-                    if (!ignoreAction)
-                    {
-                        if (icon_menu.MenuItems.Contains(settings)) icon_menu.MenuItems.Add(i - 2, notSending);
-                        else icon_menu.MenuItems.Add(i - 1, notSending);
-                    }
-                }
-
-            }
-
-        }
-
+ 
    
         // to be called when a new transfer (one way stream of files that are either sent to the same user or received from the same user) is set up.. 
         //so we might at most have 2 different transfer connected to another user, one of the files being sent and one of the files being received. 
@@ -256,11 +147,7 @@ namespace LANshare
 
         public void NotifyTransferOpened()
         {
-            transfers++;
-            if (transfers == 1)
-            {
-                RestoreSendingItem();
-            }
+            _transfers++;
         }
 
         //to be called when a transfer has finished (a transfer is considered finished when all the files that were being sent to (or received from) a certain user have successfully completed
@@ -268,27 +155,25 @@ namespace LANshare
         {
             try
             {
-                transfers--;
-                if (transfers < 0)
+                _transfers--;
+                if (_transfers < 0)
                 {
                     //an error has occured, recheck number of transactions
                     throw new ApplicationException("error in transfer count");
                 }
-                else if (transfers == 0)
-                {
-                    RestoreSendingItem();
-                }
-            } catch (ApplicationException e)
+                
+            }
+            catch (ApplicationException e)
             {
                 Console.WriteLine("ERROR: transfers count went negative" + e.Message);
                 //get actual transfers number here
-                if (transfers == 0) RestoreSendingItem();
+               
 
             }
 
 
         }
-        private T OnButtonClick<T>() where T: Window, new()
+        private T OpenWindow<T>() where T: Window, new()
         {
             int w = Application.Current.Windows.OfType<T>().Count();
             if (w == 1)
@@ -308,13 +193,127 @@ namespace LANshare
             }
             else if (w == 0)
             {
-                T window = new T();              
+                T window = new T();
                 window.Show();
                 return window;
             }
             return null;
         }
-       
+
+        private void ShowPeople(object sender, RoutedEventArgs e)
+        {
+            ShowUsersWindow userWindow = OpenWindow<ShowUsersWindow>();
+            _comunication.UserFound += userWindow.AddUser;
+            _comunication.UsersExpired += userWindow.RemoveUsers;
+            userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
+            userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+        }
+
+        private void SetPrivacy(object sender, RoutedEventArgs e)
+        {
+            Configuration.CurrentUser.SetPrivacyMode();
+        }
+
+        private void OpenSettings(object sender, RoutedEventArgs e)
+        {
+            OpenWindow<SettingsWindow>();
+        }
+        private void OpenTransfers(object sender, RoutedEventArgs e)
+        {
+            OpenWindow<TransfersWindow>();
+        }
+
+
+        void notifier_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                if (!_menu.IsOpen) _menu.IsOpen = true;
+                else _menu.IsOpen = false;
+            }
+            if(e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                ShowPeople(sender, null);
+                OpenTransfers(sender, null);
+            }
+        }
+
+        private void PrivacyBinding(object sender , PropertyChangedEventArgs e)
+        {
+            MenuItem m = (MenuItem) _menu.Items[_privacyMenuItemPosition];
+            String mode= Configuration.CurrentUser.PrivacyMode;
+            m.Header = mode;
+        }
+
+        public void NewNotification(Notification notification)
+        {
+            if(notification.MsgType==Notification.NotificationType.transferRequest || notification.MsgType == Notification.NotificationType.transferAbort)
+            {
+                System.Media.SystemSounds.Exclamation.Play();
+            }
+            int w = Application.Current.Windows.OfType<NotificationWindow>().Count(); //se w=1 vuol dire che c'è una finestra già aperta che aspetta di essere clickata o chiusa ed eventualmente anche altre notifiche in coda
+            if (w == 1)
+            {
+                _notificationsQueue.AddLast(notification);
+                NotificationWindow n= Application.Current.Windows.OfType<NotificationWindow>().First();
+                n.NewNotificationInQueue();
+                UnseenNotificationsIconOverlay();
+
+            }
+            else if (w == 0)
+            {
+                NotificationWindow n = new NotificationWindow(notification, _notificationsQueue.Count());
+                n.Closing += OnNotificationClosed;
+                n.Show();
+            }
+        }
+
+        public void OnNotificationClosed(object sender, CancelEventArgs a)
+        {  
+            _notificationsQueue.RemoveFirst();
+            if(_notificationsQueue.Count>0)
+            {
+                NotificationWindow n = new NotificationWindow( _notificationsQueue.First() , _notificationsQueue.Count()); //here i will have to check if the next notification is a user online notification.. if so i have to check if that user is still online and if it makes sense to display the notification at all
+                n.Closing += OnNotificationClosed;
+                n.Show();
+                UnseenNotificationsIconOverlay();
+                
+            }
+        }
+
+
+        // sets an overlay on the trayicon with the number of notifications in the notification queue
+        private void UnseenNotificationsIconOverlay()
+        {
+            int n = 0;
+            foreach (Notification nf in _notificationsQueue)
+            {
+                if (nf.MsgType != Notification.NotificationType.userOnline) n++; //user online notifications are not very important and should not be considered in the overlay
+            }
+
+            //devo controllare se n=0.. in caso positivo ripristino l'icona pulita senza overlay
+ 
+            Graphics canvas;
+            Bitmap iconBitmap = new Bitmap(32, 32);
+            canvas = Graphics.FromImage(iconBitmap);
+
+            canvas.DrawIcon(_icon, 0, 0);
+
+            StringFormat format = new StringFormat();
+            format.Alignment = StringAlignment.Center;
+            Font f = new Font("Verdana Pro Black", 18.00f);
+
+            canvas.DrawString(
+                n.ToString(),
+                f,
+                new SolidBrush(System.Drawing.Color.Red),
+                new RectangleF(9, 5, 30, 30),
+                format
+            );
+
+            _trayIcon.Icon = System.Drawing.Icon.FromHandle(iconBitmap.GetHicon());
+
+        }
 
     }
 }

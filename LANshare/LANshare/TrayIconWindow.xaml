@@ -4,7 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
+        xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
         mc:Ignorable="d"
-        Title="TrayIconWindow" Height="300" Width="300"
-        Visibility="Hidden" ShowActivated="False" ShowInTaskbar="False">
+        Title="TrayIconWindow"  Visibility="Hidden"
+        
+        >
+    <Window.Resources>
+        <ContextMenu x:Key="NotifierContextMenu" Placement="MousePoint" Background="Black" Foreground="Black">
+            <MenuItem Foreground="LightGray" Header="People Online" Click="ShowPeople"/>
+            <MenuItem x:Name="PrivacyItem" Foreground="LightGray" Header="{Binding PrivacyMode}" HeaderStringFormat="Privacy Mode: {0}" Click="SetPrivacy" diag:PresentationTraceSources.TraceLevel="High" />
+            <MenuItem Foreground="LightGray" Header="{Binding _transfers}" HeaderStringFormat="Active File Transfers: {0}" Click="OpenTransfers" />
+            <MenuItem Foreground="LightGray" Header="Settings" Click="OpenSettings"  />
+            <MenuItem Foreground="LightGray" Header="Exit" Click="ExitApplication"/>
+
+        </ContextMenu>
+    </Window.Resources>
+
 </Window>
