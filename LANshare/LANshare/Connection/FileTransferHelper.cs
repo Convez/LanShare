@@ -18,18 +18,26 @@ namespace LANshare.Connection
     public interface IFileTransferHelper
     {
         event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
-        
+        void Cancel();
     }
 
     public class FileDownloadHelper : IFileTransferHelper
     {
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
-
-        public void HandleFileDownload(TcpClient from,string destinationPath, long totalSize)
-        {
-            ReceiveFiles(from, destinationPath, totalSize, 0);
+        private TcpClient client;
+        public FileDownloadHelper() { }
+        public FileDownloadHelper(TcpClient c) {
+            client = c;
         }
 
+        public void HandleFileDownload(string destinationPath, long totalSize) => HandleFileDownload(client, destinationPath, totalSize);
+        public void HandleFileDownload(TcpClient from,string destinationPath, long totalSize)
+        {
+            if (client == null) client = from;
+            
+            ReceiveFiles(from, destinationPath, totalSize, 0);
+           
+        }
         private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(client);
@@ -40,14 +48,28 @@ namespace LANshare.Connection
                     case MessageType.NewFile:
                         string path = Path.Combine(basePath, message.Message as string);
                         FileStream f = File.Create(path);
-                        ReceiveFile(f, client,totSize,currSize,Environment.TickCount);
+                        ReceiveFile(f, client, totSize, currSize, Environment.TickCount);
                         currSize += new FileInfo(path).Length;
                         f.Close();
                         break;
                     case MessageType.NewDirectory:
                         string p = Path.Combine(basePath, message.Message as string);
                         Directory.CreateDirectory(p);
-                        ReceiveFiles(client, p, totSize, currSize);
+                        try
+                        {
+                            ReceiveFiles(client, p, totSize, currSize);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (ex is ObjectDisposedException || ex is SocketException)
+                            {
+                                Directory.EnumerateFiles(p,"*",SearchOption.AllDirectories).ToList().ForEach(File.Delete);
+                                Directory.EnumerateDirectories(p, "*", SearchOption.AllDirectories).ToList()
+                                    .ForEach(Directory.Delete);
+                                Directory.Delete(p);
+                            }
+                            throw;
+                        }
                         break;
                 }
                 message = TCP_Comunication.ReadMessage(client);
@@ -77,14 +99,24 @@ namespace LANshare.Connection
         {
             ProgressChanged?.Invoke(this, e);
         }
+
+        public void Cancel()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class FileUploadHelper : IFileTransferHelper
     {
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
 
+        private CancellationTokenSource cts;
+        private CancellationToken ctok;
+
         public bool InitFileSend(User to, List<string> files, CancellationToken ct, string subject = null)
         {
+            cts = new CancellationTokenSource();
+            ctok = cts.Token;
             TcpClient client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, subject);
             TCP_Comunication.SendMessage(client, message);
@@ -111,12 +143,22 @@ namespace LANshare.Connection
 
                 message = new ConnectionMessage(MessageType.TotalUploadSize, true, totalSize);
                 TCP_Comunication.SendMessage(client, message);
-
-                SendFiles(client, folder, files, ct, totalSize,0);
+                try
+                {
+                    SendFiles(client, folder, files, ctok, totalSize, 0);
+                }
+                catch (OperationCanceledException ex)
+                {
+                    client.Close();
+                    return false;
+                }
+                client.Close();
                 return true;
             }
+            client.Close();
             return false;
         }
+
         private void SendFiles(TcpClient client, string baseFolder, List<string> files, CancellationToken ct, long totalSize=1, long currSize=1)
         {
             foreach (string file in files)
@@ -149,6 +191,12 @@ namespace LANshare.Connection
             int bytesRed = from.Read(block, 0, block.Length);
             do
             {
+                if (ctok.IsCancellationRequested)
+                {
+                    ConnectionMessage me = new ConnectionMessage(MessageType.OperationCanceled, false, null);
+                    TCP_Comunication.SendMessage(to, me);
+                    throw new OperationCanceledException();
+                }
                 ConnectionMessage message = new ConnectionMessage(MessageType.FileChunk, true, block);
                 TCP_Comunication.SendMessage(to, message);
                 long newCurr = curSize + bytesRed;
@@ -167,6 +215,11 @@ namespace LANshare.Connection
         protected virtual void OnProgressChanged(FileTransferProgressChangedArgs e)
         {
             ProgressChanged?.Invoke(this, e);
+        }
+
+        public void Cancel()
+        {
+            throw new NotImplementedException();
         }
     }
 

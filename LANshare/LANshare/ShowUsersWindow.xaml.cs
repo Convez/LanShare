@@ -25,14 +25,11 @@ namespace LANshare
     /// </summary>
     public partial class ShowUsersWindow : Window
     {
-        private LanComunication _comunication;
-        private Task _UDPlistener;
-        private CancellationTokenSource _cts;
 
-        private ObservableCollection<User> userList;
+        private readonly ObservableCollection<User> userList;
         private readonly object l = "";
 
-        public event EventHandler<List<User>> usersSelected;
+        public event EventHandler<List<User>> UsersSelected;
         public ShowUsersWindow()
         {
             InitializeComponent();
@@ -56,7 +53,7 @@ namespace LANshare
             }
             else
             {
-                usersSelected?.Invoke(this, selectedUsers);
+                OnUsersSelected(selectedUsers);
                 Close();
             }
         }
@@ -101,5 +98,9 @@ namespace LANshare
                 this.DragMove();
         }
 
+        protected virtual void OnUsersSelected(List<User> e)
+        {
+            UsersSelected?.Invoke(this, e);
+        }
     }
 }

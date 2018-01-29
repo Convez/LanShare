@@ -100,6 +100,7 @@ namespace LANshare
             base.OnClosed(e);
             _cts.Cancel();
             _comunication.StopAll();
+            _tcpComunication.StopAll();
             Application.Current.Shutdown();
         }
         private void ExitApplication(object sender, RoutedEventArgs args)
@@ -117,7 +118,7 @@ namespace LANshare
                 _comunication.UsersExpired += suw.RemoveUsers;
                 suw.Closing += (o, a) => _comunication.UserFound -= suw.AddUser;
                 suw.Closing += (o, a) => _comunication.UsersExpired -= suw.RemoveUsers;
-                suw.usersSelected += (send, arg) =>
+                suw.UsersSelected += (send, arg) =>
                 {
                     StartUpload(args, arg);
                 };

@@ -118,35 +118,38 @@ namespace LANshare.Connection
             {
                 CancellationToken ct = cts.Token;
                 int newSessionIdNotified=0;
-                while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
-                {
-                    Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
-                    if (newSessionIdAvailable == 1)
-                    {
-                        if (newSessionIdNotified == 0)
-                        {
-                            userMessage.Message = Configuration.CurrentUser;
-                            data = ConnectionMessage.Serialize(userMessage);
-                            newSessionIdNotified = 1;
-                            Interlocked.Increment(ref numNotified);
-                            if (numNotified == advertisers.Count)
-                            {
-                                newSessionIdAvailable = 0;
-                            }
-                        }
-                    }
-                    if (newSessionIdAvailable == 0 && newSessionIdNotified == 1)
-                    {
-                        newSessionIdNotified = 0;
-                    }
-                }
                 try
                 {
-                    advertiser.DropMulticastGroup(Configuration.MulticastAddress);
+                    while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
+                    {
+                        Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
+                        if (newSessionIdAvailable == 1)
+                        {
+                            if (newSessionIdNotified == 0)
+                            {
+                                userMessage.Message = Configuration.CurrentUser;
+                                data = ConnectionMessage.Serialize(userMessage);
+                                newSessionIdNotified = 1;
+                                Interlocked.Increment(ref numNotified);
+                                if (numNotified == advertisers.Count)
+                                {
+                                    newSessionIdAvailable = 0;
+                                }
+                            }
+                        }
+                        if (newSessionIdAvailable == 0 && newSessionIdNotified == 1)
+                        {
+                            newSessionIdNotified = 0;
+                        }
+                    }
                 }
                 catch (ObjectDisposedException ex)
                 {
                     //Object disposed as expected
+                }
+                catch (SocketException ex)
+                {
+                    //Disposed as intended
                 }
             }));
         }
@@ -213,14 +216,6 @@ namespace LANshare.Connection
                         {
                             //As intended
                         }
-                    }
-                    try
-                    {
-                        listener.DropMulticastGroup(Configuration.MulticastAddress);
-                    }
-                    catch (ObjectDisposedException ex)
-                    {
-                        //Disposed as intended
                     }
 
                 });
