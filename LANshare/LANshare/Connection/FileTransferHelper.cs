@@ -18,12 +18,14 @@ namespace LANshare.Connection
     public interface IFileTransferHelper
     {
         event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
+        event EventHandler<TcpClient> cancelRequested;
         void Cancel();
     }
 
     public class FileDownloadHelper : IFileTransferHelper
     {
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
+        public event EventHandler<TcpClient> cancelRequested;
         private TcpClient client;
         public FileDownloadHelper() { }
         public FileDownloadHelper(TcpClient c) {
@@ -61,7 +63,7 @@ namespace LANshare.Connection
                         }
                         catch (Exception ex)
                         {
-                            if (ex is ObjectDisposedException || ex is SocketException)
+                            if (ex is ObjectDisposedException || ex is SocketException || ex is OperationCanceledException)
                             {
                                 Directory.EnumerateFiles(p,"*",SearchOption.AllDirectories).ToList().ForEach(File.Delete);
                                 Directory.EnumerateDirectories(p, "*", SearchOption.AllDirectories).ToList()
@@ -71,6 +73,8 @@ namespace LANshare.Connection
                             throw;
                         }
                         break;
+                    case MessageType.OperationCanceled:
+                        throw new OperationCanceledException();
                 }
                 message = TCP_Comunication.ReadMessage(client);
             }
@@ -82,6 +86,8 @@ namespace LANshare.Connection
             byte[] data;
             while (message.Next)
             {
+                if (message.MessageType == MessageType.OperationCanceled)
+                    throw new OperationCanceledException();
                 data = message.Message as byte[];
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
@@ -102,14 +108,21 @@ namespace LANshare.Connection
 
         public void Cancel()
         {
-            throw new NotImplementedException();
+            try
+            {
+                ConnectionMessage message = new ConnectionMessage(MessageType.OperationCanceled, false, null);
+                TCP_Comunication.SendMessage(client, message);
+                client.Close();
+            }
+            catch (Exception e) { }
         }
     }
 
     public class FileUploadHelper : IFileTransferHelper
     {
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
-
+        public event EventHandler<TcpClient> cancelRequested;
+        private TcpClient client;
         private CancellationTokenSource cts;
         private CancellationToken ctok;
 
@@ -117,7 +130,15 @@ namespace LANshare.Connection
         {
             cts = new CancellationTokenSource();
             ctok = cts.Token;
-            TcpClient client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
+            client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
+            Task.Run(() =>
+            {
+                var msg = TCP_Comunication.ReadMessage(client);
+                if (msg.MessageType == MessageType.OperationCanceled)
+                {
+                    cancelRequested?.Invoke(this, client);
+                }
+            });
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, subject);
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
@@ -219,7 +240,13 @@ namespace LANshare.Connection
 
         public void Cancel()
         {
-            throw new NotImplementedException();
+            try
+            {
+                ConnectionMessage message = new ConnectionMessage(MessageType.OperationCanceled, false, null);
+                TCP_Comunication.SendMessage(client, message);
+                client.Close();
+            }
+            catch(Exception e) { }
         }
     }
 

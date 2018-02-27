@@ -60,6 +60,7 @@ namespace LANshare.Connection
                     }
                  );
             }
+        
             return servers;
         }
 
@@ -81,14 +82,19 @@ namespace LANshare.Connection
                     }
                     catch (SocketException)
                     {
-
                     }
                     catch (ObjectDisposedException)
                     {
-                        
                     }
+                    catch (InvalidOperationException) { }
                 }
             }));
+            NetworkChange.NetworkAvailabilityChanged += NetAvailabilityCallback;
+        }
+        
+        private void NetAvailabilityCallback(object sender, NetworkAvailabilityEventArgs args)
+        {
+            
         }
         
         public void StopAll()
