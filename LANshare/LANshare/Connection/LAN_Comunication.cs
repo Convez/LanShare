@@ -34,7 +34,7 @@ namespace LANshare.Connection
         }
 
         private int numNotified;
-        
+
         /// <summary>
         /// Called when a user is found. Provides the new user as argument.
         /// </summary>
@@ -52,8 +52,12 @@ namespace LANshare.Connection
             userList.ElementsExpired += (sender, args) => OnUsersExpired(args);
             newSessionIdAvailable = 0;
             numNotified = 0;
+            NetworkChange.NetworkAvailabilityChanged += NetworkStatusChangedCallback;
         }
-
+        ~LanComunication()
+        {
+            NetworkChange.NetworkAvailabilityChanged -= NetworkStatusChangedCallback;
+        }
         private List<UdpClient> GenerateUdpClients(int udpPort)
         {
             List<UdpClient> clients = new List<UdpClient>();
@@ -89,7 +93,6 @@ namespace LANshare.Connection
                     }
                 );
             }
-            NetworkChange.NetworkAvailabilityChanged += NetworkStatusChangedCallback;
             return clients;
         }
 
@@ -256,20 +259,12 @@ namespace LANshare.Connection
 
         protected void OnUserFound(User u)
         {
-            EventHandler<User> handler = UserFound;
-            if (handler != null)
-            {
-                handler(this, u);
-            }
+            UserFound?.Invoke(this, u);
         }
 
         protected void OnUsersExpired(List<User> expired)
         {
-            EventHandler<List<User>> handler = UsersExpired;
-            if (handler != null)
-            {
-                handler(this, expired);
-            }
+            UsersExpired?.Invoke(this, expired);
         }
 
     }

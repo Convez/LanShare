@@ -29,7 +29,14 @@ namespace LANshare.Connection
 
         public event EventHandler<IFileTransferHelper> UploadAccepted;
         
-        
+        public TCP_Comunication()
+        {
+            NetworkChange.NetworkAvailabilityChanged += NetAvailabilityCallback;
+        }
+        ~TCP_Comunication()
+        {
+            NetworkChange.NetworkAvailabilityChanged -= NetAvailabilityCallback;
+        }
 
         private List<TcpListener> GenerateServers(int tcpPort)
         {
@@ -89,12 +96,12 @@ namespace LANshare.Connection
                     catch (InvalidOperationException) { }
                 }
             }));
-            NetworkChange.NetworkAvailabilityChanged += NetAvailabilityCallback;
         }
         
         private void NetAvailabilityCallback(object sender, NetworkAvailabilityEventArgs args)
         {
-            
+            StopAll();
+            StartTcpServers();
         }
         
         public void StopAll()
