@@ -62,8 +62,6 @@ namespace LANshare.Connection
                 IPInterfaceProperties ipProperties = nic.GetIPProperties();
                 if (!ipProperties.MulticastAddresses.Any())
                     continue; // most of VPN adapters will be skipped
-                if (!nic.SupportsMulticast)
-                    continue; // multicast is meaningless for this type of connection
                 if (OperationalStatus.Up != nic.OperationalStatus)
                     continue; // this adapter is off or not connected
                 IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
@@ -84,17 +82,24 @@ namespace LANshare.Connection
                             cl.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                             cl.ExclusiveAddressUse = false;
                             cl.Client.SetSocketOption(SocketOptionLevel.IP,
-                                SocketOptionName.AddMembership, new MulticastOption(Configuration.MulticastAddress,x.Address));
+                                SocketOptionName.AddMembership, new MulticastOption(Configuration.MulticastAddress, x.Address));
                             cl.Client.Bind(edp);
                             clients.Add(cl);
                         }
                     }
                 );
             }
+            NetworkChange.NetworkAvailabilityChanged += NetworkStatusChangedCallback;
             return clients;
         }
-        
 
+        private void NetworkStatusChangedCallback(object sender, EventArgs args)
+        {
+            StopAll();
+            userList.Reset();
+            StartLanListen();
+            StartLanAdvertise();
+        }
 
 
         /// <summary>

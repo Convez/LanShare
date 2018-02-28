@@ -94,6 +94,10 @@ namespace LANshare.Model
         {
             return innerList.ToList().Select(a => a.Value.Item1).ToList();
         }
+        public void Reset()
+        {
+            innerList.Keys.ToList().ForEach(k => Remove(k));
+        }
 
         protected void OnElementsExpired(List<T> expired)
         {
