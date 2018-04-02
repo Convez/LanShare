@@ -34,7 +34,7 @@ namespace LANshare.Connection
         }
 
         private int numNotified;
-        
+
         /// <summary>
         /// Called when a user is found. Provides the new user as argument.
         /// </summary>
@@ -52,8 +52,12 @@ namespace LANshare.Connection
             userList.ElementsExpired += (sender, args) => OnUsersExpired(args);
             newSessionIdAvailable = 0;
             numNotified = 0;
+            NetworkChange.NetworkAvailabilityChanged += NetworkStatusChangedCallback;
         }
-
+        ~LanComunication()
+        {
+            NetworkChange.NetworkAvailabilityChanged -= NetworkStatusChangedCallback;
+        }
         private List<UdpClient> GenerateUdpClients(int udpPort)
         {
             List<UdpClient> clients = new List<UdpClient>();
@@ -62,8 +66,6 @@ namespace LANshare.Connection
                 IPInterfaceProperties ipProperties = nic.GetIPProperties();
                 if (!ipProperties.MulticastAddresses.Any())
                     continue; // most of VPN adapters will be skipped
-                if (!nic.SupportsMulticast)
-                    continue; // multicast is meaningless for this type of connection
                 if (OperationalStatus.Up != nic.OperationalStatus)
                     continue; // this adapter is off or not connected
                 IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
@@ -84,7 +86,7 @@ namespace LANshare.Connection
                             cl.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                             cl.ExclusiveAddressUse = false;
                             cl.Client.SetSocketOption(SocketOptionLevel.IP,
-                                SocketOptionName.AddMembership, new MulticastOption(Configuration.MulticastAddress,x.Address));
+                                SocketOptionName.AddMembership, new MulticastOption(Configuration.MulticastAddress, x.Address));
                             cl.Client.Bind(edp);
                             clients.Add(cl);
                         }
@@ -93,8 +95,14 @@ namespace LANshare.Connection
             }
             return clients;
         }
-        
 
+        private void NetworkStatusChangedCallback(object sender, EventArgs args)
+        {
+            StopAll();
+            userList.Reset();
+            StartLanListen();
+            StartLanAdvertise();
+        }
 
 
         /// <summary>
@@ -104,6 +112,8 @@ namespace LANshare.Connection
         /// <param name="ct">Usato per fermare l'invio dei pacchetti quando l'applicazione si chiude</param>
         public void StartLanAdvertise()
         {
+            if (Configuration.UserAdvertisementMode == EUserAdvertisementMode.Private)
+                return;
             var endpoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
             List<UdpClient> advertisers = GenerateUdpClients(0);
             this.advertisers = advertisers;
@@ -116,35 +126,38 @@ namespace LANshare.Connection
             {
                 CancellationToken ct = cts.Token;
                 int newSessionIdNotified=0;
-                while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
-                {
-                    Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
-                    if (newSessionIdAvailable == 1)
-                    {
-                        if (newSessionIdNotified == 0)
-                        {
-                            userMessage.Message = Configuration.CurrentUser;
-                            data = ConnectionMessage.Serialize(userMessage);
-                            newSessionIdNotified = 1;
-                            Interlocked.Increment(ref numNotified);
-                            if (numNotified == advertisers.Count)
-                            {
-                                newSessionIdAvailable = 0;
-                            }
-                        }
-                    }
-                    if (newSessionIdAvailable == 0 && newSessionIdNotified == 1)
-                    {
-                        newSessionIdNotified = 0;
-                    }
-                }
                 try
                 {
-                    advertiser.DropMulticastGroup(Configuration.MulticastAddress);
+                    while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
+                    {
+                        Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
+                        if (newSessionIdAvailable == 1)
+                        {
+                            if (newSessionIdNotified == 0)
+                            {
+                                userMessage.Message = Configuration.CurrentUser;
+                                data = ConnectionMessage.Serialize(userMessage);
+                                newSessionIdNotified = 1;
+                                Interlocked.Increment(ref numNotified);
+                                if (numNotified == advertisers.Count)
+                                {
+                                    newSessionIdAvailable = 0;
+                                }
+                            }
+                        }
+                        if (newSessionIdAvailable == 0 && newSessionIdNotified == 1)
+                        {
+                            newSessionIdNotified = 0;
+                        }
+                    }
                 }
                 catch (ObjectDisposedException ex)
                 {
                     //Object disposed as expected
+                }
+                catch (SocketException ex)
+                {
+                    //Disposed as intended
                 }
             }));
         }
@@ -212,22 +225,14 @@ namespace LANshare.Connection
                             //As intended
                         }
                     }
-                    try
-                    {
-                        listener.DropMulticastGroup(Configuration.MulticastAddress);
-                    }
-                    catch (ObjectDisposedException ex)
-                    {
-                        //Disposed as intended
-                    }
 
                 });
             });
             
         }
-        public void StopAll()
+
+        public void GoPrivate()
         {
-            cts?.Cancel();
             advertisers?.ForEach(x =>
             {
                 ConnectionMessage userMessage = new ConnectionMessage(MessageType.UserDisconnectingNotification, false,
@@ -237,8 +242,13 @@ namespace LANshare.Connection
                 x.Send(data, data.Length, endpoint);
                 x.Close();
             });
-            listeners?.ForEach(x => x.Close());
             advertiserTask?.Wait();
+        }
+        public void StopAll()
+        {
+            cts?.Cancel();
+            GoPrivate();
+            listeners?.ForEach(x => x.Close());
             listenerTask?.Wait();
         }
 
@@ -249,20 +259,12 @@ namespace LANshare.Connection
 
         protected void OnUserFound(User u)
         {
-            EventHandler<User> handler = UserFound;
-            if (handler != null)
-            {
-                handler(this, u);
-            }
+            UserFound?.Invoke(this, u);
         }
 
         protected void OnUsersExpired(List<User> expired)
         {
-            EventHandler<List<User>> handler = UsersExpired;
-            if (handler != null)
-            {
-                handler(this, expired);
-            }
+            UsersExpired?.Invoke(this, expired);
         }
 
     }

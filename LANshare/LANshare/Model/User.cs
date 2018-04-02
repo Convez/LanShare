@@ -12,9 +12,9 @@ using System.Threading;
 using System.Windows.Media;
 using System.Drawing;
 using System.Windows.Media.Imaging;
-using System.ComponentModel;
-using LANshare.Connection;
 using System.Windows.Threading;
+using LANshare.Connection;
+using System.ComponentModel;
 
 namespace LANshare.Model
 {
@@ -69,13 +69,10 @@ namespace LANshare.Model
                 return _privacymode.ToString(); 
             }
         }
+
         public ImageSource ProfilePicture
         {
-            get
-            {
-                
-                return _profilepicture;
-            }
+            get => _profilepicture;
             set
             {
                 _profilepicture = value;
@@ -86,7 +83,6 @@ namespace LANshare.Model
 
         
        
-
         //Session Id
         public object SessionId { get=>_sessionId; set=>Interlocked.Exchange(ref _sessionId,value); }
 
@@ -99,7 +95,7 @@ namespace LANshare.Model
             get => _userAddress;
             set => _userAddress = value;
         }
-
+        
 
 
         // Tcp port listening for file upload requests for user

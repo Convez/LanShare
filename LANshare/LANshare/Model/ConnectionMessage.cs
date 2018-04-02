@@ -23,7 +23,8 @@ namespace LANshare.Model
         EndDirectory,
         NewFile,
         FileChunk,
-        TotalUploadSize
+        TotalUploadSize,
+        OperationCanceled
     }
     
     [Serializable]
