@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Drawing;
 using LANshare.Model;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace LANshare
 {
@@ -61,9 +63,11 @@ namespace LANshare
                         Configuration.CurrentUser.NickName = i.Input;
                     }
                     break;
-                case "EditNicButton":
+                case "EditPicButton":
                     //make chose the file
+                    
                     break;
+                
             }    
         }
         private void PrivacySetter(object sender, RoutedEventArgs e)
@@ -75,6 +79,68 @@ namespace LANshare
             }
         }
 
+        private void GetPicFromFIle()
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog1;
+            openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog1.ShowDialog();
+            openFileDialog1.Filter = "Images (*.BMP;*.JPG;*.GIF,*.PNG,*.TIFF)|*.BMP;*.JPG;*.GIF;*.PNG;*.TIFF|" +"All files (*.*)|*.*";
+
+
+            openFileDialog1.Title = "Select Profile Picture";
+
+            DialogResult dr = openFileDialog1.ShowDialog();
+
+            if (dr == System.Windows.Forms.DialogResult.OK)
+
+            {
+
+                foreach (String file in openFileDialog1.FileNames)
+
+                {
+
+                    try
+
+                    {
+
+                        PictureBox imageControl = new PictureBox();
+
+                        imageControl.Height = 100;
+
+                        imageControl.Width = 100;
+
+
+
+                        Image.GetThumbnailImageAbort myCallback =
+
+                                new Image.GetThumbnailImageAbort(ThumbnailCallback);
+
+                        Bitmap myBitmap = new Bitmap(file);
+
+                        Image myThumbnail = myBitmap.GetThumbnailImage(96, 96,
+
+                            myCallback, IntPtr.Zero);
+
+                        imageControl.Image = myThumbnail;
+
+
+
+                        PhotoGallary.Controls.Add(imageControl);
+
+                    }
+
+                    catch (Exception ex)
+
+                    {
+
+                        MessageBox.Show("Error: " + ex.Message);
+
+                    }
+
+                }
+
+            }
+        }
       
     }
 }
