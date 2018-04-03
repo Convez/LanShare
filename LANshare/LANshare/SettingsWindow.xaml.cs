@@ -52,7 +52,7 @@ namespace LANshare
 
         private void Edit(object sender, RoutedEventArgs e)
         {
-            Button b = (Button)sender;
+            System.Windows.Controls.Button b = (System.Windows.Controls.Button)sender;
             switch(b.Name)
             {
                 case "EditNickButton":
@@ -65,14 +65,14 @@ namespace LANshare
                     break;
                 case "EditPicButton":
                     //make chose the file
-                    
+                    GetPicFromFIle();
                     break;
                 
             }    
         }
         private void PrivacySetter(object sender, RoutedEventArgs e)
         {
-            MenuItem m = (MenuItem)sender;
+            System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
             if (m.Header.ToString() != Configuration.CurrentUser.PrivacyMode)
             {
                 Configuration.CurrentUser.SetPrivacyMode();
@@ -95,52 +95,29 @@ namespace LANshare
 
             {
 
-                foreach (String file in openFileDialog1.FileNames)
+                String file = openFileDialog1.FileName;
+
+                try
+
+                {
+                    System.IO.File.Copy(file, "Media/Images/UserImages/" + Properties.Settings.Default.CustomPic , true);
+                    BitmapImage profile_pic = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
+                    Configuration.CurrentUser.ProfilePicture = profile_pic;
+                }
+
+                catch (Exception ex)
 
                 {
 
-                    try
-
-                    {
-
-                        PictureBox imageControl = new PictureBox();
-
-                        imageControl.Height = 100;
-
-                        imageControl.Width = 100;
-
-
-
-                        Image.GetThumbnailImageAbort myCallback =
-
-                                new Image.GetThumbnailImageAbort(ThumbnailCallback);
-
-                        Bitmap myBitmap = new Bitmap(file);
-
-                        Image myThumbnail = myBitmap.GetThumbnailImage(96, 96,
-
-                            myCallback, IntPtr.Zero);
-
-                        imageControl.Image = myThumbnail;
-
-
-
-                        PhotoGallary.Controls.Add(imageControl);
-
-                    }
-
-                    catch (Exception ex)
-
-                    {
-
-                        MessageBox.Show("Error: " + ex.Message);
-
-                    }
+                    System.Windows.MessageBox.Show("Error: " + ex.Message);
 
                 }
-
             }
         }
-      
+
+        private bool myCallback()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
