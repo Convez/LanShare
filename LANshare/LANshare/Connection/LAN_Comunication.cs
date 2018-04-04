@@ -68,9 +68,13 @@ namespace LANshare.Connection
                     continue; // most of VPN adapters will be skipped
                 if (OperationalStatus.Up != nic.OperationalStatus)
                     continue; // this adapter is off or not connected
+                try{
                 IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
-                if (p == null)
-                    continue; // IPv4 is not configured on this adapter
+                    if (p == null)
+                        continue; // IPv4 is not configured on this adapter
+                }catch(NetworkInformationException e){
+                    continue;
+                }
                 ipProperties.UnicastAddresses.ToList().ForEach(
                     (x) =>
                     {

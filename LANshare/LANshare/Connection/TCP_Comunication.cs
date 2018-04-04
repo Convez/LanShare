@@ -50,10 +50,13 @@ namespace LANshare.Connection
                     continue; // multicast is meaningless for this type of connection
                 if (OperationalStatus.Up != nic.OperationalStatus)
                     continue; // this adapter is off or not connected
-                IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
-                if (p == null)
-                    continue; // IPv4 is not configured on this adapter
-               
+                try{
+                    IPv4InterfaceProperties p = ipProperties.GetIPv4Properties();
+                    if (p == null)
+                        continue; // IPv4 is not configured on this adapter
+                }catch(NetworkInformationException e){
+                    continue;
+                }
                 ipProperties.UnicastAddresses.ToList().ForEach(
                     (addr) =>
                     {
