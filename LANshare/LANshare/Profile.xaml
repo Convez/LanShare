@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="LANshare.Profile"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LANshare"
+             mc:Ignorable="d" 
+             Style="{StaticResource StandardUsStyle}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+
+    <Grid Style="{StaticResource viewStyle}" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.4*"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="0.3*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="0.2*"/>
+            <RowDefinition Height="0.1*"/>
+        </Grid.RowDefinitions>
+
+
+        <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Right" Height="20" Margin="0,128,0,118" Width="106">Profile Picture :</TextBlock>
+        <Ellipse  Name="profileImg" Grid.Column="1" Grid.Row="0" Height="228" VerticalAlignment="Center" Margin="105,10,149,28">
+            <Ellipse.Fill>
+                <ImageBrush  Stretch="UniformToFill" ImageSource="{Binding ProfilePicture}"/>
+            </Ellipse.Fill>
+        </Ellipse>
+        <Button Content="Edit" Grid.Column="2" Grid.Row="0" Name="EditPicButton" Click="Edit" FontSize="16" FontStyle="Italic" Margin="30,42,30,41"   />
+
+        <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="1"  HorizontalAlignment="Right" Height="20" Margin="0,32,0,14" Width="40">Name :</TextBlock>
+        <TextBlock Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="1" Text="{Binding Name}" Height="24" Margin="243,22,243,20" Width="0" />
+
+
+        <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right" Height="22" Margin="0,28,0,13" Width="78">Nickname :</TextBlock>
+        <TextBlock Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="2" Text="{Binding NickName}" Height="24" Margin="243,28,243,11" Width="0" />
+        <Button Content="Edit" Grid.Column="2" Grid.Row="2" Name="EditNickButton" Click="Edit" FontSize="16" FontStyle="Italic" Margin="30,35,30,6"  />
+        <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" Height="22" Margin="0,31,0,22" Width="103">Privacy Mode :</TextBlock>
+        <TextBlock Name="CurrentPrivacyMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding PrivacyMode}" Height="24" Margin="243,29,243,22" Width="0" />
+        <Button Content="Edit" Grid.Column="2" Grid.Row="3" Name="EditPrivButton" Click="Edit" FontSize="16" FontStyle="Italic" Margin="30,36,30,12" >
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="TextElement.Foreground" Value="Coral"/>
+                        </Trigger>
+                        <EventTrigger RoutedEvent="Click">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="ContextMenu.IsOpen">
+                                            <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True"/>
+                                        </BooleanAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Style.Triggers>
+
+                    <Setter Property="Background" Value="#00DDDDDD" />
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="BorderBrush" Value="{x:Null}" />
+                    <Setter Property="FontFamily" Value="Gadugi" />
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Foreground="LightGray" Header="Public" Click="PrivacySetter" FontStyle="Normal" />
+                    <MenuItem Foreground="LightGray" Header="Private" Click="PrivacySetter" FontStyle="Normal" />
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
+
+    </Grid>
+
+</UserControl>

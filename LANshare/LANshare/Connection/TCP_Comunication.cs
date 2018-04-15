@@ -125,7 +125,7 @@ namespace LANshare.Connection
                 FileStream f = new FileStream(p+from.SessionId+".jpg", FileMode.OpenOrCreate, FileAccess.Write);
                 new FileDownloadHelper().ReceiveFile(f, client);
                 f.Close();
-                from.ProfilePicture = new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
+                from.ProfilePicture= new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
             }
         }
 
