@@ -49,6 +49,12 @@ namespace LANshare.Connection
                 {
                     case MessageType.NewFile:
                         string path = Path.Combine(basePath, message.Message as string);
+                        if (File.Exists(path)) {
+                            int fileCount = -1;
+                            do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
+                            path = path + "(" + fileCount.ToString() + ")";
+                        }
+
                         FileStream f = File.Create(path);
                         ReceiveFile(f, client, totSize, currSize, Environment.TickCount);
                         currSize += new FileInfo(path).Length;
