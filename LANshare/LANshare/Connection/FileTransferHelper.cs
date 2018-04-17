@@ -49,7 +49,7 @@ namespace LANshare.Connection
                 {
                     filesDownloaded.ForEach(File.Delete);
                     foldersDownloaded.Reverse();
-                    foldersDownloaded.Where(x => Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
+                    foldersDownloaded.Where(x => !Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
                 }
             }
         }
