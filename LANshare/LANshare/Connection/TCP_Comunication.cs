@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 
 namespace LANshare.Connection
@@ -55,7 +55,7 @@ namespace LANshare.Connection
                     if (p == null)
                         continue; // IPv4 is not configured on this adapter
                 }catch(NetworkInformationException e){
-                    continue;
+                    continue;// This adapter does not support IPv4
                 }
                 ipProperties.UnicastAddresses.ToList().ForEach(
                     (addr) =>
@@ -168,17 +168,54 @@ namespace LANshare.Connection
                     }
                     break;
                 case MessageType.FileUploadRequest:
+                    User from = message.Message as User;
+                    string username = from.NickName != null ? from.NickName : from.Name;
                     //TODO Ask user for permission
-                    //TODO Ask for path to save files
-                    string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                    if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
+                    {
+
+                        DialogResult result = MessageBox.Show("Incoming transfer from " + username + ".\nDo you want to accept it?"
+                            , "Incoming transfer requested", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.No)
+                        {
+                            message = new ConnectionMessage(MessageType.FileUploadResponse, false, null);
+                            SendMessage(client, message);
+                            break;
+                        }
+                    }
+
                     message = new ConnectionMessage(MessageType.FileUploadResponse, true, null);
                     SendMessage(client, message);
                     message = ReadMessage(client);
                     if (message.MessageType != MessageType.TotalUploadSize)
                         break;
+
+                    //TODO Ask for path to save files
+                    string savePath = null;
+                    if (Configuration.FileSavePathMode.Equals(EFileSavePathMode.AskForPath))
+                    {
+                        FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+                        folderBrowserDialog.Description = "Save transmission from " + username;
+                        folderBrowserDialog.RootFolder = Environment.SpecialFolder.Personal;
+                        DialogResult dialogResult = folderBrowserDialog.ShowDialog();
+                        if(dialogResult != DialogResult.OK)
+                        {
+                            break;
+                        }
+                        savePath = folderBrowserDialog.SelectedPath;
+                    }else if (Configuration.FileSavePathMode.Equals(EFileSavePathMode.UseCustom))
+                    {
+                        savePath = Configuration.CustomSavePath;
+                    }
+                    else
+                    {
+                        savePath = Configuration.DefaultSavePath;
+                    }
+                    
+                    
                     FileDownloadHelper helper = new FileDownloadHelper();
                     OnUploadAccepted(helper);
-                    helper.HandleFileDownload(client, path, (long)message.Message);
+                    helper.HandleFileDownload(client, savePath, (long)message.Message);
                     break;
             }
             client.Close();

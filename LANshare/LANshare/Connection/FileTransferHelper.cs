@@ -139,7 +139,7 @@ namespace LANshare.Connection
                     cancelRequested?.Invoke(this, client);
                 }
             });
-            ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, subject);
+            ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
             if (message.MessageType == MessageType.FileUploadResponse)
