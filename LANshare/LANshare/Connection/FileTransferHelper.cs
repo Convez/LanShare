@@ -27,6 +27,8 @@ namespace LANshare.Connection
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
         public event EventHandler<TcpClient> cancelRequested;
         private TcpClient client;
+        private List<string> filesDownloaded = new List<string>();
+        private List<string> foldersDownloaded = new List<string>();
         public FileDownloadHelper() { }
         public FileDownloadHelper(TcpClient c) {
             client = c;
@@ -36,9 +38,20 @@ namespace LANshare.Connection
         public void HandleFileDownload(TcpClient from,string destinationPath, long totalSize)
         {
             if (client == null) client = from;
-            
-            ReceiveFiles(from, destinationPath, totalSize, 0);
-           
+            try
+            {
+                ReceiveFiles(from, destinationPath, totalSize, 0);
+            }
+            catch (Exception ex)
+            {
+                //If the download goes bad -> delete
+                if (ex is ObjectDisposedException || ex is SocketException || ex is OperationCanceledException)
+                {
+                    filesDownloaded.ForEach(File.Delete);
+                    foldersDownloaded.Reverse();
+                    foldersDownloaded.Where(x => Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
+                }
+            }
         }
         private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize)
         {
@@ -56,6 +69,7 @@ namespace LANshare.Connection
                         }
 
                         FileStream f = File.Create(path);
+                        filesDownloaded.Add(path);
                         ReceiveFile(f, client, totSize, currSize, Environment.TickCount);
                         currSize += new FileInfo(path).Length;
                         f.Close();
@@ -63,21 +77,8 @@ namespace LANshare.Connection
                     case MessageType.NewDirectory:
                         string p = Path.Combine(basePath, message.Message as string);
                         Directory.CreateDirectory(p);
-                        try
-                        {
-                            ReceiveFiles(client, p, totSize, currSize);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (ex is ObjectDisposedException || ex is SocketException || ex is OperationCanceledException)
-                            {
-                                Directory.EnumerateFiles(p,"*",SearchOption.AllDirectories).ToList().ForEach(File.Delete);
-                                Directory.EnumerateDirectories(p, "*", SearchOption.AllDirectories).ToList()
-                                    .ForEach(Directory.Delete);
-                                Directory.Delete(p);
-                            }
-                            throw;
-                        }
+                        foldersDownloaded.Add(p);
+                        ReceiveFiles(client, p, totSize, currSize);
                         break;
                     case MessageType.OperationCanceled:
                         throw new OperationCanceledException();
