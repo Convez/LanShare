@@ -14,7 +14,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using LANshare.Views.HelperClasses;
 namespace LANshare.Views.Profile
 {
     /// <summary>
@@ -24,7 +23,7 @@ namespace LANshare.Views.Profile
     {
         public Profile()
         {
-            InitializeComponent();
+            //InitializeComponent();
             this.DataContext = Model.Configuration.CurrentUser;
         }
 

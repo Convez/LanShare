@@ -29,23 +29,7 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="1">
             <!-- Navigation Buttons -->
-            <Border DockPanel.Dock="Left" BorderBrush="Black"
-                                    BorderThickness="0,0,1,0">
-                <ItemsControl >
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Button Content="Button"
-                          Command="{Binding DataContext.ChangePageCommand,
-                             RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-                          CommandParameter="{Binding }"
-                          Margin="2,5"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Border>
-
-            <!-- Content Area -->
-            <ContentControl Content="{Binding CurrentPageViewModel}" />
+            <Button></Button>
         </DockPanel>
 
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">

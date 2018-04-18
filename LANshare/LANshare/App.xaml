@@ -66,8 +66,8 @@
                                             />
                 </Setter.Value>
             </Setter>
-            <Setter Property="Height" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={model:RatioConverter}, ConverterParameter='0.6' }" />
-            <Setter Property="Width" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={model:RatioConverter}, ConverterParameter='0.45' }" />
+            <!--<Setter Property="Height" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={model:RatioConverter}, ConverterParameter='0.6' }" />
+            <Setter Property="Width" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={model:RatioConverter}, ConverterParameter='0.45' }" />-->
 
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
@@ -83,9 +83,6 @@
                                             />
                 </Setter.Value>
             </Setter>
-            <Setter Property="Height" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={model:RatioConverter}, ConverterParameter='0.6' }" />
-            <Setter Property="Width" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={model:RatioConverter}, ConverterParameter='0.45' }" />
-
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
 
