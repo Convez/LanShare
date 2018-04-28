@@ -6,13 +6,7 @@
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d" Height="500" Width="600" WindowStartupLocation="Manual" Left="700" Top="100" Foreground="{x:Null}"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown">
-    <Window.Resources>
-        <DataTemplate DataType="{x:Type local:Profile}">
-            <local:Profile />
-            <!-- This is a UserControl -->
-        </DataTemplate>
-        
-    </Window.Resources>
+    
 
     <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
