@@ -10,33 +10,50 @@
 
     <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition />
-            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="0.2*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="0.07*"/>
             <RowDefinition/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
-            <Button Width="22" Height="22" Click="Minimize_Button_Click" Margin="5,0,0,0" >
-                <Button.Background>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/minimizebutton.jpg"/>
-                </Button.Background>
+        <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Background="#FF05080C">
+                <Button Width="17" Height="17" Click="Minimize_Button_Click" Margin="5,0,0,0" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/minimise.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="17" Height="17" Click="Maximize_Button_Click" Margin="5,0,0,0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/restore.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="17" Height="17" Click="Exit_Button_Click" Margin="5,0,0,0" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/close.png"/>
+                    </Button.Background>
+                </Button>
+
+            </StackPanel>
+        </Border>
+
+        <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
+        <StackPanel Grid.Column="0" Grid.Row="1" >
+
+            <Button Margin="10" FontSize="16" Foreground="Gray" >
+                People Online
             </Button>
-            <Button Width="22" Height="22" Click="Maximize_Button_Click" Margin="5,0,0,0">
-                <Button.Background>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/fullscreenbutton.jpg"/>
-                </Button.Background>
+            <Button Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
+                Transfers
             </Button>
-            <Button Width="22" Height="22" Click="Exit_Button_Click" Margin="5,0,0,0" >
-                <Button.Background>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/exitbutton.jpg"/>
-                </Button.Background>
+            <Button Margin="10" FontSize="16" >
+                Settings
             </Button>
 
         </StackPanel>

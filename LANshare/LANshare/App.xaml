@@ -91,7 +91,7 @@
         <Style x:Key="windowStyle" TargetType="{x:Type Grid}">
             <Setter Property="Background">
                 <Setter.Value>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg"/>
+                    <ImageBrush ImageSource="Media/Images/ApplicationImages/polinet3.jpg"/>
                 </Setter.Value>
             </Setter>
             <Setter Property="SnapsToDevicePixels" Value="True"/>

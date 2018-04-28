@@ -217,6 +217,8 @@
     <Resource Include="Media\Images\ApplicationImages\exitbutton.jpg" />
     <Resource Include="Media\Images\ApplicationImages\fullscreenbutton.jpg" />
     <Resource Include="Media\Images\ApplicationImages\minimizebutton.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\restore.png" />
+    <Resource Include="Media\Images\ApplicationImages\close.png" />
     <Content Include="Media\Images\ApplicationImages\switch.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
