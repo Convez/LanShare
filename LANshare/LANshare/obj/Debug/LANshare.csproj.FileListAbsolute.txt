@@ -8,7 +8,6 @@ C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\App.g.cs
 C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\LANshare_Content.g.cs
 C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\LANshare_MarkupCompile.cache
 C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\LANshare_MarkupCompile.lref
-C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\user\source\repos\LANshare\LANshare\any\Debug\Media\Images\UserImages\defaultPic.png
 C:\Users\user\source\repos\LANshare\LANshare\any\Debug\Media\Images\ApplicationImages\1.jpg
 C:\Users\user\source\repos\LANshare\LANshare\any\Debug\Media\Images\ApplicationImages\coal.jpg
