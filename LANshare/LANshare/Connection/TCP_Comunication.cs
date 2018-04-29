@@ -170,7 +170,7 @@ namespace LANshare.Connection
                 case MessageType.FileUploadRequest:
                     User from = message.Message as User;
                     string username = from.NickName != null ? from.NickName : from.Name;
-                    //TODO Ask user for permission
+                    //Ask user for permission
                     if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
                     {
 
@@ -190,7 +190,7 @@ namespace LANshare.Connection
                     if (message.MessageType != MessageType.TotalUploadSize)
                         break;
 
-                    //TODO Ask for path to save files
+                    //Ask for path to save files
                     string savePath = null;
                     if (Configuration.FileSavePathMode.Equals(EFileSavePathMode.AskForPath))
                     {

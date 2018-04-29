@@ -8,6 +8,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/userimages/defaultpic.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/1.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/coal.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/black.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/exitbutton.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/fullscreenbutton.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/minimizebutton.jpg")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/switch.ico")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/tree.jpg")]
 
 

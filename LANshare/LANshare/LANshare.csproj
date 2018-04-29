@@ -205,19 +205,35 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Media\Images\UserImages\defaultPic.png" />
+    <Content Include="Media\Images\UserImages\defaultPic.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\personalPic.jpg" />
     <None Include="Resources\Image1.jpg" />
-    <Resource Include="Media\Images\ApplicationImages\1.jpg" />
-    <Resource Include="Media\Images\ApplicationImages\coal.jpg" />
-    <Resource Include="Media\Images\ApplicationImages\black.jpg" />
-    <Resource Include="Media\Images\ApplicationImages\exitbutton.jpg" />
-    <Resource Include="Media\Images\ApplicationImages\fullscreenbutton.jpg" />
-    <Resource Include="Media\Images\ApplicationImages\minimizebutton.jpg" />
+    <Content Include="Media\Images\ApplicationImages\1.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Media\Images\ApplicationImages\coal.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Media\Images\ApplicationImages\black.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Media\Images\ApplicationImages\exitbutton.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Media\Images\ApplicationImages\fullscreenbutton.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Media\Images\ApplicationImages\minimizebutton.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Media\Images\ApplicationImages\switch.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="Media\Images\ApplicationImages\tree.jpg" />
+    <Content Include="Media\Images\ApplicationImages\tree.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
