@@ -219,6 +219,8 @@
     <Resource Include="Media\Images\ApplicationImages\minimizebutton.jpg" />
     <Resource Include="Media\Images\ApplicationImages\restore.png" />
     <Resource Include="Media\Images\ApplicationImages\close.png" />
+    <Resource Include="Media\Images\ApplicationImages\polinet3.jpg" />
+    <Resource Include="Media\Images\ApplicationImages\minimise.png" />
     <Content Include="Media\Images\ApplicationImages\switch.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
