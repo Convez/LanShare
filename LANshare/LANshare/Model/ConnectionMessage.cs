@@ -62,6 +62,7 @@ namespace LANshare.Model
             {
                 using (MemoryStream ms = new MemoryStream(toDeserialize))
                 {
+                    ms.Seek(0, SeekOrigin.Begin);
                     return formatter.Deserialize(ms) as ConnectionMessage;
                 }
             }

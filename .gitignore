@@ -3,7 +3,8 @@
 *.lo
 *.o
 *.obj
-
+*.cache
+*.g.i.cs
 # Precompiled Headers
 *.gch
 *.pch
@@ -29,3 +30,4 @@
 *.app
 *.sqlite
 /.vs
+obj/

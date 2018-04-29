@@ -22,9 +22,14 @@ namespace LANshare
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class SettingsWindow : Window
+    public partial class SettingsWindow : Window, ListWindow<User>
     {
-        
+
+        public event EventHandler peopleButtonClick;
+        public event EventHandler transfersButtonClick;
+        public event EventHandler settingsButtonClick;
+        public event EventHandler privacyChanged;
+
         public SettingsWindow()
         {
             InitializeComponent();
@@ -76,7 +81,7 @@ namespace LANshare
             System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
             if (m.Header.ToString() != Configuration.CurrentUser.PrivacyMode)
             {
-                Configuration.CurrentUser.SetPrivacyMode();
+                privacyChanged?.Invoke(this, null);
             }
         }
 
@@ -139,14 +144,36 @@ namespace LANshare
 
         private void OnUsersClick(object sender, RoutedEventArgs e)
         {
-            TrayIconWindow.OpenWindow<ShowUsersWindow>();
+            OnPeopleWindowSelected();
 
         }
 
         private void OnTransfersClick(object sender, RoutedEventArgs e)
         {
-            TrayIconWindow.OpenWindow<TransfersWindow>();
+            OnTransferWindowSelected();
+        }
 
+        public void setList(List<User> list)
+        {
+            //does nothing on pupose
+        }
+        
+
+        public void OnPeopleWindowSelected()
+        {
+            peopleButtonClick?.Invoke(this, null);
+
+        }
+
+        public void OnSettingWindowSelected()
+        {
+            //settingsButtonClick?.Invoke(this, null);
+
+        }
+
+        public void OnTransferWindowSelected()
+        {
+            transfersButtonClick?.Invoke(this, null);
         }
     }
 }

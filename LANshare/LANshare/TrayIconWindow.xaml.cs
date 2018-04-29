@@ -128,7 +128,26 @@ namespace LANshare
 
         private void StartUpload(List<string>what, List<User> to)
         {
-            foreach(User u in to)
+            if (what.Count == 0)
+            {
+
+                System.Windows.Forms.OpenFileDialog openFileDialog;
+                openFileDialog = new System.Windows.Forms.OpenFileDialog();
+                openFileDialog.Title = "Select files";
+                openFileDialog.Multiselect = true;
+                System.Windows.Forms.DialogResult dr = openFileDialog.ShowDialog();
+
+                if (dr == System.Windows.Forms.DialogResult.OK)
+                {
+                    foreach (String file in openFileDialog.FileNames)
+                    {
+                        what.Add(file);
+                    }
+                }
+
+            }
+
+            foreach (User u in to)
             {
                 System.Threading.Tasks.Task.Run(() =>
                 {
@@ -176,7 +195,8 @@ namespace LANshare
 
 
         }
-        public static T OpenWindow<T>() where T: Window, new()
+        public static T OpenWindow<T, Y>(List<Y> y)
+            where T : Window, ListWindow<Y>, new()
         {
             int w = Application.Current.Windows.OfType<T>().Count();
             if (w == 1)
@@ -197,34 +217,66 @@ namespace LANshare
             else if (w == 0)
             {
                 T window = new T();
+                window.setList(y);
                 window.Show();
                 return window;
             }
             return null;
         }
 
-        private void ShowPeople(object sender, RoutedEventArgs e)
+        private void ShowPeople(object sender, EventArgs e)
         {
-            ShowUsersWindow userWindow = OpenWindow<ShowUsersWindow>();
+            ShowUsersWindow userWindow = OpenWindow<ShowUsersWindow,User>(_comunication.GetUsers());
             _comunication.UserFound += userWindow.AddUser;
             _comunication.UsersExpired += userWindow.RemoveUsers;
-            userWindow.Closing += (o, a) => _comunication.UserFound -= userWindow.AddUser;
-            userWindow.Closing += (o, a) => _comunication.UsersExpired -= userWindow.RemoveUsers;
+            userWindow.transfersButtonClick +=OpenTransfers;
+            userWindow.settingsButtonClick += OpenSettings;
+
+            userWindow.Closing += (o, a) =>
+            {
+                _comunication.UserFound -= userWindow.AddUser;
+                _comunication.UsersExpired -= userWindow.RemoveUsers;
+                userWindow.transfersButtonClick -= OpenTransfers;
+                userWindow.settingsButtonClick -= OpenSettings;
+            };
         }
 
-        private void SetPrivacy(object sender, RoutedEventArgs e)
+
+        private void OpenSettings(object sender, EventArgs e)
+        {
+            SettingsWindow settw = OpenWindow<SettingsWindow, User>(null);
+            settw.peopleButtonClick += ShowPeople;
+            settw.transfersButtonClick += OpenTransfers;
+            settw.privacyChanged += SetPrivacy;
+            settw.Closing += (o, a) =>
+            {
+                settw.transfersButtonClick -= OpenTransfers;
+                settw.settingsButtonClick -= ShowPeople;
+                settw.privacyChanged -= SetPrivacy;
+            };
+        }
+        private void OpenTransfers(object sender, EventArgs e)
+        {
+            TransfersWindow tf= OpenWindow<TransfersWindow, IFileTransferHelper>(ongoingTransfers);
+            tf.peopleButtonClick += (o, a) => ShowPeople(this, null);
+            tf.settingsButtonClick += (o, a) => OpenSettings(this, null);
+            tf.Closing += (o, a) =>
+            {
+                tf.transfersButtonClick -= ShowPeople;
+                tf.settingsButtonClick -= OpenSettings;
+            };
+        }
+
+        private void SetPrivacy(object sender, EventArgs e)
         {
             Configuration.CurrentUser.SetPrivacyMode();
+            if (Configuration.CurrentUser.PrivacyMode == "Public")
+                _comunication.StartLanAdvertise();
+            else
+                _comunication.GoPrivate();
+
         }
 
-        private void OpenSettings(object sender, RoutedEventArgs e)
-        {
-            OpenWindow<SettingsWindow>();
-        }
-        private void OpenTransfers(object sender, RoutedEventArgs e)
-        {
-            OpenWindow<TransfersWindow>();
-        }
 
 
         void notifier_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
