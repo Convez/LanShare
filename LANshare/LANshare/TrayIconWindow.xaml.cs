@@ -176,7 +176,7 @@ namespace LANshare
 
 
         }
-        private T OpenWindow<T>() where T: Window, new()
+        public static T OpenWindow<T>() where T: Window, new()
         {
             int w = Application.Current.Windows.OfType<T>().Count();
             if (w == 1)

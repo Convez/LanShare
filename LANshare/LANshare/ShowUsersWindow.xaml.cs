@@ -102,5 +102,17 @@ namespace LANshare
         {
             UsersSelected?.Invoke(this, e);
         }
+
+        private void OnSettingClick(object sender, RoutedEventArgs e) {
+            TrayIconWindow.OpenWindow<SettingsWindow>();
+
+        }
+
+        private void OnTransfersClick(object sender, RoutedEventArgs e) {
+            TrayIconWindow.OpenWindow<TransfersWindow>();
+
+        }
+
+        
     }
 }

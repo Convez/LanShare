@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:LANshare"        
         mc:Ignorable="d"
         Title="SettingsWindow"  Foreground="{x:Null}"
-        Height="600" Width="700"
+        Height="500" Width="700"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown" 
-        WindowStartupLocation="CenterScreen" >
+        WindowStartupLocation="Manual" Left="1070" Top="100" >
     <Window.Background>
         <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg" TileMode="FlipXY"/>
     </Window.Background>
@@ -50,10 +50,10 @@
         <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
         <StackPanel Grid.Column="0" Grid.Row="1" >
 
-            <Button Margin="10" FontSize="16" Foreground="Gray" >
+            <Button Margin="10" FontSize="16" Foreground="Gray" Click="OnUsersClick" >
                 People Online
             </Button>
-            <Button Margin="10" FontSize="16" >
+            <Button Margin="10" FontSize="16" Click="OnTransfersClick" >
                 Transfers
             </Button>
             <Button Margin="10" FontSize="16" Background="{x:Null}" Foreground="#FFCDDFF5" >

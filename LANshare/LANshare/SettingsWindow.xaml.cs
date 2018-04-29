@@ -136,5 +136,17 @@ namespace LANshare
         {
             throw new NotImplementedException();
         }
+
+        private void OnUsersClick(object sender, RoutedEventArgs e)
+        {
+            TrayIconWindow.OpenWindow<ShowUsersWindow>();
+
+        }
+
+        private void OnTransfersClick(object sender, RoutedEventArgs e)
+        {
+            TrayIconWindow.OpenWindow<TransfersWindow>();
+
+        }
     }
 }

@@ -52,6 +52,17 @@ namespace LANshare
                 this.DragMove();
         }
 
+        private void OnSettingClick(object sender, RoutedEventArgs e)
+        {
+            TrayIconWindow.OpenWindow<SettingsWindow>();
+
+        }
+
+        private void OnUsersClick(object sender, RoutedEventArgs e)
+        {
+            TrayIconWindow.OpenWindow<ShowUsersWindow>();
+
+        }
 
     }
 }

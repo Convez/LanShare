@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
-        mc:Ignorable="d" Height="500" Width="600" WindowStartupLocation="Manual" Left="700" Top="100" Foreground="{x:Null}"
+        mc:Ignorable="d" Height="500" Width="700" WindowStartupLocation="Manual" Left="570" Top="100" Foreground="{x:Null}"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown">
     
 
@@ -46,26 +46,24 @@
         <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
         <StackPanel Grid.Column="0" Grid.Row="1" >
 
-            <Button Margin="10" FontSize="16" Foreground="Gray" >
+            <Button Margin="10" FontSize="16" Foreground="Gray"  Click="OnUsersClick">
                 People Online
             </Button>
             <Button Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
                 Transfers
             </Button>
-            <Button Margin="10" FontSize="16" >
+            <Button Margin="10" FontSize="16" Click="OnSettingClick" >
                 Settings
             </Button>
 
         </StackPanel>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" VerticalAlignment="Stretch" >
-            <Label Style="{StaticResource windowHeaderTextStyle}" Width="142" >File Transfers</Label>
-        </Border>
+        
         <Border Grid.Column="1" Grid.Row="1">
-            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransactions" BorderBrush="{x:Null}" >
+            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransactions" BorderBrush="{x:Null}" Background="{x:Null}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid Background="#CC000000">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="300"/>
                                 <ColumnDefinition />
