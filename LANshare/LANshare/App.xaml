@@ -66,18 +66,32 @@
                                             />
                 </Setter.Value>
             </Setter>
-            <Setter Property="Height" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={model:RatioConverter}, ConverterParameter='0.6' }" />
-            <Setter Property="Width" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={model:RatioConverter}, ConverterParameter='0.45' }" />
+            <!--<Setter Property="Height" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenHeight}, Converter={model:RatioConverter}, ConverterParameter='0.6' }" />
+            <Setter Property="Width" Value="{Binding Source={x:Static SystemParameters.PrimaryScreenWidth}, Converter={model:RatioConverter}, ConverterParameter='0.45' }" />-->
 
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
-           
+
+        <Style x:Key="StandardUsStyle" TargetType="{x:Type UserControl}">
+            <Setter Property="WindowChrome.WindowChrome">
+                <Setter.Value>
+                    <WindowChrome CaptionHeight="0"
+                                  GlassFrameThickness="2"
+                                  NonClientFrameEdges="None"
+                                  ResizeBorderThickness="1"
+                                            
+                                            />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+        </Style>
+
 
         <!--style of main grid-->
         <Style x:Key="windowStyle" TargetType="{x:Type Grid}">
             <Setter Property="Background">
                 <Setter.Value>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/black.jpg"/>
+                    <ImageBrush ImageSource="Media/Images/ApplicationImages/polinet3.jpg"/>
                 </Setter.Value>
             </Setter>
             <Setter Property="SnapsToDevicePixels" Value="True"/>

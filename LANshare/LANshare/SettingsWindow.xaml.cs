@@ -13,6 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Drawing;
 using LANshare.Model;
+using System.Diagnostics;
+using System.Windows.Forms;
+using System.Net.Cache;
 
 namespace LANshare
 {
@@ -50,7 +53,7 @@ namespace LANshare
 
         private void Edit(object sender, RoutedEventArgs e)
         {
-            Button b = (Button)sender;
+            System.Windows.Controls.Button b = (System.Windows.Controls.Button)sender;
             switch(b.Name)
             {
                 case "EditNickButton":
@@ -61,20 +64,89 @@ namespace LANshare
                         Configuration.CurrentUser.NickName = i.Input;
                     }
                     break;
-                case "EditNicButton":
+                case "EditPicButton":
                     //make chose the file
+                    GetPicFromFIle();
                     break;
+                
             }    
         }
         private void PrivacySetter(object sender, RoutedEventArgs e)
         {
-            MenuItem m = (MenuItem)sender;
+            System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
             if (m.Header.ToString() != Configuration.CurrentUser.PrivacyMode)
             {
                 Configuration.CurrentUser.SetPrivacyMode();
             }
         }
 
-      
+        private void GetPicFromFIle()
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog1;
+            openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog1.Filter = "Images (*.BMP;*.JPG;*.GIF,*.PNG,*.TIFF)|*.BMP;*.JPG;*.GIF;*.PNG;*.TIFF|" +"All files (*.*)|*.*";
+            openFileDialog1.Title = "Select Profile Picture";
+
+            DialogResult dr = openFileDialog1.ShowDialog();
+
+            if (dr == System.Windows.Forms.DialogResult.OK)
+
+            {
+
+                String file = openFileDialog1.FileName;
+
+                try
+
+                {
+                    Configuration.CurrentUser.ProfilePicture = null;
+                    System.IO.File.Copy(file, Properties.Settings.Default.CustomPic, true);
+                    BitmapImage profile_pic = new BitmapImage();
+                    //profile_pic.BeginInit();
+                    //profile_pic.CacheOption = BitmapCacheOption.OnLoad;
+
+                    //profile_pic.UriSource= new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative); 
+
+                    //profile_pic.EndInit();
+                    profile_pic.BeginInit();
+                    profile_pic.CacheOption = BitmapCacheOption.None;
+                    profile_pic.UriCachePolicy = new System.Net.Cache.RequestCachePolicy(RequestCacheLevel.BypassCache);
+                    profile_pic.CacheOption = BitmapCacheOption.OnLoad;
+                    profile_pic.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
+                    profile_pic.UriSource = new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative);
+                    profile_pic.EndInit();
+
+                    Configuration.CurrentUser.ProfilePicture = profile_pic;
+                    Configuration.SaveConfiguration();
+                    //this.FindResource("profileImg");
+                    this.UpdateLayout();
+                    
+                }
+
+                catch (Exception ex)
+
+                {
+
+                    System.Windows.MessageBox.Show("Error: " + ex.Message);
+
+                }
+            }
+        }
+
+        private bool myCallback()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnUsersClick(object sender, RoutedEventArgs e)
+        {
+            TrayIconWindow.OpenWindow<ShowUsersWindow>();
+
+        }
+
+        private void OnTransfersClick(object sender, RoutedEventArgs e)
+        {
+            TrayIconWindow.OpenWindow<TransfersWindow>();
+
+        }
     }
 }

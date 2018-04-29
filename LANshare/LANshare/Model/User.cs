@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using LANshare.Connection;
+using System.ComponentModel;
 
 namespace LANshare.Model
 {
@@ -75,7 +76,7 @@ namespace LANshare.Model
             set
             {
                 _profilepicture = value;
-                _profilepicture.Freeze();
+                
                 OnPropertyChanged("ProfilePicture");
             }
        }
@@ -105,60 +106,62 @@ namespace LANshare.Model
             TcpPortTo = tcpPortTo;
             NickName = nickName;
             _privacymode = privacymode;
-            if(profilePicUri==null)
+
+            try
             {
-                if(this==Model.Configuration.CurrentUser)
+                BitmapImage bi = new BitmapImage();
+                bi.BeginInit();
+                bi.CacheOption = BitmapCacheOption.OnLoad;
+
+                if (profilePicUri == null)
+                {
+                    
+
+                    if (File.Exists(Properties.Settings.Default.CustomPic))
+                        bi.UriSource=new Uri(Properties.Settings.Default.CustomPic, UriKind.Relative);
+                    else
+                        bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
+                    bi.EndInit();
+                    _profilepicture = bi;
+                    
+
+
+
+
+                }
+                else
                 {
                     try
                     {
-                        _profilepicture = new BitmapImage(new Uri("Media/Images/UserImages/"+ Properties.Settings.Default.CustomPic , UriKind.Relative));
+                        System.IO.File.Copy(profilePicUri.AbsolutePath, Properties.Settings.Default.CustomPic, true);
+                       
+                        bi.UriSource=new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative);
+                        bi.EndInit();
+                        _profilepicture = bi;
 
                     }
                     catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
                     {
                         try
                         {
-                            _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic , UriKind.Relative));
+                            bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
+                            bi.EndInit();
+                            _profilepicture = bi;
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine(ex.Message);
-                            _profilepicture = null;
+                            throw ex;
                         }
                     }
                 }
-                else
-                {
-                    try
-                    {
-                        _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        _profilepicture = null;
-                    }
-                }
-            }else
-            {
-                try
-                {
-                    _profilepicture = new BitmapImage(profilePicUri);
-                }
-                catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
-                {
-                    try
-                    {
-                        _profilepicture = new BitmapImage(new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative));
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                        _profilepicture = null;
-                    }
-                }
-            }
+                
 
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                _profilepicture = null;
+            }
         }
 
         public void SetupImage()
@@ -204,6 +207,7 @@ namespace LANshare.Model
             }
         }
 
+    
         private void OnPropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));

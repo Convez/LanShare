@@ -4,50 +4,66 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
-        mc:Ignorable="d" Height="500" Width="600" WindowStartupLocation="Manual" Left="700" Top="100" Foreground="{x:Null}"
+        mc:Ignorable="d" Height="500" Width="700" WindowStartupLocation="Manual" Left="570" Top="100" Foreground="{x:Null}"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown">
+    
 
     <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="0.5*"/>
             <ColumnDefinition />
-            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="0.2*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="70"/>
+            <RowDefinition Height="0.07*"/>
             <RowDefinition/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
-            <Button Width="22" Height="22" Click="Minimize_Button_Click" Margin="5,0,0,0" >
-                <Button.Background>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/minimizebutton.jpg"/>
-                </Button.Background>
+        <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Background="#FF05080C">
+                <Button Width="17" Height="17" Click="Minimize_Button_Click" Margin="5,0,0,0" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/minimise.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="17" Height="17" Click="Maximize_Button_Click" Margin="5,0,0,0">
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/restore.png"/>
+                    </Button.Background>
+                </Button>
+                <Button Width="17" Height="17" Click="Exit_Button_Click" Margin="5,0,0,0" >
+                    <Button.Background>
+                        <ImageBrush ImageSource="Media/Images/ApplicationImages/close.png"/>
+                    </Button.Background>
+                </Button>
+
+            </StackPanel>
+        </Border>
+
+        <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
+        <StackPanel Grid.Column="0" Grid.Row="1" >
+
+            <Button Margin="10" FontSize="16" Foreground="Gray"  Click="OnUsersClick">
+                People Online
             </Button>
-            <Button Width="22" Height="22" Click="Maximize_Button_Click" Margin="5,0,0,0">
-                <Button.Background>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/fullscreenbutton.jpg"/>
-                </Button.Background>
+            <Button Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
+                Transfers
             </Button>
-            <Button Width="22" Height="22" Click="Exit_Button_Click" Margin="5,0,0,0" >
-                <Button.Background>
-                    <ImageBrush ImageSource="Media/Images/ApplicationImages/exitbutton.jpg"/>
-                </Button.Background>
+            <Button Margin="10" FontSize="16" Click="OnSettingClick" >
+                Settings
             </Button>
 
         </StackPanel>
 
-        <Border Grid.Column="1"  Grid.Row="0" Style="{StaticResource windowHeaderStyle}" VerticalAlignment="Stretch" >
-            <Label Style="{StaticResource windowHeaderTextStyle}" Width="142" >File Transfers</Label>
-        </Border>
+        
         <Border Grid.Column="1" Grid.Row="1">
-            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransactions" BorderBrush="{x:Null}" >
+            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransactions" BorderBrush="{x:Null}" Background="{x:Null}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Grid Background="#CC000000">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="300"/>
                                 <ColumnDefinition />
