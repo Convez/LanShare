@@ -8,6 +8,15 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/bettercodes-logo_318-64716.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/close.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/frame.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/minimise.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/polinet.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/polinet2.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/polinet3.jpg")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/restore.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/userimages/78373.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/userimages/defaultpic.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/1.jpg")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("media/images/applicationimages/coal.jpg")]
