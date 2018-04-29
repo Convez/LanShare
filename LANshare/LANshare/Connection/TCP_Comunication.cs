@@ -128,7 +128,7 @@ namespace LANshare.Connection
                 FileStream f = new FileStream(p+from.SessionId+".jpg", FileMode.OpenOrCreate, FileAccess.Write);
                 new FileDownloadHelper().ReceiveFile(f, client);
                 f.Close();
-                from.ProfilePicture = new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
+                from.ProfilePicture= new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
             }
         }
 
@@ -168,22 +168,9 @@ namespace LANshare.Connection
                     }
                     break;
                 case MessageType.FileUploadRequest:
-                    User from = message.Message as User;
-                    string username = from.NickName != null ? from.NickName : from.Name;
-                    //Ask user for permission
-                    if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
-                    {
-
-                        DialogResult result = MessageBox.Show("Incoming transfer from " + username + ".\nDo you want to accept it?"
-                            , "Incoming transfer requested", MessageBoxButtons.YesNo);
-                        if (result == DialogResult.No)
-                        {
-                            message = new ConnectionMessage(MessageType.FileUploadResponse, false, null);
-                            SendMessage(client, message);
-                            break;
-                        }
-                    }
-
+                    //TODO Ask user for permission
+                    //TODO Ask for path to save files
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                     message = new ConnectionMessage(MessageType.FileUploadResponse, true, null);
                     SendMessage(client, message);
                     message = ReadMessage(client);
