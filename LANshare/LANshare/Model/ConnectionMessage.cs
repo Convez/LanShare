@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace LANshare.Model
 {
@@ -30,10 +31,14 @@ namespace LANshare.Model
     [Serializable]
     public class ConnectionMessage
     {
+        [JsonProperty(PropertyName = "PropertyName")]
         public MessageType MessageType { get; set; }
+        [JsonProperty(PropertyName ="Next")]
         public bool Next { get; set; }
+        [JsonProperty(PropertyName ="Message")]
         public object Message { get; set; }
 
+        public ConnectionMessage() { }
         public ConnectionMessage(MessageType messageType, bool next, object message)
         {
             MessageType = messageType;
@@ -43,7 +48,7 @@ namespace LANshare.Model
 
         public static byte[] Serialize(ConnectionMessage toSerialize)
         {
-
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(toSerialize));
             IFormatter formatter =
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
@@ -56,6 +61,7 @@ namespace LANshare.Model
 
         public static ConnectionMessage Deserialize(byte[] toDeserialize)
         {
+            return JsonConvert.DeserializeObject<ConnectionMessage>(Encoding.UTF8.GetString(toDeserialize));
             IFormatter formatter =
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             try
@@ -63,6 +69,7 @@ namespace LANshare.Model
                 using (MemoryStream ms = new MemoryStream(toDeserialize))
                 {
                     ms.Seek(0, SeekOrigin.Begin);
+                    ms.Position = 0;
                     return formatter.Deserialize(ms) as ConnectionMessage;
                 }
             }

@@ -43,3 +43,4 @@ C:\Users\user\source\repos\LANshare\LANshare\any\Debug\Media\Images\ApplicationI
 C:\Users\user\source\repos\LANshare\LANshare\any\Debug\Media\Images\ApplicationImages\restore.png
 C:\Users\user\source\repos\LANshare\LANshare\any\Debug\Media\Images\UserImages\78373.png
 C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\LANshare.csprojResolveAssemblyReference.cache
+C:\Users\user\source\repos\LANshare\LANshare\LANshare\obj\Debug\LANshare.csproj.CopyComplete
