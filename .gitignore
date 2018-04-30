@@ -29,3 +29,6 @@
 *.app
 *.sqlite
 /.vs
+LANshare/LANshare/obj/
+LANshare/.vs/
+LANshare/ProveTecniche di Trasmissione/obj/
