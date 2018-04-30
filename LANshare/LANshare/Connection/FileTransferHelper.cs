@@ -96,7 +96,7 @@ namespace LANshare.Connection
             {
                 if (message.MessageType == MessageType.OperationCanceled)
                     throw new OperationCanceledException();
-                data = JsonConvert.DeserializeObject<byte[]>(message.Message.ToString());
+                data = Convert.FromBase64String(message.Message as string);
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
                 int percentage = (int)(newCurr / totSize);
@@ -216,7 +216,7 @@ namespace LANshare.Connection
 
         internal void SendFile(FileStream from, TcpClient to, long totSize = 1, long curSize = 1, long previousInstant = 1)
         {
-            byte[] block = new byte[2048];
+            byte[] block = new byte[1024];
             int bytesRed = from.Read(block, 0, block.Length);
             do
             {

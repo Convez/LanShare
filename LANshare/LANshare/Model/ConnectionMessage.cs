@@ -48,7 +48,7 @@ namespace LANshare.Model
 
         public static byte[] Serialize(ConnectionMessage toSerialize)
         {
-            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(toSerialize).TrimEnd('\0'));
+            return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(toSerialize));
             IFormatter formatter =
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
 
@@ -61,7 +61,8 @@ namespace LANshare.Model
 
         public static ConnectionMessage Deserialize(byte[] toDeserialize)
         {
-            return JsonConvert.DeserializeObject<ConnectionMessage>(Encoding.UTF8.GetString(toDeserialize).TrimEnd('\0'));
+            string s = Encoding.UTF8.GetString(toDeserialize);
+            return JsonConvert.DeserializeObject<ConnectionMessage>(s);
             IFormatter formatter =
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             try

@@ -77,7 +77,7 @@ namespace LANshare.Model
             set
             {
                 _profilepicture = value;
-                
+                _profilepicture.Freeze();
                 OnPropertyChanged("ProfilePicture");
             }
        }

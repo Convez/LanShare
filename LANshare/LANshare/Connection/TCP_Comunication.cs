@@ -117,19 +117,25 @@ namespace LANshare.Connection
 
         public void RequestImage(User from)
         {
-            TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
-            ConnectionMessage message = new ConnectionMessage(MessageType.ProfileImageRequest, false, null);
-            SendMessage(client, message);
-            message = ReadMessage(client);
-            if (message.MessageType == MessageType.ProfileImageResponse && message.Next == true)
+            try
             {
-                string p = Path.GetTempPath() + "\\LANShare";
-                p = AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"tmp\\";
-                Directory.CreateDirectory(p);
-                FileStream f = new FileStream(p+from.SessionId+".jpg", FileMode.OpenOrCreate, FileAccess.Write);
-                new FileDownloadHelper().ReceiveFile(f, client);
-                f.Close();
-                from.ProfilePicture= new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
+                TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
+                ConnectionMessage message = new ConnectionMessage(MessageType.ProfileImageRequest, false, null);
+                SendMessage(client, message);
+                message = ReadMessage(client);
+                if (message.MessageType == MessageType.ProfileImageResponse && message.Next == true)
+                {
+                    string p = Path.GetTempPath() + "\\LANShare";
+                    p = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "tmp\\";
+                    Directory.CreateDirectory(p);
+                    FileStream f = new FileStream(p + from.SessionId + ".jpg", FileMode.OpenOrCreate, FileAccess.Write);
+                    new FileDownloadHelper().ReceiveFile(f, client);
+                    f.Close();
+                    from.ProfilePicture = new BitmapImage(new Uri(p + from.SessionId + ".jpg", UriKind.Absolute));
+                }
+            }catch(SocketException ex)
+            {
+                //Cannot retrieve the image
             }
         }
 
