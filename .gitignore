@@ -3,7 +3,8 @@
 *.lo
 *.o
 *.obj
-
+*.cache
+*.g.i.cs
 # Precompiled Headers
 *.gch
 *.pch
@@ -29,6 +30,14 @@
 *.app
 *.sqlite
 /.vs
+<<<<<<< HEAD
 LANshare/LANshare/obj/
 LANshare/.vs/
 LANshare/ProveTecniche di Trasmissione/obj/
+=======
+obj/
+LANshare/.vs/
+LANshare/any/
+*.cache
+*.pdb
+>>>>>>> 4534faa6f538f82b0f4e2b2e693fe72179142e2b

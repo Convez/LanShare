@@ -23,13 +23,19 @@ namespace LANshare
     /// <summary>
     /// Interaction logic for ShowUsersWindow.xaml
     /// </summary>
-    public partial class ShowUsersWindow : Window
+    public partial class ShowUsersWindow : Window,ListWindow<User>
     {
 
         private readonly ObservableCollection<User> userList;
         private readonly object l = "";
 
         public event EventHandler<List<User>> UsersSelected;
+        
+
+        public event EventHandler peopleButtonClick;
+        public event EventHandler transfersButtonClick;
+        public event EventHandler settingsButtonClick;
+
         public ShowUsersWindow()
         {
             InitializeComponent();
@@ -103,16 +109,39 @@ namespace LANshare
             UsersSelected?.Invoke(this, e);
         }
 
-        private void OnSettingClick(object sender, RoutedEventArgs e) {
-            TrayIconWindow.OpenWindow<SettingsWindow>();
+
+        public void setList(List<User> list)
+        {
+            list.ForEach(userList.Add);
+        }
+
+        private void OnSettingsClick(object sender, RoutedEventArgs e)
+        {
+            OnSettingWindowSelected();
 
         }
 
-        private void OnTransfersClick(object sender, RoutedEventArgs e) {
-            TrayIconWindow.OpenWindow<TransfersWindow>();
+        private void OnTransfersClick(object sender, RoutedEventArgs e)
+        {
+            OnTransferWindowSelected();
+        }
+
+
+        public void OnPeopleWindowSelected()
+        {
+            //peopleButtonClick?.Invoke(this, null);
 
         }
 
-        
+        public void OnSettingWindowSelected()
+        {
+            settingsButtonClick?.Invoke(this, null);
+
+        }
+
+        public void OnTransferWindowSelected()
+        {
+            transfersButtonClick?.Invoke(this, null);
+        }
     }
 }

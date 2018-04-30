@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using LANshare.Connection;
 using System.ComponentModel;
-
+using Newtonsoft.Json;
 namespace LANshare.Model
 {
     [Serializable]
@@ -88,8 +88,9 @@ namespace LANshare.Model
 
         private object _sessionId;
         //User ip address
-        [NonSerialized] private System.Net.IPAddress _userAddress;
+        [NonSerialized] [JsonIgnore] private System.Net.IPAddress _userAddress;
         
+        [JsonIgnore]
         public System.Net.IPAddress UserAddress
         {
             get => _userAddress;

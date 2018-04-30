@@ -12,14 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LANshare.Model;
+using LANshare.Connection;
 
 namespace LANshare
 {
     /// <summary>
     /// Interaction logic for TransfersWindow.xaml
     /// </summary>
-    public partial class TransfersWindow : Window
+    public partial class TransfersWindow : Window, ListWindow<IFileTransferHelper>
     {
+        private List<IFileTransferHelper> transfersList=new List<IFileTransferHelper>() ;
+
+        public event EventHandler peopleButtonClick;
+        public event EventHandler transfersButtonClick;
+        public event EventHandler settingsButtonClick;
 
         public TransfersWindow()
         {
@@ -54,15 +60,39 @@ namespace LANshare
 
         private void OnSettingClick(object sender, RoutedEventArgs e)
         {
-            TrayIconWindow.OpenWindow<SettingsWindow>();
-
+            OnSettingWindowSelected();
         }
 
         private void OnUsersClick(object sender, RoutedEventArgs e)
         {
-            TrayIconWindow.OpenWindow<ShowUsersWindow>();
+            OnPeopleWindowSelected();
+        }
+
+        
+        public void setList(List<IFileTransferHelper> list)
+        {
+            list.ForEach(transfersList.Add);
 
         }
 
+        public void OnPeopleWindowSelected()
+        {
+            peopleButtonClick?.Invoke(this, null);
+
+        }
+
+        public void OnSettingWindowSelected()
+        {
+            settingsButtonClick?.Invoke(this, null);
+
+        }
+
+        public void OnTransferWindowSelected()
+        {
+            //transfersButtonClick?.Invoke(this, null);
+
+        }
+
+        
     }
 }
