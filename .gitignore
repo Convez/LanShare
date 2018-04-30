@@ -31,3 +31,7 @@
 *.sqlite
 /.vs
 obj/
+LANshare/.vs/
+LANshare/any/
+*.cache
+*.pdb
