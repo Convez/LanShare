@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using LANshare.Model;
+using Newtonsoft.Json;
 
 namespace LANshare.Connection
 {
@@ -61,7 +62,7 @@ namespace LANshare.Connection
                 switch (message.MessageType)
                 {
                     case MessageType.NewFile:
-                        string path = Path.Combine(basePath, message.Message as string);
+                        string path = Path.Combine(basePath, JsonConvert.DeserializeObject<string>(message.Message.ToString()));
                         if (File.Exists(path)) {
                             int fileCount = -1;
                             do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
@@ -75,7 +76,7 @@ namespace LANshare.Connection
                         f.Close();
                         break;
                     case MessageType.NewDirectory:
-                        string p = Path.Combine(basePath, message.Message as string);
+                        string p = Path.Combine(basePath, JsonConvert.DeserializeObject<string>(message.Message.ToString()));
                         Directory.CreateDirectory(p);
                         foldersDownloaded.Add(p);
                         ReceiveFiles(client, p, totSize, currSize);
@@ -95,7 +96,7 @@ namespace LANshare.Connection
             {
                 if (message.MessageType == MessageType.OperationCanceled)
                     throw new OperationCanceledException();
-                data = message.Message as byte[];
+                data = JsonConvert.DeserializeObject<byte[]>(message.Message.ToString());
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
                 int percentage = (int)(newCurr / totSize);

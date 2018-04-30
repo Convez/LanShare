@@ -27,7 +27,7 @@ namespace LANshare.Model
         private EUserAdvertisementMode _privacymode;
         [field: NonSerializedAttribute()] public event PropertyChangedEventHandler PropertyChanged;
 
-
+        [JsonProperty("Name")]
         public string Name
         {
             get => _name;
@@ -37,12 +37,13 @@ namespace LANshare.Model
                 OnPropertyChanged("Name");
             }
         }
+        [JsonIgnore]
         public string IpAddress
         {
             get => UserAddress.ToString();
             
         }
-        
+        [JsonProperty("NickName")]
         public string NickName
         {
             get
@@ -61,7 +62,7 @@ namespace LANshare.Model
                 OnPropertyChanged("NickName");
             }
         }
-
+        [JsonProperty("PrivacyMode")]
         public String PrivacyMode
         {
             get
@@ -69,7 +70,7 @@ namespace LANshare.Model
                 return _privacymode.ToString(); 
             }
         }
-
+        [JsonProperty("ProfilePicture")]
         public ImageSource ProfilePicture
         {
             get => _profilepicture;
@@ -84,6 +85,7 @@ namespace LANshare.Model
         
        
         //Session Id
+        [JsonProperty("SessionId")]
         public object SessionId { get=>_sessionId; set=>Interlocked.Exchange(ref _sessionId,value); }
 
         private object _sessionId;
@@ -98,7 +100,7 @@ namespace LANshare.Model
         }
         
 
-
+        [JsonProperty("TcpPortTo")]
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
         public User(string name, int tcpPortTo , EUserAdvertisementMode privacymode, Uri profilePicUri=null, string nickName=null)

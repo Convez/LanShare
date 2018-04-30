@@ -1,4 +1,5 @@
 ﻿using LANshare.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -141,7 +142,7 @@ namespace LANshare.Connection
                     List<string> files = new List<string>();
                     do
                     {
-                        files.Add(message.Message as string);
+                        files.Add(JsonConvert.DeserializeObject<string>(message.Message.ToString()));
                         message = ReadMessage(client);
                     } while (message.Next);
                     files.Add(message.Message as string);
@@ -168,7 +169,7 @@ namespace LANshare.Connection
                     }
                     break;
                 case MessageType.FileUploadRequest:
-                    User from = message.Message as User;
+                    User from = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                     string username = from.NickName != null ? from.NickName : from.Name;
                     //TODO Ask user for permission
                     if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
