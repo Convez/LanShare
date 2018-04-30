@@ -200,7 +200,7 @@ namespace LANshare.Connection
                                         u.UserAddress = endPoint.Address;
                                         if (userList.Add(u.SessionId, u))
                                         {
-                                            //u.SetupImage();
+                                            u.SetupImage();
                                             OnUserFound(u);
                                         }
                                         if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))
