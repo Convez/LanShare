@@ -139,6 +139,9 @@ namespace LANshare.Connection
             cts = new CancellationTokenSource();
             ctok = cts.Token;
             client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
+            ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
+            TCP_Comunication.SendMessage(client, message);
+            message = TCP_Comunication.ReadMessage(client);
             Task.Run(() =>
             {
                 var msg = TCP_Comunication.ReadMessage(client);
@@ -147,9 +150,6 @@ namespace LANshare.Connection
                     cancelRequested?.Invoke(this, client);
                 }
             });
-            ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
-            TCP_Comunication.SendMessage(client, message);
-            message = TCP_Comunication.ReadMessage(client);
             if (message.MessageType == MessageType.FileUploadResponse)
             {
                 if (message.Next == false)

@@ -142,11 +142,10 @@ namespace LANshare
 
                 if (dr == System.Windows.Forms.DialogResult.OK)
                 {
-                    string baseDIr =Path.GetDirectoryName(openFileDialog.FileNames.First());
-                    what.Add(baseDIr);
-                    foreach (String file in openFileDialog.FileNames)
+                    var names = openFileDialog.FileNames;
+                    string basePath = Path.GetDirectoryName(names.First());
+                    foreach (String file in names)
                     {
-                        
                         what.Add(Path.GetFileName(file));
                     }
                 }

@@ -85,7 +85,7 @@ namespace LANshare.Connection
                             UdpClient cl = new UdpClient();
                             cl.MulticastLoopback = false;
                             int ttl = (int)cl.Client.GetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive);
-                            ttl += 5;
+                            ttl += 15;
                             cl.Client.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, ttl);
                             cl.ExclusiveAddressUse = false;
                             cl.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
