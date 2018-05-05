@@ -164,7 +164,7 @@ namespace LANshare.Connection
                 case MessageType.ProfileImageRequest:
                     try
                     {
-                        FileStream f = File.OpenRead("Media/profile.jpg");
+                        FileStream f = File.OpenRead(Configuration.UserPicPath);
                         ConnectionMessage response =
                             new ConnectionMessage(MessageType.ProfileImageResponse, true, null);
                         SendMessage(client, response);
