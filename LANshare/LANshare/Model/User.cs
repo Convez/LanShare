@@ -126,11 +126,6 @@ namespace LANshare.Model
                         bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
                     bi.EndInit();
                     _profilepicture = bi;
-                    
-
-
-
-
                 }
                 else
                 {
