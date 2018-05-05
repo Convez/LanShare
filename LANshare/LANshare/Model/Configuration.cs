@@ -50,7 +50,8 @@ namespace LANshare.Model
         public static string CustomSavePath { get; set; }
         public static User CurrentUser { get; private set; }
         public static int UserValidityMilliseconds { get; private set; }
-
+        public static String DefaultPicPath { get; private set; }
+        public static String UserPicPath { get; private set; }
         public static void LoadConfiguration()
         {
             UdpPort = Properties.Settings.Default.UdpPort;
@@ -68,6 +69,9 @@ namespace LANshare.Model
                 .FirstOrDefault((ip) => ip.AddressFamily == AddressFamily.InterNetwork);
             UserValidityMilliseconds = Properties.Settings.Default.UserValidityMilliseconds;
             CustomSavePath = Properties.Settings.Default.CustomSavePath;
+            DefaultPicPath = Properties.Settings.Default.DefaultPic;
+
+            UserPicPath = Properties.Settings.Default.CustomPic;
         }
 
         public static void SaveConfiguration()

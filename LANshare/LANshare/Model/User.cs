@@ -27,7 +27,7 @@ namespace LANshare.Model
         private EUserAdvertisementMode _privacymode;
         [field: NonSerializedAttribute()] public event PropertyChangedEventHandler PropertyChanged;
 
-
+        [JsonProperty("Name")]
         public string Name
         {
             get => _name;
@@ -37,12 +37,13 @@ namespace LANshare.Model
                 OnPropertyChanged("Name");
             }
         }
+        [JsonIgnore]
         public string IpAddress
         {
             get => UserAddress.ToString();
             
         }
-        
+        [JsonProperty("NickName")]
         public string NickName
         {
             get
@@ -61,7 +62,7 @@ namespace LANshare.Model
                 OnPropertyChanged("NickName");
             }
         }
-
+        [JsonProperty("PrivacyMode")]
         public String PrivacyMode
         {
             get
@@ -69,14 +70,14 @@ namespace LANshare.Model
                 return _privacymode.ToString(); 
             }
         }
-
+        [JsonProperty("ProfilePicture")]
         public ImageSource ProfilePicture
         {
             get => _profilepicture;
             set
             {
                 _profilepicture = value;
-                
+                _profilepicture.Freeze();
                 OnPropertyChanged("ProfilePicture");
             }
        }
@@ -84,6 +85,7 @@ namespace LANshare.Model
         
        
         //Session Id
+        [JsonProperty("SessionId")]
         public object SessionId { get=>_sessionId; set=>Interlocked.Exchange(ref _sessionId,value); }
 
         private object _sessionId;
@@ -98,7 +100,7 @@ namespace LANshare.Model
         }
         
 
-
+        [JsonProperty("TcpPortTo")]
         // Tcp port listening for file upload requests for user
         public int TcpPortTo { get; set; }
         public User(string name, int tcpPortTo , EUserAdvertisementMode privacymode, Uri profilePicUri=null, string nickName=null)
@@ -124,11 +126,6 @@ namespace LANshare.Model
                         bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
                     bi.EndInit();
                     _profilepicture = bi;
-                    
-
-
-
-
                 }
                 else
                 {
@@ -167,7 +164,7 @@ namespace LANshare.Model
 
         public void SetupImage()
         {
-            ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"Media\\default_pic.jpg", UriKind.Absolute));
+            ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+Configuration.DefaultPicPath, UriKind.Absolute));
             TCP_Comunication com = new TCP_Comunication();
             Task.Run(() => com.RequestImage(this));
         }

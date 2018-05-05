@@ -129,24 +129,24 @@ namespace LANshare
         private void StartUpload(List<string>what, List<User> to)
         {
             //TODO TEST
-            //if (what.Count == 0)
-            //{
+            if (what.Count == 0)
+            {
 
-            //    System.Windows.Forms.OpenFileDialog openFileDialog;
-            //    openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            //    openFileDialog.Title = "Select files";
-            //    openFileDialog.Multiselect = true;
-            //    System.Windows.Forms.DialogResult dr = openFileDialog.ShowDialog();
+                System.Windows.Forms.OpenFileDialog openFileDialog;
+                openFileDialog = new System.Windows.Forms.OpenFileDialog();
+                openFileDialog.Title = "Select files";
+                openFileDialog.Multiselect = true;
+                System.Windows.Forms.DialogResult dr = openFileDialog.ShowDialog();
 
-            //    if (dr == System.Windows.Forms.DialogResult.OK)
-            //    {
-            //        foreach (String file in openFileDialog.FileNames)
-            //        {
-            //            what.Add(file);
-            //        }
-            //    }
+                if (dr == System.Windows.Forms.DialogResult.OK)
+                {
+                    foreach (String file in openFileDialog.FileNames)
+                    {
+                        what.Add(file);
+                    }
+                }
 
-            //}
+            }
 
             foreach (User u in to)
             {

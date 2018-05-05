@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Caching;
+using Newtonsoft.Json;
 
 namespace LANshare.Connection
 {
@@ -195,11 +196,11 @@ namespace LANshare.Connection
                                 switch (message?.MessageType)
                                 {
                                     case MessageType.UserAdvertisement:
-                                        User u = message.Message as User;
+                                        User u = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                                         u.UserAddress = endPoint.Address;
                                         if (userList.Add(u.SessionId, u))
                                         {
-                                            //u.SetupImage();
+                                            u.SetupImage();
                                             OnUserFound(u);
                                         }
                                         if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))
@@ -213,7 +214,7 @@ namespace LANshare.Connection
                                         }
                                         break;
                                     case MessageType.UserDisconnectingNotification:
-                                        User us = message.Message as User;
+                                        User us = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                                         userList.Remove(us.SessionId);
                                         break;
                                     //Ignore udp packets where MessageType is not what expected. Might be from different versions of the program

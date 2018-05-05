@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using LANshare.Model;
+using Newtonsoft.Json;
 
 namespace LANshare.Connection
 {
@@ -61,7 +62,7 @@ namespace LANshare.Connection
                 switch (message.MessageType)
                 {
                     case MessageType.NewFile:
-                        string path = Path.Combine(basePath, message.Message as string);
+                        string path = Path.Combine(basePath, JsonConvert.DeserializeObject<string>(message.Message.ToString()));
                         if (File.Exists(path)) {
                             int fileCount = -1;
                             do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
@@ -75,7 +76,7 @@ namespace LANshare.Connection
                         f.Close();
                         break;
                     case MessageType.NewDirectory:
-                        string p = Path.Combine(basePath, message.Message as string);
+                        string p = Path.Combine(basePath, JsonConvert.DeserializeObject<string>(message.Message.ToString()));
                         Directory.CreateDirectory(p);
                         foldersDownloaded.Add(p);
                         ReceiveFiles(client, p, totSize, currSize);
@@ -95,7 +96,7 @@ namespace LANshare.Connection
             {
                 if (message.MessageType == MessageType.OperationCanceled)
                     throw new OperationCanceledException();
-                data = message.Message as byte[];
+                data = Convert.FromBase64String(message.Message as string);
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
                 int percentage = (int)(newCurr / totSize);
@@ -215,7 +216,7 @@ namespace LANshare.Connection
 
         internal void SendFile(FileStream from, TcpClient to, long totSize = 1, long curSize = 1, long previousInstant = 1)
         {
-            byte[] block = new byte[2048];
+            byte[] block = new byte[1024];
             int bytesRed = from.Read(block, 0, block.Length);
             do
             {

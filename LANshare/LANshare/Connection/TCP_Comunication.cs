@@ -1,4 +1,5 @@
 ﻿using LANshare.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -116,19 +117,25 @@ namespace LANshare.Connection
 
         public void RequestImage(User from)
         {
-            TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
-            ConnectionMessage message = new ConnectionMessage(MessageType.ProfileImageRequest, false, null);
-            SendMessage(client, message);
-            message = ReadMessage(client);
-            if (message.MessageType == MessageType.ProfileImageResponse && message.Next == true)
+            try
             {
-                string p = Path.GetTempPath() + "\\LANShare";
-                p = AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"tmp\\";
-                Directory.CreateDirectory(p);
-                FileStream f = new FileStream(p+from.SessionId+".jpg", FileMode.OpenOrCreate, FileAccess.Write);
-                new FileDownloadHelper().ReceiveFile(f, client);
-                f.Close();
-                from.ProfilePicture= new BitmapImage(new Uri(p+from.SessionId+".jpg", UriKind.Absolute));
+                TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
+                ConnectionMessage message = new ConnectionMessage(MessageType.ProfileImageRequest, false, null);
+                SendMessage(client, message);
+                message = ReadMessage(client);
+                if (message.MessageType == MessageType.ProfileImageResponse && message.Next == true)
+                {
+                    string p = Path.GetTempPath() + "\\LANShare";
+                    p = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "tmp\\";
+                    Directory.CreateDirectory(p);
+                    FileStream f = new FileStream(p + from.SessionId + ".jpg", FileMode.OpenOrCreate, FileAccess.Write);
+                    new FileDownloadHelper().ReceiveFile(f, client);
+                    f.Close();
+                    from.ProfilePicture = new BitmapImage(new Uri(p + from.SessionId + ".jpg", UriKind.Absolute));
+                }
+            }catch(SocketException ex)
+            {
+                //Cannot retrieve the image
             }
         }
 
@@ -141,7 +148,7 @@ namespace LANshare.Connection
                     List<string> files = new List<string>();
                     do
                     {
-                        files.Add(message.Message as string);
+                        files.Add(JsonConvert.DeserializeObject<string>(message.Message.ToString()));
                         message = ReadMessage(client);
                     } while (message.Next);
                     files.Add(message.Message as string);
@@ -168,7 +175,7 @@ namespace LANshare.Connection
                     }
                     break;
                 case MessageType.FileUploadRequest:
-                    User from = message.Message as User;
+                    User from = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                     string username = from.NickName != null ? from.NickName : from.Name;
                     //TODO Ask user for permission
                     if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
