@@ -23,7 +23,7 @@ namespace LANshare.Model
     {
         private string _name;
         private string _nickname;
-        [NonSerialized] private ImageSource _profilepicture;
+        [NonSerialized] [JsonIgnore] private ImageSource _profilepicture;
         private EUserAdvertisementMode _privacymode;
         [field: NonSerializedAttribute()] public event PropertyChangedEventHandler PropertyChanged;
 
@@ -70,7 +70,7 @@ namespace LANshare.Model
                 return _privacymode.ToString(); 
             }
         }
-        [JsonProperty("ProfilePicture")]
+        [JsonIgnore]
         public ImageSource ProfilePicture
         {
             get => _profilepicture;
