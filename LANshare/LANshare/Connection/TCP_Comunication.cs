@@ -135,14 +135,9 @@ namespace LANshare.Connection
                 }
             }catch(SocketException ex)
             {
-                from.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "Media\\Images\\UserImages\\default_pic.jpg", UriKind.Absolute));
-
-                //Cannot retrieve the image
             }
             catch (IOException ex)
             {
-                from.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "Media\\Images\\UserImages\\default_pic.jpg", UriKind.Absolute));
-
             }
         }
 

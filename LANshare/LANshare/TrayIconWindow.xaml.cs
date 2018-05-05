@@ -12,7 +12,7 @@ using System.Collections;
 using System.Windows.Interop;
 using System.Drawing;
 using System.Windows.Controls;
-
+using System.IO;
 
 namespace LANshare
 {
@@ -140,9 +140,11 @@ namespace LANshare
 
                 if (dr == System.Windows.Forms.DialogResult.OK)
                 {
-                    foreach (String file in openFileDialog.FileNames)
+                    var names = openFileDialog.FileNames;
+                    string basePath = Path.GetDirectoryName(names.First());
+                    foreach (String file in names)
                     {
-                        what.Add(file);
+                        what.Add(Path.GetFileName(file));
                     }
                 }
 
