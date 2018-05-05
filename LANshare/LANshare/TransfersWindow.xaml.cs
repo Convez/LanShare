@@ -34,9 +34,9 @@ namespace LANshare
 
 
 
-        public void AddTransfer(object sender, Transfer t)
+        public void AddTransfer(object sender, IFileTransferHelper t)
         {
-
+            transfersList.Add(t);
         }
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)

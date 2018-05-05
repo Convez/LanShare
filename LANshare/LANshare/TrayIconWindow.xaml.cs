@@ -12,7 +12,7 @@ using System.Collections;
 using System.Windows.Interop;
 using System.Drawing;
 using System.Windows.Controls;
-
+using System.IO;
 
 namespace LANshare
 {
@@ -35,6 +35,8 @@ namespace LANshare
         private TCP_Comunication _tcpComunication;
 
         private CancellationTokenSource _cts;
+
+        public event EventHandler<IFileTransferHelper> addedToTransfers;
 
         public TrayIconWindow()
         {
@@ -140,9 +142,12 @@ namespace LANshare
 
                 if (dr == System.Windows.Forms.DialogResult.OK)
                 {
+                    string baseDIr =Path.GetDirectoryName(openFileDialog.FileNames.First());
+                    what.Add(baseDIr);
                     foreach (String file in openFileDialog.FileNames)
                     {
-                        what.Add(file);
+                        
+                        what.Add(Path.GetFileName(file));
                     }
                 }
 
@@ -155,9 +160,12 @@ namespace LANshare
                     CancellationTokenSource cts = new CancellationTokenSource();
                     FileUploadHelper uploader = new FileUploadHelper();
                     ongoingTransfers.Add(uploader);
+                    OnAddedToTransfers(uploader);
                     uploader.InitFileSend(u, what, cts.Token);
                 });
             }
+
+            OpenTransfers(this, null);
         }
 
 
@@ -265,6 +273,7 @@ namespace LANshare
             TransfersWindow tf= OpenWindow<TransfersWindow, IFileTransferHelper>(ongoingTransfers);
             tf.peopleButtonClick += (o, a) => ShowPeople(this, null);
             tf.settingsButtonClick += (o, a) => OpenSettings(this, null);
+            addedToTransfers += (o, a) => tf.AddTransfer(this, a);
             tf.Closing += (o, a) =>
             {
                 tf.transfersButtonClick -= ShowPeople;
@@ -372,6 +381,13 @@ namespace LANshare
             );
 
             _trayIcon.Icon = System.Drawing.Icon.FromHandle(iconBitmap.GetHicon());
+
+        }
+
+
+        public void OnAddedToTransfers(IFileTransferHelper e) {
+            addedToTransfers?.Invoke(this, e);
+            _transfers = ongoingTransfers.Count();
 
         }
 
