@@ -193,6 +193,7 @@ namespace LANshare.Model
             byte[] hashed = hashAlg.ComputeHash(Encoding.UTF8.GetBytes(randNum));
             return BitConverter.ToString(hashed).Replace("-","");
         }
+
         public void SetPrivacyMode()
         {
             if (this == Model.Configuration.CurrentUser)
