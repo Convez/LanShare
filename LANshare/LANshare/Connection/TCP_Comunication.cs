@@ -164,7 +164,7 @@ namespace LANshare.Connection
                 case MessageType.ProfileImageRequest:
                     try
                     {
-                        FileStream f = File.OpenRead("Media/profile.jpg");
+                        FileStream f = File.OpenRead(Configuration.UserPicPath);
                         ConnectionMessage response =
                             new ConnectionMessage(MessageType.ProfileImageResponse, true, null);
                         SendMessage(client, response);
@@ -274,8 +274,13 @@ namespace LANshare.Connection
                 return null;
             }
             long messageLength = BitConverter.ToInt64(messageSize, 0);
-            byte[] readVector = new byte[IPAddress.NetworkToHostOrder(messageLength)];
-            bytesRed = ns.Read(readVector, 0, readVector.Length);
+            int toRead = (int)IPAddress.NetworkToHostOrder(messageLength);
+            byte[] readVector = new byte[toRead];
+            int red = ns.Read(readVector, 0, readVector.Length); ;
+            while (red < toRead)
+            {
+                red = ns.Read(readVector, red, toRead-red);
+            }
             return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
         }
 
