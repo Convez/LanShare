@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LANshare.Model;
 using LANshare.Connection;
+using System.Collections.ObjectModel;
 
 namespace LANshare
 {
@@ -21,7 +22,7 @@ namespace LANshare
     /// </summary>
     public partial class TransfersWindow : Window, ListWindow<IFileTransferHelper>
     {
-        private List<IFileTransferHelper> transfersList=new List<IFileTransferHelper>() ;
+        private ObservableCollection<IFileTransferHelper> transfersList=new ObservableCollection<IFileTransferHelper>() ;
 
         public event EventHandler peopleButtonClick;
         public event EventHandler transfersButtonClick;
@@ -30,6 +31,13 @@ namespace LANshare
         public TransfersWindow()
         {
             InitializeComponent();
+            transfersList = new ObservableCollection<IFileTransferHelper>();
+            ActiveTransfers.ItemsSource = transfersList;
+            //FileUploadHelper fu = new FileUploadHelper();
+            //User u = new User("prova", 111, EUserAdvertisementMode.Public);
+            //List<string> files= new List<string>("uno")
+            //fu.InitFileSend(u,)
+            //transfersList.Add()
         }
 
 

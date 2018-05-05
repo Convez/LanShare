@@ -60,7 +60,7 @@
 
         
         <Border Grid.Column="1" Grid.Row="1">
-            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransactions" BorderBrush="{x:Null}" Background="{x:Null}" >
+            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransfers" BorderBrush="{x:Null}" Background="{x:Null}" >
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid Background="#CC000000">
