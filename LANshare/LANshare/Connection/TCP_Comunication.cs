@@ -149,6 +149,8 @@ namespace LANshare.Connection
         private void HandleClient(TcpClient client, CancellationToken ct)
         {
             ConnectionMessage message = ReadMessage(client);
+            if (message == null)
+                return;
             switch (message.MessageType)
             {
                 case MessageType.IpcBaseFolder:
