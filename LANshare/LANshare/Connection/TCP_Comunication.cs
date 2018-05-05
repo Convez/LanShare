@@ -135,7 +135,14 @@ namespace LANshare.Connection
                 }
             }catch(SocketException ex)
             {
+                from.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "Media\\Images\\UserImages\\default_pic.jpg", UriKind.Absolute));
+
                 //Cannot retrieve the image
+            }
+            catch (IOException ex)
+            {
+                from.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "Media\\Images\\UserImages\\default_pic.jpg", UriKind.Absolute));
+
             }
         }
 
@@ -278,6 +285,7 @@ namespace LANshare.Connection
             byte[] data = ConnectionMessage.Serialize(message);
             byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
             ns.Write(dataSize, 0, dataSize.Length);
+            ns.Flush();
             ns.Write(data, 0, data.Length);
             ns.Flush();
         }

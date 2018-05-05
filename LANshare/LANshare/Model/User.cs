@@ -164,7 +164,7 @@ namespace LANshare.Model
 
         public void SetupImage()
         {
-            ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"Media\\default_pic.jpg", UriKind.Absolute));
+            ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+"Media\\Images\\UserImages\\default_pic.jpg", UriKind.Absolute));
             TCP_Comunication com = new TCP_Comunication();
             Task.Run(() => com.RequestImage(this));
         }
@@ -193,6 +193,7 @@ namespace LANshare.Model
             byte[] hashed = hashAlg.ComputeHash(Encoding.UTF8.GetBytes(randNum));
             return BitConverter.ToString(hashed).Replace("-","");
         }
+
         public void SetPrivacyMode()
         {
             if (this == Model.Configuration.CurrentUser)
