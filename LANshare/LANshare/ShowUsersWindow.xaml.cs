@@ -60,7 +60,7 @@ namespace LANshare
             else
             {
                 OnUsersSelected(selectedUsers);
-                Close();
+                //Close();
             }
         }
         public void AddUser(object sender, User u)

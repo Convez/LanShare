@@ -268,20 +268,20 @@ namespace LANshare.Connection
         internal static ConnectionMessage ReadMessage(TcpClient from)
         {
             NetworkStream ns = from.GetStream();
-            byte[] messageSize = new byte[sizeof(long)];
+            byte[] messageSize = new byte[sizeof(Int32)];
             int bytesRed = ns.Read(messageSize, 0, messageSize.Length);
             if (bytesRed <= 0)
             {
                 MessageBox.Show("Connection aborted");
                 return null;
             }
-            long messageLength = BitConverter.ToInt64(messageSize, 0);
-            int toRead = (int)IPAddress.NetworkToHostOrder(messageLength);
+            int messageLength = BitConverter.ToInt32(messageSize, 0);
+            int toRead = IPAddress.NetworkToHostOrder(messageLength);
             byte[] readVector = new byte[toRead];
-            int red = ns.Read(readVector, 0, readVector.Length); ;
+            int red = ns.Read(readVector, 0, readVector.Length);
             while (red < toRead)
             {
-                red = ns.Read(readVector, red, toRead-red);
+                red = ns.Read(readVector, red,toRead-red);
             }
             return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
         }
@@ -290,7 +290,7 @@ namespace LANshare.Connection
         {
             NetworkStream ns = to.GetStream();
             byte[] data = ConnectionMessage.Serialize(message);
-            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.LongLength));
+            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.Length));
             ns.Write(dataSize, 0, dataSize.Length);
             ns.Flush();
             ns.Write(data, 0, data.Length);

@@ -232,6 +232,10 @@ namespace LANshare
             _comunication.UsersExpired += userWindow.RemoveUsers;
             userWindow.transfersButtonClick +=OpenTransfers;
             userWindow.settingsButtonClick += OpenSettings;
+            userWindow.UsersSelected += (send, arg) =>
+            {
+                StartUpload(new List<String>(), arg);
+            };
 
             userWindow.Closing += (o, a) =>
             {
