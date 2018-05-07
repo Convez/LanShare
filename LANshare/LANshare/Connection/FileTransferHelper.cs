@@ -42,6 +42,7 @@ namespace LANshare.Connection
             try
             {
                 ReceiveFiles(from, destinationPath, totalSize, 0);
+                MessageBox.Show("Download completed");
             }
             catch (Exception ex)
             {
@@ -168,6 +169,7 @@ namespace LANshare.Connection
                 try
                 {
                     SendFiles(client, folder, files, ctok, totalSize, 0);
+                    MessageBox.Show("Upload completed");
                 }
                 catch (OperationCanceledException ex)
                 {
