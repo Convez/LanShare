@@ -42,6 +42,7 @@ namespace LANshare.Connection
             try
             {
                 ReceiveFiles(from, destinationPath, totalSize, 0);
+                MessageBox.Show("Download completed");
             }
             catch (Exception ex)
             {
@@ -62,7 +63,7 @@ namespace LANshare.Connection
                 switch (message.MessageType)
                 {
                     case MessageType.NewFile:
-                        string path = Path.Combine(basePath, JsonConvert.DeserializeObject<string>(message.Message.ToString()));
+                        string path = Path.Combine(basePath, message.Message as string);
                         if (File.Exists(path)) {
                             int fileCount = -1;
                             do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
@@ -76,7 +77,7 @@ namespace LANshare.Connection
                         f.Close();
                         break;
                     case MessageType.NewDirectory:
-                        string p = Path.Combine(basePath, JsonConvert.DeserializeObject<string>(message.Message.ToString()));
+                        string p = Path.Combine(basePath, message.Message as string);
                         Directory.CreateDirectory(p);
                         foldersDownloaded.Add(p);
                         ReceiveFiles(client, p, totSize, currSize);
@@ -142,14 +143,7 @@ namespace LANshare.Connection
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
-            Task.Run(() =>
-            {
-                var msg = TCP_Comunication.ReadMessage(client);
-                if (msg.MessageType == MessageType.OperationCanceled)
-                {
-                    cancelRequested?.Invoke(this, client);
-                }
-            });
+            
             if (message.MessageType == MessageType.FileUploadResponse)
             {
                 if (message.Next == false)
@@ -175,6 +169,7 @@ namespace LANshare.Connection
                 try
                 {
                     SendFiles(client, folder, files, ctok, totalSize, 0);
+                    MessageBox.Show("Upload completed");
                 }
                 catch (OperationCanceledException ex)
                 {

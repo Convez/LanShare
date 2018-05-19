@@ -276,7 +276,7 @@ namespace LANshare.Connection
             int red = ns.Read(readVector, 0, readVector.Length);
             while (red < toRead)
             {
-                red = ns.Read(readVector, red,toRead-red);
+                red += ns.Read(readVector, red,toRead-red);
             }
             return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
         }

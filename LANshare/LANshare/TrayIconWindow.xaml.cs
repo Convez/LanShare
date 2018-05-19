@@ -144,6 +144,7 @@ namespace LANshare
                 {
                     var names = openFileDialog.FileNames;
                     string basePath = Path.GetDirectoryName(names.First());
+                    what.Add(basePath);
                     foreach (String file in names)
                     {
                         what.Add(Path.GetFileName(file));
