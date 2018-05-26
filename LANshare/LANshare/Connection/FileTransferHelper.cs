@@ -14,12 +14,26 @@ using Newtonsoft.Json;
 
 namespace LANshare.Connection
 {
-    
+    public enum TransferCompletitionStatus
+    {
+        Sending,
+        Completed,
+        Canceled,
+        Error
+    }
 
     public interface IFileTransferHelper
     {
         event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
+        event EventHandler<TransferCompletitionStatus> TransferCompleted;
         event EventHandler<TcpClient> cancelRequested;
+       
+        User Counterpart { get; set; }
+
+        TransferCompletitionStatus Status { get; set; }
+
+        int Percentage { get; set; }
+
         void Cancel();
     }
 
@@ -27,9 +41,17 @@ namespace LANshare.Connection
     {
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
         public event EventHandler<TcpClient> cancelRequested;
+        public event EventHandler<TransferCompletitionStatus> TransferCompleted;
         private TcpClient client;
         private List<string> filesDownloaded = new List<string>();
         private List<string> foldersDownloaded = new List<string>();
+        private User _counterpart;
+        private TransferCompletitionStatus _status;
+        private int _percentage;
+        public User Counterpart { get => _counterpart; set => _counterpart=value; }
+        public TransferCompletitionStatus Status { get => _status; set => _status=value; }
+        public int Percentage { get => _percentage; set => _percentage=value; }
+
         public FileDownloadHelper() { }
         public FileDownloadHelper(TcpClient c) {
             client = c;
@@ -42,7 +64,7 @@ namespace LANshare.Connection
             try
             {
                 ReceiveFiles(from, destinationPath, totalSize, 0);
-                MessageBox.Show("Download completed");
+                TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
             }
             catch (Exception ex)
             {
@@ -131,9 +153,16 @@ namespace LANshare.Connection
     {
         public event EventHandler<FileTransferProgressChangedArgs> ProgressChanged;
         public event EventHandler<TcpClient> cancelRequested;
+        public event EventHandler<TransferCompletitionStatus> TransferCompleted;
         private TcpClient client;
         private CancellationTokenSource cts;
         private CancellationToken ctok;
+        private User _counterpart;
+        private TransferCompletitionStatus _status;
+        private int _percentage;
+        public User Counterpart { get => _counterpart; set => _counterpart = value; }
+        public TransferCompletitionStatus Status { get => _status; set => _status = value; }
+        public int Percentage { get => _percentage; set => _percentage = value; }
 
         public bool InitFileSend(User to, List<string> files, CancellationToken ct, string subject = null)
         {
@@ -169,7 +198,7 @@ namespace LANshare.Connection
                 try
                 {
                     SendFiles(client, folder, files, ctok, totalSize, 0);
-                    MessageBox.Show("Upload completed");
+                    TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                 }
                 catch (OperationCanceledException ex)
                 {

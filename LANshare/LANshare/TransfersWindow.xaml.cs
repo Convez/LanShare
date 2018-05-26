@@ -29,6 +29,8 @@ namespace LANshare
         public event EventHandler settingsButtonClick;
         private readonly object l = "";
 
+        private IFileTransferHelper transf;
+        private User u;
 
         public TransfersWindow()
         {
@@ -40,14 +42,33 @@ namespace LANshare
             //List<string> files= new List<string>("uno")
             //fu.InitFileSend(u,)
             //transfersList.Add()
+            u = new User("gigino",3,EUserAdvertisementMode.Public,null,null);
+       
+            u.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute));
+            transf = new FileDownloadHelper();
+            transf.Counterpart = u;
+            transf.Status = TransferCompletitionStatus.Sending;
+            transf.Percentage = 40;
+            AddTransfer(this, transf);
         }
 
 
 
         public void AddTransfer(object sender, IFileTransferHelper t)
         {
-            
-            transfersList.Add(t);
+            ActiveTransfers.Dispatcher.Invoke(() =>
+            {
+                lock (l)
+                {
+                    transfersList.Add(t);
+                    t.TransferCompleted += (o, a) => UpdateStatus(a, t);
+                }
+            });
+        }
+
+        private void UpdateStatus(TransferCompletitionStatus status,IFileTransferHelper t)
+        {
+
         }
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)

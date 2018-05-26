@@ -37,6 +37,8 @@ namespace LANshare
         private CancellationTokenSource _cts;
 
         public event EventHandler<IFileTransferHelper> addedToTransfers;
+        public event EventHandler<IFileTransferHelper> removedFromTransfers;
+
 
         public TrayIconWindow()
         {
@@ -295,7 +297,7 @@ namespace LANshare
 
         void notifier_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == System.Windows.Forms.MouseButtons.Right && e.Clicks==1)
             {
                 if (!_menu.IsOpen) _menu.IsOpen = true;
                 else _menu.IsOpen = false;
