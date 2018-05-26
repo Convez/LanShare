@@ -27,6 +27,8 @@ namespace LANshare
         public event EventHandler peopleButtonClick;
         public event EventHandler transfersButtonClick;
         public event EventHandler settingsButtonClick;
+        private readonly object l = "";
+
 
         public TransfersWindow()
         {
@@ -44,6 +46,7 @@ namespace LANshare
 
         public void AddTransfer(object sender, IFileTransferHelper t)
         {
+            
             transfersList.Add(t);
         }
 
@@ -79,7 +82,15 @@ namespace LANshare
         
         public void setList(List<IFileTransferHelper> list)
         {
-            list.ForEach(transfersList.Add);
+            ActiveTransfers.Dispatcher.Invoke(() =>
+            {
+                lock (l)
+                {
+                    list.ForEach(t => transfersList.Add(t));
+                }
+            });
+
+            //list.ForEach(transfersList.Add);
 
         }
 
