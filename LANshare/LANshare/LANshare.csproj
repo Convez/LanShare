@@ -229,7 +229,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Media\Images\ApplicationImages\polinet3.jpg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Media\Images\ApplicationImages\restore.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

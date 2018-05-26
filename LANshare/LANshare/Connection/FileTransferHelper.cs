@@ -101,7 +101,15 @@ namespace LANshare.Connection
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
                 int percentage = (int)(newCurr / totSize);
-                long remainingTime = totSize / (newCurr - curSize) * (Environment.TickCount - previousInstant);
+                Int64 remainingTime = Int64.MaxValue;
+                try
+                {
+                    remainingTime = (totSize - newCurr) / data.Length * (Environment.TickCount - previousInstant);
+                }
+                catch (Exception)
+                {
+                    remainingTime = Int64.MaxValue;
+                }
                 curSize = newCurr;
                 previousInstant = Environment.TickCount;
                 OnProgressChanged(
@@ -193,7 +201,10 @@ namespace LANshare.Connection
                 {
                     ConnectionMessage message = new ConnectionMessage(MessageType.NewDirectory, true, file);
                     TCP_Comunication.SendMessage(client, message);
-                    SendFiles(client, path, Directory.GetFiles(path).Select(x => Path.GetFileName(x)).ToList(), ct,totalSize,currSize);
+                    List<string> toSend = Directory.GetFiles(path).Select(x => Path.GetFileName(x)).ToList();
+                    
+                    toSend.AddRange(Directory.GetDirectories(path).Select(x => Path.GetDirectoryName(x)).ToList());
+                    SendFiles(client, path, toSend, ct,totalSize,currSize);
                 }
                 else
                 {
@@ -225,7 +236,15 @@ namespace LANshare.Connection
                 TCP_Comunication.SendMessage(to, message);
                 long newCurr = curSize + bytesRed;
                 int percentage = (int)(newCurr / totSize);
-                long remainingTime = totSize / (newCurr - curSize) * (Environment.TickCount - previousInstant);
+                Int64 remainingTime = Int64.MaxValue;
+                try
+                {
+                    remainingTime = (totSize - newCurr) / bytesRed * (Environment.TickCount - previousInstant);
+                }
+                catch (Exception)
+                {
+                    remainingTime = Int64.MaxValue;
+                }
                 curSize = newCurr;
                 previousInstant = Environment.TickCount;
                 OnProgressChanged(

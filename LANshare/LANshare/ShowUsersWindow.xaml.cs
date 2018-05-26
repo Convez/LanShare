@@ -52,7 +52,7 @@ namespace LANshare
         }
         private void SendButtonClicked(object sender,EventArgs args)
         {
-            List<User> selectedUsers = ConnectedUsers.SelectedItems.OfType<User>().ToList();
+            List<User> selectedUsers = ConnectedUsers.SelectedItems.OfType<User>().Distinct().ToList();
             if (selectedUsers.Count <= 0)
             {
                 MessageBox.Show("Select at least one user");
