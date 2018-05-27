@@ -1,2 +1,6 @@
 #TargetFrameworkVersion=v4.0:PlatformToolSet=v141:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit:WindowsTargetPlatformVersion=10.0.16299.0
+<<<<<<< HEAD
 Debug|Win32|C:\Users\Ema\Documents\LANshare\LANshare\|
+=======
+Debug|x64|C:\Users\crema\Documents\LANshare\LANshare\|
+>>>>>>> origin/Ema

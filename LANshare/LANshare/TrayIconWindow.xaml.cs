@@ -106,6 +106,7 @@ namespace LANshare
             _cts.Cancel();
             _comunication.StopAll();
             _tcpComunication.StopAll();
+            _tcpComunication.StopLoopback();
             Application.Current.Shutdown();
         }
         private void ExitApplication(object sender, RoutedEventArgs args)

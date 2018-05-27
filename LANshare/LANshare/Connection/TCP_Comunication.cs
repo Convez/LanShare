@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -25,7 +26,8 @@ namespace LANshare.Connection
         private Task serverTask;
 
         private List<TcpListener> listeners;
-
+        private TcpListener loopback;
+        private Task loopbackTask;
         public event EventHandler<List<string>> FileSendRequested;
 
         public event EventHandler<IFileTransferHelper> UploadAccepted;
@@ -42,6 +44,37 @@ namespace LANshare.Connection
         private List<TcpListener> GenerateServers(int tcpPort)
         {
             List<TcpListener> servers = new List<TcpListener>();
+            if (loopback == null)
+            {
+                Debug.WriteLine(loopback);
+                loopback = new TcpListener(new IPEndPoint(IPAddress.Loopback, 42666));
+                try {
+                    loopback.Start(50);
+                    loopbackTask = Task.Run(() => 
+                    {
+                        CancellationToken shutDown = shuttingDown.Token;
+                        while (!shutDown.IsCancellationRequested)
+                        {
+                            try
+                            {
+                                TcpClient clientAccepted = loopback.AcceptTcpClient();
+                                Task.Run(() => HandleClient(clientAccepted, shutDown));
+                            }
+                            catch (SocketException)
+                            {
+                            }
+                            catch (ObjectDisposedException)
+                            {
+                            }
+                            catch (InvalidOperationException) { }
+                        }
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine("Magia nera");
+                }
+            }
             foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
             {
                 IPInterfaceProperties ipProperties = nic.GetIPProperties();
@@ -58,12 +91,14 @@ namespace LANshare.Connection
                 }catch(NetworkInformationException e){
                     continue;// This adapter does not support IPv4
                 }
-                ipProperties.UnicastAddresses.ToList().ForEach(
+                ipProperties.UnicastAddresses.ToList().Where(addr=>!addr.Address.Equals(IPAddress.Loopback))
+                    .ToList().ForEach(
                     (addr) =>
                     {
                         if (addr.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
                             var edp = new IPEndPoint(addr.Address, tcpPort);
+                            
                             TcpListener server = new TcpListener(edp);
                             server.Start(50);
                             servers.Add(server);
@@ -104,6 +139,7 @@ namespace LANshare.Connection
         
         private void NetAvailabilityCallback(object sender, NetworkAvailabilityEventArgs args)
         {
+            
             StopAll();
             StartTcpServers();
         }
@@ -111,10 +147,14 @@ namespace LANshare.Connection
         public void StopAll()
         {
             shuttingDown?.Cancel();
-            listeners?.ForEach((l)=>l.Stop());
+            listeners?.ForEach((l)=> { l.Stop(); });
             serverTask?.Wait();
         }
-
+        public void StopLoopback()
+        {
+            loopback?.Stop();
+            loopbackTask?.Wait();
+        }
         public void RequestImage(User from)
         {
             try
@@ -152,7 +192,7 @@ namespace LANshare.Connection
                     List<string> files = new List<string>();
                     do
                     {
-                        files.Add(JsonConvert.DeserializeObject<string>(message.Message.ToString()));
+                        files.Add(message.Message as string);
                         message = ReadMessage(client);
                     } while (message.Next);
                     files.Add(message.Message as string);
