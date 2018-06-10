@@ -36,6 +36,7 @@ namespace LANshare
         {
             InitializeComponent();
             transfersList = new ObservableCollection<IFileTransferHelper>();
+            ActiveTransfers.Items.Clear();
             ActiveTransfers.ItemsSource = transfersList;
             //FileUploadHelper fu = new FileUploadHelper();
             //User u = new User("prova", 111, EUserAdvertisementMode.Public);

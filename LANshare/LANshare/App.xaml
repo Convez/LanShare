@@ -108,6 +108,7 @@
             <Setter Property="Foreground" Value="LightGray"/>
             <Setter Property="FontSize" Value="19"/>
             <Setter Property="FontFamily" Value="Gadugi"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
 
         </Style>
@@ -192,47 +193,23 @@
 
 
         <!--Control colors.-->
-        <Color x:Key="WindowColor">#FFE8EDF9</Color>
-        <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
-        <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
-
-        <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
-        <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
-        <Color x:Key="DisabledForegroundColor">#FF888888</Color>
-
-        <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
-        <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
 
         <Color x:Key="ControlLightColor">White</Color>
-        <Color x:Key="ControlMediumColor">#FF7381F9</Color>
-        <Color x:Key="ControlDarkColor">#FF211AA9</Color>
+        <Color x:Key="ControlMediumColor">Turquoise</Color>
+        <Color x:Key="ControlDarkColor">#c0f7f1</Color>
 
-        <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
-        <Color x:Key="ControlPressedColor">#FF211AA9</Color>
 
 
         <Color x:Key="GlyphColor">#FF444444</Color>
         <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
 
-        <!--Border colors-->
-        <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
-        <Color x:Key="BorderMediumColor">#FF888888</Color>
-        <Color x:Key="BorderDarkColor">#FF444444</Color>
-
-        <Color x:Key="PressedBorderLightColor">#FF888888</Color>
-        <Color x:Key="PressedBorderDarkColor">#FF444444</Color>
-
-        <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
-        <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
-
-        <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
 
         <!--Control-specific resources.-->
-        <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
-        <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
-        <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
+        <Color x:Key="HeaderTopColor">#CC000000</Color>
+        <Color x:Key="DatagridCurrentCellBorderColor">#CC000000</Color>
+        <Color x:Key="SliderTrackDarkColor">#CC000000</Color>
 
-        <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
+        <Color x:Key="NavButtonFrameColor">#CC000000</Color>
 
         <LinearGradientBrush x:Key="MenuPopupBrush"
                      EndPoint="0.5,1"
@@ -250,14 +227,13 @@
                      EndPoint="1,0">
             <LinearGradientBrush.GradientStops>
                 <GradientStopCollection>
-                    <GradientStop Color="#000A
-                                  00FF"
+                    <GradientStop Color="#9af9f0"
                     Offset="0" />
-                    <GradientStop Color="#600000FF"
+                    <GradientStop Color="White"
                     Offset="0.4" />
-                    <GradientStop Color="#600000FF"
-                    Offset="0.6" />
-                    <GradientStop Color="#000000FF"
+                    <GradientStop Color="White"
+                    Offset="0.5" />
+                    <GradientStop Color="#9af9f0"
                     Offset="1" />
                 </GradientStopCollection>
             </LinearGradientBrush.GradientStops>
@@ -274,7 +250,7 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ProgressBar}">
                         <Grid MinHeight="14"
-              MinWidth="200"
+              MinWidth="50"
               Background="{TemplateBinding Background}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -296,26 +272,38 @@
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
                             <Border x:Name="PART_Track"
-                  CornerRadius="2"
-                  BorderThickness="1">
-                                <Border.BorderBrush>
-                                    <SolidColorBrush Color="{DynamicResource BorderMediumColor}" />
-                                </Border.BorderBrush>
-                            </Border>
-                            <Border x:Name="PART_Indicator"
-                  CornerRadius="2"
-                  BorderThickness="1"
-                  HorizontalAlignment="Left"
-                  Background="{TemplateBinding Foreground}"
-                  Margin="0,-1,0,1">
+                            CornerRadius="12"
+                            BorderThickness="1">
                                 <Border.BorderBrush>
                                     <LinearGradientBrush StartPoint="0,0"
                                    EndPoint="0,1">
                                         <GradientBrush.GradientStops>
                                             <GradientStopCollection>
-                                                <GradientStop Color="{DynamicResource BorderLightColor}"
+                                                <GradientStop Color="White"
                                   Offset="0.0" />
-                                                <GradientStop Color="{DynamicResource BorderMediumColor}"
+                                                <GradientStop Color="Turquoise"
+                                  Offset="1.0" />
+                                            </GradientStopCollection>
+                                        </GradientBrush.GradientStops>
+                                    </LinearGradientBrush>
+
+                                </Border.BorderBrush>
+                            </Border>
+                            <Border x:Name="PART_Indicator"
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            HorizontalAlignment="Left"
+                                    
+                            Background="{TemplateBinding Foreground}"
+                            Margin="0,0,0,0">
+                                <Border.BorderBrush>
+                                    <LinearGradientBrush StartPoint="0,0"
+                                   EndPoint="0,1">
+                                        <GradientBrush.GradientStops>
+                                            <GradientStopCollection>
+                                                <GradientStop Color="White"
+                                  Offset="0.0" />
+                                                <GradientStop Color="Turquoise"
                                   Offset="1.0" />
                                             </GradientStopCollection>
                                         </GradientBrush.GradientStops>
@@ -323,12 +311,19 @@
 
                                 </Border.BorderBrush>
                                 <Grid ClipToBounds="True"
-                  x:Name="Animation">
-                                    <Rectangle x:Name="PART_GlowRect"
-                         Width="100"
-                         HorizontalAlignment="Left"
-                         Fill="{StaticResource ProgressBarIndicatorAnimatedFill}"
-                         Margin="-100,0,0,0" />
+                                      Margin="4,-1,4,-1"
+                                x:Name="Animation">
+                                    <Border x:Name="PART_GlowRect"
+                                         Width="30"
+                                         CornerRadius="12" 
+                                         BorderThickness="2"
+                                         HorizontalAlignment="Left"
+                                         Background="{StaticResource ProgressBarIndicatorAnimatedFill}"
+                                          >
+                                        <Border.BorderBrush>
+                                            <SolidColorBrush Color="Transparent" />
+                                        </Border.BorderBrush>
+                                    </Border>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -339,9 +334,9 @@
                 <Setter.Value>
                     <LinearGradientBrush EndPoint="0,1"
                            StartPoint="0,0">
-                        <GradientStop Color="{DynamicResource ControlLightColor}"
+                        <GradientStop Color="Transparent"
                       Offset="0" />
-                        <GradientStop Color="{DynamicResource ControlMediumColor}"
+                        <GradientStop Color="Transparent"
                       Offset="1" />
                     </LinearGradientBrush>
                 </Setter.Value>
@@ -358,8 +353,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        
+ 
 
     </Application.Resources>
 </Application>

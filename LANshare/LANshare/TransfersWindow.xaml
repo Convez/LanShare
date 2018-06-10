@@ -59,41 +59,56 @@
         </StackPanel>
 
         
-        <Border Grid.Column="1" Grid.Row="1">
-            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransfers" BorderBrush="{x:Null}" Background="{x:Null}" >
+        <Border Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1">
+            
+            <ListView Style="{StaticResource listViewStyle}" Name="ActiveTransfers" BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Stretch" >
                 <ListView.ItemTemplate>
+                    
                     <DataTemplate>
-                        <Grid Background="#CC000000">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="120" />
-                                <ColumnDefinition Width="50" />
+                        <Border CornerRadius="5" Background="#CC000000" BorderThickness="1" HorizontalAlignment="Stretch" MinWidth="470"  >
+                            <Border.BorderBrush>
+                                <SolidColorBrush Color="Black" />
+                            </Border.BorderBrush>
+                            <Grid HorizontalAlignment="Stretch"  >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.1*"/>
+                                    <ColumnDefinition MinWidth="100" Width="0.4*" />
+                                    <ColumnDefinition Width="0.3*" />
+                                    <ColumnDefinition MinWidth="150" Width="0.6*"/>
+                                    <ColumnDefinition Width="0.2*" />
 
-                            </Grid.ColumnDefinitions>
-                            <Ellipse  Grid.Column="0" Margin="10" Height="30" Width="30" VerticalAlignment="Center">
-                                <Ellipse.Fill>
-                                    <ImageBrush  ImageSource="{Binding Counterpart.ProfilePicture}"/>
-                                </Ellipse.Fill>
-                            </Ellipse>
-                            <TextBlock Grid.Column="1" Margin="10" Text="{Binding Counterpart.Name}"  HorizontalAlignment="Left" />
+                                </Grid.ColumnDefinitions>
+                                <Ellipse  Grid.Column="0" Margin="10" Height="30" Width="30" VerticalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <ImageBrush  ImageSource="{Binding Counterpart.ProfilePicture}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <TextBlock Grid.Column="1" Margin="10" Text="{Binding Counterpart.Name}"  HorizontalAlignment="Left" />
 
-                            <!--<TextBlock Grid.Column="0" Text="{Binding OtherUserName}" Margin="10" HorizontalAlignment="Left"/>-->
-                            <TextBlock Grid.Column="2" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center"/>
-                            <ProgressBar Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding Percentage}" Margin="10"  />
-                            <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
-                            <Button Grid.Column="4" Width="17" Height="17"  Margin="5,0,0,0" >
-                                <Button.Background>
-                                    <ImageBrush ImageSource="Media/Images/ApplicationImages/close.png"/>
-                                </Button.Background>
-                            </Button>
+                                <!--<TextBlock Grid.Column="0" Text="{Binding OtherUserName}" Margin="10" HorizontalAlignment="Left"/>-->
+                                <TextBlock Grid.Column="2" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center"/>
+                                <ProgressBar Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding Percentage}" Margin="10" Height="15"  />
+                                <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
+                                <Button Grid.Column="4" Width="17" Height="17"  Margin="5,0,0,0" >
+                                    <Button.Background>
+                                        <ImageBrush ImageSource="Media/Images/ApplicationImages/close.png"/>
+                                    </Button.Background>
+                                </Button>
 
 
-                        </Grid>
+                            </Grid>
 
+
+                        </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
+                <!--<ListView.Style>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    </Style>
+
+                </ListView.Style>-->
+                
             </ListView>
         </Border>
 
