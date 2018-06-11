@@ -86,7 +86,7 @@ namespace LANshare
 
             _icon = new Icon(System.IO.Path.Combine(
                         AppDomain.CurrentDomain.BaseDirectory, //Directory where executable is (NEVER NULL)
-                        "Media/Images/ApplicationImages/switch.ico"));
+                        "Media/Images/ApplicationImages/lslogo.ico"));
             //Crea TrayIcon
             _trayIcon = new System.Windows.Forms.NotifyIcon
             {
@@ -179,34 +179,7 @@ namespace LANshare
         //so we might at most have 2 different transfer connected to another user, one of the files being sent and one of the files being received. 
         //group transactions are not considered for the sake of the transactions counter as they are counted separately for each of the participants in the group.
 
-        public void NotifyTransferOpened()
-        {
-            _transfers++;
-        }
-
-        //to be called when a transfer has finished (a transfer is considered finished when all the files that were being sent to (or received from) a certain user have successfully completed
-        public void NotifyTransferClosed()
-        {
-            try
-            {
-                _transfers--;
-                if (_transfers < 0)
-                {
-                    //an error has occured, recheck number of transactions
-                    throw new ApplicationException("error in transfer count");
-                }
-                
-            }
-            catch (ApplicationException e)
-            {
-                Console.WriteLine("ERROR: transfers count went negative" + e.Message);
-                //get actual transfers number here
-               
-
-            }
-
-
-        }
+       
         public static T OpenWindow<T, Y>(List<Y> y)
             where T : Window, ListWindow<Y>, new()
         {
@@ -378,7 +351,7 @@ namespace LANshare
             canvas.DrawString(
                 n.ToString(),
                 f,
-                new SolidBrush(System.Drawing.Color.Red),
+                new SolidBrush(System.Drawing.Color.Blue),
                 new RectangleF(9, 5, 30, 30),
                 format
             );
@@ -390,6 +363,13 @@ namespace LANshare
 
         public void OnAddedToTransfers(IFileTransferHelper e) {
             addedToTransfers?.Invoke(this, e);
+            _transfers = ongoingTransfers.Count();
+
+        }
+
+        public void OnRemovedFromTransfers(IFileTransferHelper e)
+        {
+            removedFromTransfers?.Invoke(this, e);
             _transfers = ongoingTransfers.Count();
 
         }

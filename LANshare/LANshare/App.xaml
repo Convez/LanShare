@@ -166,8 +166,8 @@
             </Setter>
         </Style>
 
-        <!--button style-->
-        <Style x:Key="{x:Type Button}" TargetType="{x:Type Button}">
+        <!--text button style-->
+        <Style x:Key="textButton" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="#00DDDDDD" />
             <Setter Property="Foreground" Value="Gray"/>
             <Setter Property="BorderBrush" Value="{x:Null}" />
@@ -184,10 +184,81 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="TextElement.Foreground" Value="Coral"/>
+                    <Setter Property="TextElement.Foreground" Value="#FF004DF1"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!--window close button style-->
+        <Style x:Key="closeButton" TargetType="{x:Type Button}">
+
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="Background" Value="{x:Null}" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF892626"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--window general button style-->
+        <Style x:Key="windowButton" TargetType="{x:Type Button}">
+
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="Background" Value="{x:Null}" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF4E4E53"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+        <!--base button style-->
+        <Style x:Key="baseButton" TargetType="{x:Type Button}">
+
+            <Setter Property="Background" Value="#FF3A3A3E" />
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="FontFamily" Value="Gadugi" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF4E4E53"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
 
 
 

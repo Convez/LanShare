@@ -32,6 +32,7 @@ namespace LANshare
             Title.Text = title;
             InputField.Text = _defaultText;
             DataContext = this;
+            
         }
 
         private void SubmitInput(object sender, RoutedEventArgs e)

@@ -17,27 +17,39 @@
 
         <Grid.RowDefinitions>
 
-            <RowDefinition Height="0.07*"/>
+            <RowDefinition Height="32"/>
             <RowDefinition/>
             <RowDefinition Height="0.1*"/>
         </Grid.RowDefinitions>
 
         <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
-            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Background="#FF05080C">
-                <Button Width="17" Height="17" Click="Minimize_Button_Click" Margin="5,0,0,0" >
-                    <Button.Background>
-                        <ImageBrush ImageSource="Media/Images/ApplicationImages/minimise.png"/>
-                    </Button.Background>
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"  Background="#FF05080C">
+                <Button Style="{StaticResource windowButton}"   Width="42" Height="32" Click="Minimize_Button_Click"  >
+
+                    <Viewbox Width="16" Height="16">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M19,13H5V11H19V13Z" Fill="Gray" />
+                        </Canvas>
+                    </Viewbox>
+
                 </Button>
-                <Button Width="17" Height="17" Click="Maximize_Button_Click" Margin="5,0,0,0">
-                    <Button.Background>
-                        <ImageBrush ImageSource="Media/Images/ApplicationImages/restore.png"/>
-                    </Button.Background>
+                <Button Style="{StaticResource windowButton}"   Width="42" Height="32" Click="Maximize_Button_Click"  >
+
+                    <Viewbox Width="16" Height="16">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M3,21V3H21V21H3M5,5V19H19V5H5Z" Fill="Gray" />
+                        </Canvas>
+                    </Viewbox>
+
                 </Button>
-                <Button Width="17" Height="17" Click="Exit_Button_Click" Margin="5,0,0,0" >
-                    <Button.Background>
-                        <ImageBrush ImageSource="Media/Images/ApplicationImages/close.png"/>
-                    </Button.Background>
+                <Button Style="{StaticResource closeButton}"   Width="42" Height="32" Click="Exit_Button_Click"  >
+
+                    <Viewbox Width="16" Height="16">
+                        <Canvas Width="24" Height="24">
+                            <Path  Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="Gray" />
+                        </Canvas>
+                    </Viewbox>
+
                 </Button>
 
             </StackPanel>
@@ -46,13 +58,13 @@
         <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
         <StackPanel Grid.Column="0" Grid.Row="1" >
 
-            <Button Margin="10" FontSize="16" Foreground="Gray"  Click="OnUsersClick">
+            <Button Style="{StaticResource textButton}" Margin="10" FontSize="16"   Click="OnUsersClick">
                 People Online
             </Button>
-            <Button Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
+            <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
                 Transfers
             </Button>
-            <Button Margin="10" FontSize="16" Click="OnSettingClick" >
+            <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Click="OnSettingClick" >
                 Settings
             </Button>
 
@@ -89,12 +101,15 @@
                                 <TextBlock Grid.Column="2" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center"/>
                                 <ProgressBar Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding Percentage}" Margin="10" Height="15"  />
                                 <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
-                                <Button Grid.Column="4" Width="17" Height="17"  Margin="5,0,0,0" >
-                                    <Button.Background>
-                                        <ImageBrush ImageSource="Media/Images/ApplicationImages/close.png"/>
-                                    </Button.Background>
-                                </Button>
+                                <Button Style="{StaticResource closeButton}"  Grid.Column="4" Width="32" Height="22" Click="Exit_Button_Click"  >
 
+                                    <Viewbox Width="16" Height="16">
+                                        <Canvas Width="24" Height="24">
+                                            <Path  Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="Gray" />
+                                        </Canvas>
+                                    </Viewbox>
+
+                                </Button>
 
                             </Grid>
 

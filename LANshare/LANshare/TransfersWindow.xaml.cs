@@ -36,7 +36,6 @@ namespace LANshare
         {
             InitializeComponent();
             transfersList = new ObservableCollection<IFileTransferHelper>();
-            ActiveTransfers.Items.Clear();
             ActiveTransfers.ItemsSource = transfersList;
             //FileUploadHelper fu = new FileUploadHelper();
             //User u = new User("prova", 111, EUserAdvertisementMode.Public);
@@ -132,6 +131,25 @@ namespace LANshare
         {
             //transfersButtonClick?.Invoke(this, null);
 
+        }
+
+        public void AbortTransfer(object sender, RoutedEventArgs e) {
+            ConfirmationWindow C = new ConfirmationWindow("The file transfer will be aborted, continue?");
+            C.ShowDialog();
+            if (C.DialogResult == true)
+            {
+                Button b= (Button)sender;
+                IFileTransferHelper t = b.DataContext as IFileTransferHelper;
+                //t.Cancel();
+                ActiveTransfers.Dispatcher.Invoke(() =>
+                {
+                    lock (l)
+                    {
+                        transfersList.Remove(t);
+                    }
+                });
+            }
+            
         }
 
         
