@@ -224,10 +224,9 @@ namespace LANshare.Connection
                     //TODO Ask user for permission
                     if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
                     {
-
-                        DialogResult result = MessageBox.Show("Incoming transfer from " + username + ".\nDo you want to accept it?"
-                            , "Incoming transfer requested", MessageBoxButtons.YesNo);
-                        if (result == DialogResult.No)
+                        ConfirmationWindow C = new ConfirmationWindow("Incoming transfer from " + username + ".\nDo you want to accept it ?");
+                        
+                        if (C.DialogResult == false)
                         {
                             message = new ConnectionMessage(MessageType.FileUploadResponse, false, null);
                             SendMessage(client, message);
@@ -236,6 +235,7 @@ namespace LANshare.Connection
                     }
                     //TODO Ask user for permission
                     message = new ConnectionMessage(MessageType.FileUploadResponse, true, null);
+
                     SendMessage(client, message);
                     message = ReadMessage(client);
                     if (message.MessageType != MessageType.TotalUploadSize)

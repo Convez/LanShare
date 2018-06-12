@@ -48,7 +48,7 @@ namespace LANshare
             transf = new FileDownloadHelper();
             transf.Counterpart = u;
             transf.Status = TransferCompletitionStatus.Sending;
-            transf.Percentage = 40;
+            transf.DownloadPercentage = 40;
             AddTransfer(this, transf);
         }
 
@@ -140,7 +140,7 @@ namespace LANshare
             {
                 Button b= (Button)sender;
                 IFileTransferHelper t = b.DataContext as IFileTransferHelper;
-                //t.Cancel();
+                t.Cancel();
                 ActiveTransfers.Dispatcher.Invoke(() =>
                 {
                     lock (l)
