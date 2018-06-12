@@ -99,9 +99,9 @@
 
                                 <!--<TextBlock Grid.Column="0" Text="{Binding OtherUserName}" Margin="10" HorizontalAlignment="Left"/>-->
                                 <TextBlock Grid.Column="2" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center"/>
-                                <ProgressBar Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding Percentage}" Margin="10" Height="15"  />
+                                <ProgressBar Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding DownloadPercentage}" Margin="10" Height="15"  />
                                 <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
-                                <Button Style="{StaticResource closeButton}"  Grid.Column="4" Width="32" Height="22" Click="Exit_Button_Click"  >
+                                <Button Style="{StaticResource closeButton}"  Grid.Column="4" Width="32" Height="22" Click="AbortTransfer"  >
 
                                     <Viewbox Width="16" Height="16">
                                         <Canvas Width="24" Height="24">

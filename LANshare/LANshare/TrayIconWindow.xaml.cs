@@ -42,20 +42,17 @@ namespace LANshare
 
         public TrayIconWindow()
         {
-            SetupNetwork();
-            InitializeComponent();
-            _menu = (ContextMenu)this.FindResource("NotifierContextMenu");
-            Configuration.CurrentUser.PropertyChanged += PrivacyBinding;
-            _menu.DataContext = new
-            {
-                Configuration.CurrentUser.PrivacyMode,
-                _transfers,
-
-            };
+            SetupApplication();
         }
 
         public TrayIconWindow(StartupEventArgs e)
         {
+            SetupApplication();
+
+            StartSendingProcedure(this, e.Args.ToList());
+        }
+
+        private void SetupApplication() {
             SetupNetwork();
             InitializeComponent();
             _menu = (ContextMenu)this.FindResource("NotifierContextMenu");
@@ -67,7 +64,8 @@ namespace LANshare
 
             };
 
-            StartSendingProcedure(this, e.Args.ToList());
+            _tcpComunication.UploadAccepted += (o, a) => NewTransfer(a);
+
         }
 
         private void SetupNetwork()
@@ -124,7 +122,7 @@ namespace LANshare
                 _comunication.UsersExpired += suw.RemoveUsers;
                 suw.Closing += (o, a) => _comunication.UserFound -= suw.AddUser;
                 suw.Closing += (o, a) => _comunication.UsersExpired -= suw.RemoveUsers;
-                suw.UsersSelected += (send, arg) =>
+                suw.UsersSelected += (send, arg) => 
                 {
                     StartUpload(args, arg);
                 };
@@ -162,15 +160,21 @@ namespace LANshare
                 {
                     CancellationTokenSource cts = new CancellationTokenSource();
                     FileUploadHelper uploader = new FileUploadHelper();
-                    ongoingTransfers.Add(uploader);
-                    OnAddedToTransfers(uploader);
-                    uploader.InitFileSend(u, what, cts.Token);
+                    uploader.Counterpart = u;
+                    uploader.Status = TransferCompletitionStatus.Requested;
+                    NewTransfer(uploader);
+                    bool accepted=uploader.InitFileSend(u, what, cts.Token);                    
                 });
             }
 
             OpenTransfers(this, null);
         }
 
+        private void NewTransfer(IFileTransferHelper h)
+        {
+            ongoingTransfers.Add(h);
+            OnAddedToTransfers(h);
+        }
 
         //called after transactions window is closed to reinsert relative menuitem in context menu
  
