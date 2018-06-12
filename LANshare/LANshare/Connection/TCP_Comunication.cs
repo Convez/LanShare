@@ -243,7 +243,11 @@ namespace LANshare.Connection
 
                         lock (l)
                         {
-                            if (rejected) break;
+
+                            if (rejected) {
+
+                                break;
+                            }
                         }    
                         
 
@@ -281,6 +285,8 @@ namespace LANshare.Connection
                     
                     
                     FileDownloadHelper helper = new FileDownloadHelper();
+                    helper.Counterpart = from;
+                    helper.Status = TransferCompletitionStatus.Receiving;
                     OnUploadAccepted(helper);
                     helper.HandleFileDownload(client, savePath, (long)message.Message);
                     break;
