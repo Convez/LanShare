@@ -20,7 +20,8 @@ namespace LANshare.Connection
         Completed,
         Canceled,
         Error,
-        Requested
+        Requested,
+        Receiving
     }
 
     public interface IFileTransferHelper : INotifyPropertyChanged
@@ -49,10 +50,24 @@ namespace LANshare.Connection
         private List<string> filesDownloaded = new List<string>();
         private List<string> foldersDownloaded = new List<string>();
         private User _counterpart;
+        private int _percentage;
         private TransferCompletitionStatus _status;
-        public User Counterpart { get => _counterpart; set => _counterpart=value; }
-        public TransferCompletitionStatus Status { get => _status; set => _status=value; }
-        public int DownloadPercentage { get;  set; }
+        public User Counterpart { get => _counterpart;
+            set {
+                _counterpart = value;
+                OnPropertyChanged("Counterpart");
+            } }
+        public TransferCompletitionStatus Status { get => _status;
+            set {
+                _status = value;
+                OnPropertyChanged("Status");
+            } }
+        public int DownloadPercentage { get=> _percentage ; set
+            {
+                _percentage = value;
+                OnPropertyChanged("DownloadPercentage");
+            }
+        }
 
         public FileDownloadHelper() { }
         public FileDownloadHelper(TcpClient c) {
@@ -62,11 +77,13 @@ namespace LANshare.Connection
         public void HandleFileDownload(string destinationPath, long totalSize) => HandleFileDownload(client, destinationPath, totalSize);
         public void HandleFileDownload(TcpClient from,string destinationPath, long totalSize)
         {
+
             if (client == null) client = from;
             try
             {
                 ReceiveFiles(from, destinationPath, totalSize, 0);
                 TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
+                Status = TransferCompletitionStatus.Completed;
             }
             catch (Exception ex)
             {
@@ -76,6 +93,7 @@ namespace LANshare.Connection
                     filesDownloaded.ForEach(File.Delete);
                     foldersDownloaded.Reverse();
                     foldersDownloaded.Where(x => !Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
+                    Status = TransferCompletitionStatus.Error;
                 }
             }
         }
@@ -178,15 +196,34 @@ namespace LANshare.Connection
         private CancellationToken ctok;
         private User _counterpart;
         private TransferCompletitionStatus _status;
+        private int _percentage;
 
-        public User Counterpart { get => _counterpart; set => _counterpart = value; }
-        public TransferCompletitionStatus Status { get => _status; set => _status = value; }
-
-        public long TotalTransferSize { get; private set; }
-        public long CurrentTransferedSize { get; private set; }
-        public int DownloadPercentage { get;  set; }
-        public TimeSpan RemainingTime { get; private set; }
-
+        public User Counterpart
+        {
+            get => _counterpart;
+            set
+            {
+                _counterpart = value;
+                OnPropertyChanged("Counterpart");
+            }
+        }
+        public TransferCompletitionStatus Status
+        {
+            get => _status;
+            set
+            {
+                _status = value;
+                OnPropertyChanged("Status");
+            }
+        }
+        public int DownloadPercentage
+        {
+            get => _percentage; set
+            {
+                _percentage = value;
+                OnPropertyChanged("DownloadPercentage");
+            }
+        }
 
         public bool InitFileSend(User to, List<string> files, CancellationToken ct, string subject = null)
         {
@@ -202,8 +239,8 @@ namespace LANshare.Connection
                 if (message.Next == false)
                     return false;
 
-                _status = TransferCompletitionStatus.Sending;
-                OnPropertyChanged("Status");
+                Status = TransferCompletitionStatus.Sending;
+
                 string folder = files.First();
                 files.Remove(folder);
 
@@ -226,8 +263,7 @@ namespace LANshare.Connection
                 {
                     SendFiles(client, folder, files, ctok, totalSize, 0);
                     TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
-                    _status = TransferCompletitionStatus.Completed;
-                    OnPropertyChanged("Status");
+                    Status = TransferCompletitionStatus.Completed;
                 }
                 catch (OperationCanceledException ex)
                 {
@@ -308,7 +344,6 @@ namespace LANshare.Connection
         protected virtual void OnProgressChanged(FileTransferProgressChangedArgs e)
         {
             DownloadPercentage = e.DownloadPercentage;
-            OnPropertyChanged("DownloadPercentage");
         }
 
         public void Cancel()
@@ -318,8 +353,8 @@ namespace LANshare.Connection
                 ConnectionMessage message = new ConnectionMessage(MessageType.OperationCanceled, false, null);
                 TCP_Comunication.SendMessage(client, message);
                 client.Close();
-                _status = TransferCompletitionStatus.Canceled;
-                OnPropertyChanged("Status");
+                Status = TransferCompletitionStatus.Canceled;
+
             }
             catch(Exception e) { }
         }
