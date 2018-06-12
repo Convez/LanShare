@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace LANshare.Connection
 {
@@ -24,7 +25,7 @@ namespace LANshare.Connection
         private CancellationTokenSource shuttingDown;
 
         private Task serverTask;
-
+        private readonly object l = "";
         private List<TcpListener> listeners;
         private TcpListener loopback;
         private Task loopbackTask;
@@ -224,14 +225,29 @@ namespace LANshare.Connection
                     //TODO Ask user for permission
                     if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
                     {
-                        ConfirmationWindow C = new ConfirmationWindow("Incoming transfer from " + username + ".\nDo you want to accept it ?");
-                        
-                        if (C.DialogResult == false)
+                        bool rejected = false;
+                        System.Windows.Application.Current.Dispatcher.Invoke(() =>
                         {
-                            message = new ConnectionMessage(MessageType.FileUploadResponse, false, null);
-                            SendMessage(client, message);
-                            break;
-                        }
+                            lock (l)
+                            {
+                                ConfirmationWindow C = new ConfirmationWindow("Incoming transfer from " + username + ".\nDo you want to accept it ?");
+                                C.ShowDialog();
+                                if (C.DialogResult == false)
+                                {
+                                    message = new ConnectionMessage(MessageType.FileUploadResponse, false, null);
+                                    SendMessage(client, message);
+                                    rejected = true;
+                                }
+                            }
+                        });
+
+                        lock (l)
+                        {
+                            if (rejected) break;
+                        }    
+                        
+
+
                     }
                     //TODO Ask user for permission
                     message = new ConnectionMessage(MessageType.FileUploadResponse, true, null);

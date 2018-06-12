@@ -182,10 +182,7 @@ namespace LANshare.Connection
         public User Counterpart { get => _counterpart; set => _counterpart = value; }
         public TransferCompletitionStatus Status { get => _status; set => _status = value; }
 
-        public long TotalTransferSize { get; private set; }
-        public long CurrentTransferedSize { get; private set; }
         public int DownloadPercentage { get;  set; }
-        public TimeSpan RemainingTime { get; private set; }
 
 
         public bool InitFileSend(User to, List<string> files, CancellationToken ct, string subject = null)
