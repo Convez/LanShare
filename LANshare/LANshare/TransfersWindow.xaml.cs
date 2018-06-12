@@ -61,15 +61,13 @@ namespace LANshare
                 lock (l)
                 {
                     transfersList.Add(t);
-                    t.TransferCompleted += (o, a) => UpdateStatus(a, t);
+                  
                 }
             });
         }
 
-        private void UpdateStatus(TransferCompletitionStatus status,IFileTransferHelper t)
-        {
 
-        }
+       
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {

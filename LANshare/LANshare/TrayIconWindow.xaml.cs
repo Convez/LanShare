@@ -25,8 +25,20 @@ namespace LANshare
         private int _transfers = 0; //number of active transations
         private ContextMenu _menu;
         private int _privacyMenuItemPosition = 1; //this must be update if position in the privacy menu item is changed in xaml
+        private int _transfersMenuItemPosition = 2;
         private LinkedList<Notification> _notificationsQueue;
         private Icon _icon;
+        public int Transfers { get => _transfers;
+            set {
+                
+                _transfers = value;
+                this.Dispatcher.Invoke(() =>
+                {
+                    MenuItem m = (MenuItem)_menu.Items[_transfersMenuItemPosition];
+                    m.Header = _transfers;
+                });
+                
+            } }
 
         private List<IFileTransferHelper> ongoingTransfers = new List<IFileTransferHelper>();
 
@@ -38,7 +50,6 @@ namespace LANshare
 
         public event EventHandler<IFileTransferHelper> addedToTransfers;
         public event EventHandler<IFileTransferHelper> removedFromTransfers;
-
 
         public TrayIconWindow()
         {
@@ -60,7 +71,7 @@ namespace LANshare
             _menu.DataContext = new
             {
                 Configuration.CurrentUser.PrivacyMode,
-                _transfers,
+                Transfers,
 
             };
 
@@ -174,16 +185,18 @@ namespace LANshare
         {
             ongoingTransfers.Add(h);
             OnAddedToTransfers(h);
+            h.cancelRequested += (o, a) => RemoveTransaction(h);
+            h.TransferCompleted += (o, a) => RemoveTransaction(h);
         }
 
-        //called after transactions window is closed to reinsert relative menuitem in context menu
- 
-   
-        // to be called when a new transfer (one way stream of files that are either sent to the same user or received from the same user) is set up.. 
-        //so we might at most have 2 different transfer connected to another user, one of the files being sent and one of the files being received. 
-        //group transactions are not considered for the sake of the transactions counter as they are counted separately for each of the participants in the group.
+        private void RemoveTransaction(IFileTransferHelper e)
+        {
+            ongoingTransfers.Remove(e);
+            OnRemovedFromTransfers(e);
+            
+        }
 
-       
+
         public static T OpenWindow<T, Y>(List<Y> y)
             where T : Window, ListWindow<Y>, new()
         {
@@ -258,6 +271,7 @@ namespace LANshare
             {
                 tf.transfersButtonClick -= ShowPeople;
                 tf.settingsButtonClick -= OpenSettings;
+                addedToTransfers -=  tf.AddTransfer;
             };
         }
 
@@ -293,6 +307,8 @@ namespace LANshare
             String mode= Configuration.CurrentUser.PrivacyMode;
             m.Header = mode;
         }
+
+      
 
         public void NewNotification(Notification notification)
         {
@@ -367,16 +383,18 @@ namespace LANshare
 
         public void OnAddedToTransfers(IFileTransferHelper e) {
             addedToTransfers?.Invoke(this, e);
-            _transfers = ongoingTransfers.Count();
-
+            Transfers = ongoingTransfers.Count();
+            
         }
 
         public void OnRemovedFromTransfers(IFileTransferHelper e)
         {
             removedFromTransfers?.Invoke(this, e);
-            _transfers = ongoingTransfers.Count();
-
+            Transfers = ongoingTransfers.Count();
+           
         }
+
+
 
     }
 }

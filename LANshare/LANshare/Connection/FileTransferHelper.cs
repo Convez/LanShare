@@ -33,7 +33,7 @@ namespace LANshare.Connection
 
         TransferCompletitionStatus Status { get; set; }
 
-        int DownloadPercentage { get;  set; }
+        float DownloadPercentage { get;  set; }
 
         void Cancel();
     }
@@ -50,7 +50,7 @@ namespace LANshare.Connection
         private List<string> filesDownloaded = new List<string>();
         private List<string> foldersDownloaded = new List<string>();
         private User _counterpart;
-        private int _percentage;
+        private float _percentage;
         private TransferCompletitionStatus _status;
         public User Counterpart { get => _counterpart;
             set {
@@ -62,7 +62,7 @@ namespace LANshare.Connection
                 _status = value;
                 OnPropertyChanged("Status");
             } }
-        public int DownloadPercentage { get=> _percentage ; set
+        public float DownloadPercentage { get=> _percentage ; set
             {
                 _percentage = value;
                 OnPropertyChanged("DownloadPercentage");
@@ -142,7 +142,7 @@ namespace LANshare.Connection
                 data = Convert.FromBase64String(message.Message as string);
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
-                int percentage = (int)(newCurr / totSize);
+                float percentage = ((float)newCurr / (float)totSize)*100;
                 Int64 remainingTime = Int64.MaxValue;
                 try
                 {
@@ -163,7 +163,6 @@ namespace LANshare.Connection
         protected virtual void OnProgressChanged(FileTransferProgressChangedArgs e)
         {
             DownloadPercentage = e.DownloadPercentage;
-            OnPropertyChanged("DownloadPercentage");
         }
 
         public void Cancel()
@@ -196,7 +195,7 @@ namespace LANshare.Connection
         private CancellationToken ctok;
         private User _counterpart;
         private TransferCompletitionStatus _status;
-        private int _percentage;
+        private float _percentage;
 
         public User Counterpart
         {
@@ -216,7 +215,7 @@ namespace LANshare.Connection
                 OnPropertyChanged("Status");
             }
         }
-        public int DownloadPercentage
+        public float DownloadPercentage
         {
             get => _percentage; set
             {
@@ -268,6 +267,7 @@ namespace LANshare.Connection
                 catch (OperationCanceledException ex)
                 {
                     client.Close();
+                    Status = TransferCompletitionStatus.Canceled;
                     return false;
                 }
                 client.Close();
@@ -321,7 +321,7 @@ namespace LANshare.Connection
                 ConnectionMessage message = new ConnectionMessage(MessageType.FileChunk, true, block);
                 TCP_Comunication.SendMessage(to, message);
                 long newCurr = curSize + bytesRed;
-                int percentage = (int)(newCurr / totSize);
+                float percentage = ((float)newCurr / (float)totSize)*100;
                 Int64 remainingTime = Int64.MaxValue;
                 try
                 {
@@ -370,11 +370,11 @@ namespace LANshare.Connection
     {
         public long TotalTransferSize{ get; private set; }
         public long CurrentTransferedSize{ get; private set; }
-        public int DownloadPercentage { get; private set; }
+        public float DownloadPercentage { get; private set; }
         public TimeSpan RemainingTime { get; private set; }
 
         internal FileTransferProgressChangedArgs(long totalTransferSize, long currentTransferedSize,
-            int downloadPercentage, TimeSpan remainingTime)
+            float downloadPercentage, TimeSpan remainingTime)
         {
             TotalTransferSize = totalTransferSize;
             CurrentTransferedSize = currentTransferedSize;

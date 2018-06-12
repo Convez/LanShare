@@ -13,7 +13,7 @@
         <ContextMenu x:Key="NotifierContextMenu" Placement="MousePoint" Background="Black" Foreground="Black">
             <MenuItem Foreground="LightGray" Header="People Online" Click="ShowPeople"/>
             <MenuItem x:Name="PrivacyItem" Foreground="LightGray" Header="{Binding PrivacyMode}" HeaderStringFormat="Privacy Mode: {0}" Click="SetPrivacy" diag:PresentationTraceSources.TraceLevel="High" />
-            <MenuItem Foreground="LightGray" Header="{Binding _transfers}" HeaderStringFormat="Active File Transfers: {0}" Click="OpenTransfers" />
+            <MenuItem Foreground="LightGray" Header="{Binding Transfers}" HeaderStringFormat="Active File Transfers: {0}" Click="OpenTransfers" />
             <MenuItem Foreground="LightGray" Header="Settings" Click="OpenSettings"  />
             <MenuItem Foreground="LightGray" Header="Exit" Click="ExitApplication"/>
 

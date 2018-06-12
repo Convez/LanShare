@@ -285,9 +285,11 @@ namespace LANshare.Connection
                     
                     
                     FileDownloadHelper helper = new FileDownloadHelper();
-                    helper.Counterpart = from;
-                    helper.Status = TransferCompletitionStatus.Receiving;
-                    OnUploadAccepted(helper);
+                    
+                        //helper.Counterpart = from;
+                        helper.Status = TransferCompletitionStatus.Receiving;
+                        OnUploadAccepted(helper);
+                    
                     helper.HandleFileDownload(client, savePath, (long)message.Message);
                     break;
             }
