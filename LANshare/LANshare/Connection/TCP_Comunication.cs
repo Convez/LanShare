@@ -286,7 +286,7 @@ namespace LANshare.Connection
                     
                     FileDownloadHelper helper = new FileDownloadHelper();
                     
-                        //helper.Counterpart = from;
+                        helper.Counterpart = from;
                         helper.Status = TransferCompletitionStatus.Receiving;
                         OnUploadAccepted(helper);
                     
@@ -342,7 +342,13 @@ namespace LANshare.Connection
             {
                 red += ns.Read(readVector, red,toRead-red);
             }
-            return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
+            try
+            {
+                return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
+            }catch(Exception ex)
+            {
+                return null;
+            }
         }
 
         internal static void SendMessage(TcpClient to, ConnectionMessage message)

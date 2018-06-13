@@ -126,13 +126,12 @@ namespace LANshare.Connection
         private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(client);
-            
             while (message.MessageType != MessageType.EndDirectory)
             {
                 switch (message.MessageType)
                 {
                     case MessageType.NewFile:
-                        FileName = message.Message as string;
+                       FileName = message.Message as string;
                         string path = Path.Combine(basePath, message.Message as string);
                         if (File.Exists(path)) {
                             int fileCount = -1;
@@ -285,7 +284,6 @@ namespace LANshare.Connection
             ctok = cts.Token;
             client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
-            
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
             

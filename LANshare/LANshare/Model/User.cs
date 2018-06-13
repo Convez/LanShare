@@ -152,7 +152,7 @@ namespace LANshare.Model
                         }
                     }
                 }
-                
+                _profilepicture.Freeze();
 
             }
             catch (Exception ex)
