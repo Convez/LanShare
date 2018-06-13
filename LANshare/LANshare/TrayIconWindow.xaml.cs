@@ -162,6 +162,7 @@ namespace LANshare
                         what.Add(Path.GetFileName(file));
                     }
                 }
+                else return;
 
             }
 
