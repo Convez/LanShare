@@ -37,6 +37,8 @@ namespace LANshare.Connection
 
         string FileName { get; set; }
 
+        FileTransferProgressChangedArgs Args { get; set; }
+
         void Cancel();
     }
 
@@ -54,7 +56,19 @@ namespace LANshare.Connection
         private TransferCompletitionStatus _status;
         private float _percentage;
         private string _filename;
-        
+
+        private FileTransferProgressChangedArgs _args;
+        public FileTransferProgressChangedArgs Args
+        {
+            get => _args;
+            set
+            {
+                _args = value;
+                OnPropertyChanged("Args");
+            }
+
+        }
+
 
         public string FileName { get => _filename;
             set
@@ -105,18 +119,20 @@ namespace LANshare.Connection
                     foldersDownloaded.Reverse();
                     foldersDownloaded.Where(x => !Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
                     Status = TransferCompletitionStatus.Error;
+                    OnCanceled();
                 }
             }
         }
         private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(client);
-            FileName = message.Message as string;
+            
             while (message.MessageType != MessageType.EndDirectory)
             {
                 switch (message.MessageType)
                 {
                     case MessageType.NewFile:
+                        FileName = message.Message as string;
                         string path = Path.Combine(basePath, message.Message as string);
                         if (File.Exists(path)) {
                             int fileCount = -1;
@@ -183,8 +199,7 @@ namespace LANshare.Connection
             {
                 ConnectionMessage message = new ConnectionMessage(MessageType.OperationCanceled, false, null);
                 TCP_Comunication.SendMessage(client, message);
-                cancelRequested?.Invoke(this, client);
-                Status = TransferCompletitionStatus.Canceled;
+                OnCanceled();
                 client.Close();
             }
             catch (Exception e) { }
@@ -195,6 +210,12 @@ namespace LANshare.Connection
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
 
         }
+
+        private void OnCanceled()
+        {
+            cancelRequested?.Invoke(this, client);
+            Status = TransferCompletitionStatus.Canceled;
+        }
     }
 
     public class FileUploadHelper : IFileTransferHelper
@@ -203,6 +224,17 @@ namespace LANshare.Connection
         public event EventHandler<TransferCompletitionStatus> TransferCompleted;
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private FileTransferProgressChangedArgs _args;
+        public FileTransferProgressChangedArgs Args
+        {
+            get => _args;
+            set
+            {
+                _args = value;
+                OnPropertyChanged("Args");
+            }
+
+        }
         private TcpClient client;
         private CancellationTokenSource cts;
         private CancellationToken ctok;
@@ -253,7 +285,7 @@ namespace LANshare.Connection
             ctok = cts.Token;
             client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
-            FileName = message.Message as string;
+            
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
             
@@ -305,6 +337,7 @@ namespace LANshare.Connection
         {
             foreach (string file in files)
             {
+                FileName = file;
                 string path = Path.Combine(baseFolder, file);
                 FileAttributes attr = File.GetAttributes(path);
                 if (attr.HasFlag(FileAttributes.Directory))
@@ -368,6 +401,7 @@ namespace LANshare.Connection
         protected virtual void OnProgressChanged(FileTransferProgressChangedArgs e)
         {
             DownloadPercentage = e.DownloadPercentage;
+            Args = e;
         }
 
         public void Cancel()

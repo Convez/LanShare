@@ -33,7 +33,7 @@
                     </Viewbox>
 
                 </Button>
-                <Button Style="{StaticResource windowButton}"   Width="42" Height="32" Click="Maximize_Button_Click"  >
+                <Button Style="{StaticResource windowButton}"  Width="42" Height="32" Click="Maximize_Button_Click" >
 
                     <Viewbox Width="16" Height="16">
                         <Canvas Width="24" Height="24">
@@ -46,7 +46,7 @@
 
                     <Viewbox Width="16" Height="16">
                         <Canvas Width="24" Height="24">
-                            <Path  Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="Gray" />
+                            <Path  Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" Fill="Gray" Margin="0" />
                         </Canvas>
                     </Viewbox>
 
@@ -101,6 +101,7 @@
                                 <TextBlock Grid.Column="2" Text="{Binding FileName}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12"/>
                                 <TextBlock Grid.Column="3" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12" />
                                 <ProgressBar Grid.Column="4" Minimum="0" Maximum="100" Value="{Binding DownloadPercentage}" Margin="10" Height="15"  />
+                                <TextBlock Grid.Column="4" Text="{Binding Args.DownloadPercentage}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12" />
                                 <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
                                 <Button Style="{StaticResource closeButton}"  Grid.Column="5" Width="32" Height="22" Click="AbortTransfer"  >
 

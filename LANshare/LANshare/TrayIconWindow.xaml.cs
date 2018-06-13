@@ -162,6 +162,7 @@ namespace LANshare
                         what.Add(Path.GetFileName(file));
                     }
                 }
+                else return;
 
             }
 
@@ -235,7 +236,7 @@ namespace LANshare
             userWindow.settingsButtonClick += OpenSettings;
             userWindow.UsersSelected += (send, arg) =>
             {
-                StartUpload(new List<String>(), arg);
+                StartUpload(new List<String>(), arg.Distinct().ToList());
             };
 
             userWindow.Closing += (o, a) =>
