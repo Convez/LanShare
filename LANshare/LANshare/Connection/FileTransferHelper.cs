@@ -28,12 +28,14 @@ namespace LANshare.Connection
     {
         event EventHandler<TransferCompletitionStatus> TransferCompleted;
         event EventHandler<TcpClient> cancelRequested;
-       
+
         User Counterpart { get; set; }
 
         TransferCompletitionStatus Status { get; set; }
 
         float DownloadPercentage { get;  set; }
+
+        string FileName { get; set; }
 
         void Cancel();
     }
@@ -44,15 +46,15 @@ namespace LANshare.Connection
         public event EventHandler<TransferCompletitionStatus> TransferCompleted;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public FileTransferProgressChangedArgs ProgressChanged;
 
         private TcpClient client;
         private List<string> filesDownloaded = new List<string>();
         private List<string> foldersDownloaded = new List<string>();
         private User _counterpart;
+        private TransferCompletitionStatus _status;
         private float _percentage;
         private string _filename;
-        private TransferCompletitionStatus _status;
+        
 
         public string FileName { get => _filename;
             set
@@ -201,7 +203,6 @@ namespace LANshare.Connection
         public event EventHandler<TransferCompletitionStatus> TransferCompleted;
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public FileTransferProgressChangedArgs ProgressChanged;
         private TcpClient client;
         private CancellationTokenSource cts;
         private CancellationToken ctok;
