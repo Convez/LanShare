@@ -54,7 +54,7 @@
                     </Grid.RowDefinitions>
                     <Border Grid.Column="0"  Grid.Row="0"  HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top" >
                         <Label HorizontalAlignment="Left" >
-                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="18" Foreground="#FFB4DAE0"  >The file transfer will be aborted, continue?</TextBlock>
+                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="12" Foreground="#FFB4DAE0"  >The file transfer will be aborted, continue?</TextBlock>
                         </Label>
                     </Border>
                     <Button Style="{StaticResource baseButton}" Grid.Row="2" Grid.Column="0" Width="40" Click="Abort" HorizontalAlignment="Right" Margin="0,0,10,0"  >NO</Button>

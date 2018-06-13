@@ -139,13 +139,7 @@ namespace LANshare
                 Button b= (Button)sender;
                 IFileTransferHelper t = b.DataContext as IFileTransferHelper;
                 t.Cancel();
-                ActiveTransfers.Dispatcher.Invoke(() =>
-                {
-                    lock (l)
-                    {
-                        transfersList.Remove(t);
-                    }
-                });
+                
             }
             
         }

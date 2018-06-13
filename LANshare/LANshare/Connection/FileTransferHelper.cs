@@ -51,7 +51,16 @@ namespace LANshare.Connection
         private List<string> foldersDownloaded = new List<string>();
         private User _counterpart;
         private float _percentage;
+        private string _filename;
         private TransferCompletitionStatus _status;
+
+        public string FileName { get => _filename;
+            set
+            {
+                _filename = value;
+                OnPropertyChanged("FileName");
+            }
+        }
         public User Counterpart { get => _counterpart;
             set {
                 _counterpart = value;
@@ -100,6 +109,7 @@ namespace LANshare.Connection
         private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(client);
+            FileName = message.Message as string;
             while (message.MessageType != MessageType.EndDirectory)
             {
                 switch (message.MessageType)
@@ -171,6 +181,8 @@ namespace LANshare.Connection
             {
                 ConnectionMessage message = new ConnectionMessage(MessageType.OperationCanceled, false, null);
                 TCP_Comunication.SendMessage(client, message);
+                cancelRequested?.Invoke(this, client);
+                Status = TransferCompletitionStatus.Canceled;
                 client.Close();
             }
             catch (Exception e) { }
@@ -196,6 +208,16 @@ namespace LANshare.Connection
         private User _counterpart;
         private TransferCompletitionStatus _status;
         private float _percentage;
+        private string _filename;
+        public string FileName
+        {
+            get => _filename;
+            set
+            {
+                _filename = value;
+                OnPropertyChanged("FileName");
+            }
+        }
 
         public User Counterpart
         {
@@ -230,6 +252,7 @@ namespace LANshare.Connection
             ctok = cts.Token;
             client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
+            FileName = message.Message as string;
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
             
@@ -267,7 +290,7 @@ namespace LANshare.Connection
                 catch (OperationCanceledException ex)
                 {
                     client.Close();
-                    Status = TransferCompletitionStatus.Canceled;
+                    OnCanceled();
                     return false;
                 }
                 client.Close();
@@ -353,7 +376,7 @@ namespace LANshare.Connection
                 ConnectionMessage message = new ConnectionMessage(MessageType.OperationCanceled, false, null);
                 TCP_Comunication.SendMessage(client, message);
                 client.Close();
-                Status = TransferCompletitionStatus.Canceled;
+                OnCanceled();
 
             }
             catch(Exception e) { }
@@ -363,6 +386,11 @@ namespace LANshare.Connection
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
 
+        }
+        private void OnCanceled()
+        {
+            cancelRequested?.Invoke(this, client);
+            Status = TransferCompletitionStatus.Canceled;
         }
     }
 

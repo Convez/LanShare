@@ -86,22 +86,23 @@
                                     <ColumnDefinition Width="0.1*"/>
                                     <ColumnDefinition MinWidth="100" Width="0.4*" />
                                     <ColumnDefinition Width="0.3*" />
+                                    <ColumnDefinition Width="0.3*" />
                                     <ColumnDefinition MinWidth="150" Width="0.6*"/>
                                     <ColumnDefinition Width="0.2*" />
 
                                 </Grid.ColumnDefinitions>
-                                <Ellipse  Grid.Column="0" Margin="10" Height="30" Width="30" VerticalAlignment="Center">
+                                <Ellipse  Grid.Column="0" Margin="5" Height="30" Width="30" VerticalAlignment="Center">
                                     <Ellipse.Fill>
                                         <ImageBrush  ImageSource="{Binding Counterpart.ProfilePicture}"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                <TextBlock Grid.Column="1" Margin="10" Text="{Binding Counterpart.Name}"  HorizontalAlignment="Left" />
+                                <TextBlock Grid.Column="1" Margin="5" Text="{Binding Counterpart.Name}" VerticalAlignment="Center"  FontSize="14" HorizontalAlignment="Left" />
 
-                                <!--<TextBlock Grid.Column="0" Text="{Binding OtherUserName}" Margin="10" HorizontalAlignment="Left"/>-->
-                                <TextBlock Grid.Column="2" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center"/>
-                                <ProgressBar Grid.Column="3" Minimum="0" Maximum="100" Value="{Binding DownloadPercentage}" Margin="10" Height="15"  />
+                                <TextBlock Grid.Column="2" Text="{Binding FileName}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12"/>
+                                <TextBlock Grid.Column="3" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12" />
+                                <ProgressBar Grid.Column="4" Minimum="0" Maximum="100" Value="{Binding DownloadPercentage}" Margin="10" Height="15"  />
                                 <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
-                                <Button Style="{StaticResource closeButton}"  Grid.Column="4" Width="32" Height="22" Click="AbortTransfer"  >
+                                <Button Style="{StaticResource closeButton}"  Grid.Column="5" Width="32" Height="22" Click="AbortTransfer"  >
 
                                     <Viewbox Width="16" Height="16">
                                         <Canvas Width="24" Height="24">
