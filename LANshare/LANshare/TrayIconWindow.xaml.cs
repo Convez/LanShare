@@ -13,6 +13,8 @@ using System.Windows.Interop;
 using System.Drawing;
 using System.Windows.Controls;
 using System.IO;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace LANshare
 {
@@ -24,6 +26,8 @@ namespace LANshare
         private System.Windows.Forms.NotifyIcon _trayIcon;
         private int _transfers = 0; //number of active transations
         private ContextMenu _menu;
+        private int _menuX;
+        private int _menuY;
         private int _privacyMenuItemPosition = 1; //this must be update if position in the privacy menu item is changed in xaml
         private int _transfersMenuItemPosition = 2;
         private LinkedList<Notification> _notificationsQueue;
@@ -77,6 +81,9 @@ namespace LANshare
 
             _tcpComunication.UploadAccepted += (o, a) => NewTransfer(a);
 
+            _menu.Loaded += new RoutedEventHandler(Menu_Loaded);
+            _menu.Unloaded += new RoutedEventHandler(Menu_Unloaded);
+            _proc = HookCallback;
         }
 
         private void SetupNetwork()
@@ -103,6 +110,7 @@ namespace LANshare
             };
 
             _trayIcon.MouseDown += new System.Windows.Forms.MouseEventHandler(notifier_MouseDown);
+            
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
             _notificationsQueue = new LinkedList<Notification>();
@@ -288,17 +296,33 @@ namespace LANshare
 
 
 
-        void notifier_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void notifier_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Right && e.Clicks==1)
             {
-                if (!_menu.IsOpen) _menu.IsOpen = true;
+                if (!_menu.IsOpen) {
+                    
+                    _menuX = System.Windows.Forms.Cursor.Position.X;
+                    _menuY = System.Windows.Forms.Cursor.Position.Y;
+
+                    _menu.IsOpen = true;
+                } 
                 else _menu.IsOpen = false;
             }
             if(e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 ShowPeople(sender, null);
-                OpenTransfers(sender, null);
+            }
+            else if(e.Button== System.Windows.Forms.MouseButtons.Middle )
+            {
+
+                double w = _menu.ActualWidth;   
+                double h = _menu.ActualHeight;
+                if(e.X<_menuX || e.X> (_menuX + w))
+                {
+                    if(e.Y<_menuY || (e.Y> _menuY+h)) _menu.IsOpen = false; //checks wether the click is outside menu
+                }
+                    
             }
         }
 
@@ -395,6 +419,91 @@ namespace LANshare
            
         }
 
+
+
+        //the following methods are used for managing clicks outside of the application elements
+
+
+        void Menu_Loaded(object sender, RoutedEventArgs e)
+        {
+            _hookID = SetHook(_proc);
+        }
+
+        void Menu_Unloaded(object sender, RoutedEventArgs e)
+        {
+            UnhookWindowsHookEx(_hookID);
+        }
+
+        private LowLevelMouseProc _proc;
+        private IntPtr _hookID = IntPtr.Zero;
+
+        private IntPtr SetHook(LowLevelMouseProc proc)
+        {
+            using (Process curProcess = Process.GetCurrentProcess())
+            using (ProcessModule curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_MOUSE_LL, proc,
+                  GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        private  IntPtr HookCallback(
+          int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+            {
+                MSLLHOOKSTRUCT hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+                
+                notifier_MouseDown(this, new System.Windows.Forms.MouseEventArgs( System.Windows.Forms.MouseButtons.Middle, 1, hookStruct.pt.x, hookStruct.pt.y, 0));
+            }
+            return CallNextHookEx(_hookID, nCode, wParam, lParam);
+        }
+
+        private const int WH_MOUSE_LL = 14;
+
+        private enum MouseMessages
+        {
+            WM_LBUTTONDOWN = 0x0201,
+            WM_LBUTTONUP = 0x0202,
+            WM_MOUSEMOVE = 0x0200,
+            WM_MOUSEWHEEL = 0x020A,
+            WM_RBUTTONDOWN = 0x0204,
+            WM_RBUTTONUP = 0x0205
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MSLLHOOKSTRUCT
+        {
+            public POINT pt;
+            public uint mouseData;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr SetWindowsHookEx(int idHook,
+          LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode,
+          IntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern IntPtr GetModuleHandle(string lpModuleName);
 
 
     }

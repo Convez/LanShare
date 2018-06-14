@@ -221,9 +221,6 @@
     <Content Include="Media\Images\ApplicationImages\buttonbg.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Media\Images\ApplicationImages\close.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Media\Images\ApplicationImages\lslogo.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
