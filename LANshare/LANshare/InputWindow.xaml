@@ -42,7 +42,7 @@
 
             <Border Grid.Column="1"  Grid.Row="0"  HorizontalAlignment="Left"  VerticalAlignment="Center" >
                 <Label HorizontalAlignment="Left" Margin="-6,0,0,0" >
-                    <TextBlock Name="Title" HorizontalAlignment="Left" FontWeight="Regular" FontSize="18" Foreground="#FFB4DAE0" >Title</TextBlock>
+                    <TextBlock Name="Title" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FFB4DAE0" >Title</TextBlock>
                 </Label>
             </Border>
             <Border Grid.Column="1" Grid.Row="1" >
@@ -57,8 +57,8 @@
                         <RowDefinition/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF9CA4A4" Foreground="Black" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" BorderBrush="#FF919295" />
-                    <TextBlock Name="HintField"  Text="{Binding Hint}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"  Foreground="#FF004DF1" Background="{x:Null}" />
+                    <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF3A3A3E" Foreground="LightGray" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" BorderBrush="#FF919295" />
+                    <TextBlock Name="HintField"  Text="{Binding Hint}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"  Foreground="IndianRed" Background="{x:Null}" Margin="0,5,0,0"/>
                     <Button  Style="{StaticResource baseButton}"  Grid.Row="2" Grid.Column="1" Width="40" Click="Exit_Button_Click" HorizontalAlignment="Right" >Cancel</Button>
                     <Button Style="{StaticResource baseButton}"  Grid.Row="2" Grid.Column="2" Width="40"  Click="SubmitInput" HorizontalAlignment="Right" Foreground="#FFB4DAE0">OK</Button>
 

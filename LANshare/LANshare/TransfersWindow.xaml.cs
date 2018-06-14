@@ -48,7 +48,9 @@ namespace LANshare
             transf = new FileDownloadHelper();
             transf.Counterpart = u;
             transf.Status = TransferCompletitionStatus.Sending;
-            transf.DownloadPercentage = 40;
+            FileTransferProgressChangedArgs args = new FileTransferProgressChangedArgs(10,10,50, new TimeSpan(0,5,45));
+            transf.Args=args;
+            transf.FileName = "verylongfilenamethatjustdoesntend123456789youwishitwasover.jpg";
             AddTransfer(this, transf);
         }
 

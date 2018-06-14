@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -52,6 +53,8 @@ namespace LANshare.Model
         public static int UserValidityMilliseconds { get; private set; }
         public static String DefaultPicPath { get; private set; }
         public static String UserPicPath { get; private set; }
+
+
         public static void LoadConfiguration()
         {
             UdpPort = Properties.Settings.Default.UdpPort;

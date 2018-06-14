@@ -4,13 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
-        mc:Ignorable="d" Height="500" Width="700" WindowStartupLocation="Manual" Left="570" Top="100" Foreground="{x:Null}"
+        mc:Ignorable="d" Height="600" Width="1000" WindowStartupLocation="CenterScreen" Foreground="{x:Null}"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown">
     
 
     <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition />
             <ColumnDefinition Width="0.2*"/>
         </Grid.ColumnDefinitions>
@@ -62,7 +62,7 @@
                 People Online
             </Button>
             <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
-                Transfers
+               File Transfers
             </Button>
             <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Click="OnSettingClick" >
                 Settings
@@ -87,7 +87,9 @@
                                     <ColumnDefinition MinWidth="100" Width="0.4*" />
                                     <ColumnDefinition Width="0.3*" />
                                     <ColumnDefinition Width="0.3*" />
-                                    <ColumnDefinition MinWidth="150" Width="0.6*"/>
+                                    <ColumnDefinition Width="22" />
+                                    <ColumnDefinition Width="10" />
+                                    <ColumnDefinition MinWidth="70" Width="0.6*"/>
                                     <ColumnDefinition Width="0.2*" />
 
                                 </Grid.ColumnDefinitions>
@@ -99,11 +101,25 @@
                                 <TextBlock Grid.Column="1" Margin="5" Text="{Binding Counterpart.Name}" VerticalAlignment="Center"  FontSize="14" HorizontalAlignment="Left" />
 
                                 <TextBlock Grid.Column="2" Text="{Binding FileName}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12"/>
-                                <TextBlock Grid.Column="3" Text="{Binding Status}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12" />
-                                <ProgressBar Grid.Column="4" Minimum="0" Maximum="100" Value="{Binding DownloadPercentage}" Margin="10" Height="15"  />
-                                <TextBlock Grid.Column="4" Text="{Binding Args.DownloadPercentage}" Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12" />
+                                <TextBlock Grid.Column="3" Text="{Binding Status}" Margin="5,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12" />
+                                <TextBlock Grid.Column="4" Text="{Binding Args.DownloadPercentage}" Margin="0,10,0,10" HorizontalAlignment="Right" VerticalAlignment="Center"  FontSize="12"/>
+                                <TextBlock Grid.Column="5" Text="%" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Center"  FontSize="12"/>
+                                <Grid Grid.Column="6" Margin="13,5,0,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="0.5*" />
+                                        <ColumnDefinition Width="0.5*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="0.5*"/>
+                                        <RowDefinition Height="0.5*"/>
+                                    </Grid.RowDefinitions>
+                                    <ProgressBar Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="{Binding Args.DownloadPercentage}"   Height="15"  />
+                                    <TextBlock Grid.Column="0" Grid.Row="1" Text="Remaining Time: " Margin="0,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="12"/>
+                                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Args.RemainingTime}" Margin="0,3,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="12"/>
+
+                                </Grid>
                                 <!--<TextBlock Grid.Column="3" Text="{Binding Percentage}" Margin="10" HorizontalAlignment="Right"/>-->
-                                <Button Style="{StaticResource closeButton}"  Grid.Column="5" Width="32" Height="22" Click="AbortTransfer"  >
+                                <Button Style="{StaticResource closeButton}"  Grid.Column="7" Width="22" Height="22" Click="AbortTransfer"  >
 
                                     <Viewbox Width="16" Height="16">
                                         <Canvas Width="24" Height="24">

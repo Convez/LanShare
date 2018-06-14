@@ -6,13 +6,13 @@
         xmlns:local="clr-namespace:LANshare"        
         mc:Ignorable="d"
         Title="SettingsWindow"  Foreground="{x:Null}"
-        Height="500" Width="700"
+        Height="600" Width="1000"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown" 
-        WindowStartupLocation="Manual" Left="1070" Top="100" >
+        WindowStartupLocation="CenterScreen"  >
     
     <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition />
             <ColumnDefinition Width="0.1*"/>
         </Grid.ColumnDefinitions>
@@ -81,7 +81,9 @@
                     <ColumnDefinition Width="0.2*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="0.9*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.2*"/>
                     <RowDefinition Height="0.2*"/>
                     <RowDefinition Height="0.2*"/>
                     <RowDefinition Height="0.2*"/>
@@ -90,26 +92,30 @@
 
                 
                 <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="0"  HorizontalAlignment="Right" >Profile Picture :</TextBlock>
-                <Viewbox Grid.Row="0" Grid.Column="1">
-                   <Ellipse  Name="profileImg" Grid.Column="1" Grid.Row="0" Height="100" Width="100"  VerticalAlignment="Center" Margin="10" >
-                        <Ellipse.Fill>
-                            <ImageBrush  Stretch="UniformToFill" ImageSource="{Binding ProfilePicture}"/>
-                        </Ellipse.Fill>
-                    </Ellipse> 
-                </Viewbox>
+                <Button x:Name="profilepicbutton" Grid.Row="0" Style="{StaticResource textButton}" Grid.Column="1" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}"  Click="EditPicture">
+                    <Viewbox >
+                        <Ellipse  Name="profileImg" Height="100" Width="100"  VerticalAlignment="Center" Margin="10" >
+                            <Ellipse.Fill>
+                                <ImageBrush  Stretch="UniformToFill" ImageSource="{Binding User.ProfilePicture}"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </Viewbox>
 
-                <Button Style="{StaticResource textButton}" Content="Edit" Grid.Column="2" Grid.Row="0" Name="EditPicButton" Click="Edit" FontSize="16" Height="42" FontStyle="Italic" />
+                </Button>
+                
+                <Button Style="{StaticResource textButton}" Content="Edit" Grid.Column="2" Grid.Row="0"  Click="EditPicture"  Height="42" FontStyle="Italic" />
 
                 <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="1"  HorizontalAlignment="Right" >Name :</TextBlock>
-                <TextBlock Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="1" Text="{Binding Name}"  />
+                <TextBlock Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="1" Text="{Binding User.Name}"  />
 
 
                 <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Right">Nickname :</TextBlock>
-                <TextBlock Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="2" Text="{Binding NickName}"  />
-                <Button Style="{StaticResource textButton}" Content="Edit" Grid.Column="2" Grid.Row="2" Name="EditNickButton" Click="Edit" FontSize="16" FontStyle="Italic" Height="42" />
+                <TextBlock Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="2" Text="{Binding User.NickName}"  />
+                <Button Style="{StaticResource textButton}" Content="Edit" Grid.Column="2" Grid.Row="2"  Click="EditNick" FontStyle="Italic"  />
+                
                 <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" >Privacy Mode :</TextBlock>
-                <TextBlock Name="CurrentPrivacyMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding PrivacyMode}" />
-                <Button Content="Edit" Grid.Column="2" Grid.Row="3" Name="EditPrivButton" Click="Edit" FontSize="16" FontStyle="Italic" Height="42" >
+                <TextBlock Name="CurrentPrivacyMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding User.PrivacyMode}" />
+                <Button Content="Edit" Grid.Column="2" Grid.Row="3" Name="EditPrivButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
                             <Style.Triggers>
@@ -153,6 +159,56 @@
                     </Button.ContextMenu>
                 </Button>
 
+                <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">Save Mode :</TextBlock>
+                <TextBlock Name="CurrentSaveMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="4" Text="{Binding SavePathMode}" />
+                <Button Content="Edit" Grid.Column="2" Grid.Row="4" Name="EditSaveButton"  FontSize="12" FontStyle="Italic"  >
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="TextElement.Foreground" Value="#FF004DF1"/>
+                                </Trigger>
+                                <EventTrigger RoutedEvent="Click">
+                                    <EventTrigger.Actions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="ContextMenu.IsOpen">
+                                                    <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True"/>
+                                                </BooleanAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger.Actions>
+                                </EventTrigger>
+                            </Style.Triggers>
+
+                            <Setter Property="Background" Value="#00DDDDDD" />
+                            <Setter Property="Foreground" Value="Gray"/>
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                            <Setter Property="FontFamily" Value="Gadugi" />
+
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Foreground="LightGray" Header="Use Default" Click="PathSetter" FontStyle="Normal" />
+                            <MenuItem Foreground="LightGray" Header="Use Custom" Click="PathSetter" FontStyle="Normal" />
+                            <MenuItem Foreground="LightGray" Header="Ask Always" Click="PathSetter" FontStyle="Normal" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right">Save Path :</TextBlock>
+                <TextBlock Style="{StaticResource RelevantTextStyle}" x:Name="pathView" Grid.Column="1" FontSize="12" TextWrapping="WrapWithOverflow" Grid.Row="5" Text="{Binding SavePath}"   />
+                <Button Style="{StaticResource textButton}" x:Name="editPathButton" Content="Edit" Grid.Column="2" Grid.Row="5" Click="EditPath" FontStyle="Italic"  />
             </Grid>
 
         </Border>

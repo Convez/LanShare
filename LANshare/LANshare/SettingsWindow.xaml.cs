@@ -16,25 +16,82 @@ using LANshare.Model;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Net.Cache;
+using System.ComponentModel;
 
 namespace LANshare
 {
     /// <summary>
     /// Interaction logic for SettingsWindow.xaml
     /// </summary>
-    public partial class SettingsWindow : Window, ListWindow<User>
+    public partial class SettingsWindow : Window, ListWindow<User>, INotifyPropertyChanged
     {
 
         public event EventHandler peopleButtonClick;
         public event EventHandler transfersButtonClick;
         public event EventHandler settingsButtonClick;
         public event EventHandler privacyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private string _savePath;
+        public User User
+        {
+            get => Configuration.CurrentUser;
+            
+        }
+
+        public string SavePath { get => _savePath;
+            set
+            {
+                _savePath = value;
+                OnPropertyChanged("SavePath");
+            }
+        }
+
+        private string _savePathMode;
+
+        public string SavePathMode
+        {
+            get => _savePathMode;
+            set
+            {
+                _savePathMode = value;
+                OnPropertyChanged("SavePathMode");
+            }
+        }
 
         public SettingsWindow()
         {
             InitializeComponent();
-            this.DataContext = Model.Configuration.CurrentUser;
+            if(!String.IsNullOrWhiteSpace(Configuration.CustomSavePath) && Configuration.FileSavePathMode == EFileSavePathMode.UseCustom)
+            {
+                SavePathMode = "Use Custom";
+                SavePath = Configuration.CustomSavePath;
+                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                editPath.Visibility = Visibility.Visible;
+                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                pathField.Visibility = Visibility.Visible;
+            }
+            else if (Configuration.FileSavePathMode == EFileSavePathMode.UseDefault)
+            {
+                SavePathMode = "Use Default";
+                SavePath = Configuration.DefaultSavePath;
+                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                editPath.Visibility = Visibility.Collapsed;
+                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                pathField.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SavePathMode = "Ask Always";
+                SavePath = null;
+                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                editPath.Visibility = Visibility.Collapsed;
+                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                pathField.Visibility = Visibility.Collapsed;
+            }
 
+            DataContext = this;
+            
         }
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
@@ -56,25 +113,16 @@ namespace LANshare
                 this.DragMove();
         }
 
-        private void Edit(object sender, RoutedEventArgs e)
+       
+
+        private void EditNick(object sender, RoutedEventArgs e)
         {
-            System.Windows.Controls.Button b = (System.Windows.Controls.Button)sender;
-            switch(b.Name)
+            InputWindow i = new InputWindow("Choose your nickname:");
+            i.ShowDialog();
+            if (i.DialogResult == true)
             {
-                case "EditNickButton":
-                    InputWindow i = new InputWindow("Choose your nickname:");
-                    i.ShowDialog();
-                    if (i.DialogResult == true)
-                    {
-                        Configuration.CurrentUser.NickName = i.Input;
-                    }
-                    break;
-                case "EditPicButton":
-                    //make chose the file
-                    GetPicFromFIle();
-                    break;
-                
-            }    
+                Configuration.CurrentUser.NickName = i.Input;
+            }
         }
         private void PrivacySetter(object sender, RoutedEventArgs e)
         {
@@ -84,13 +132,76 @@ namespace LANshare
                 privacyChanged?.Invoke(this, null);
             }
         }
+        private void PathSetter(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
+            //Configuration.CustomSavePath = m.Header.ToString();
+            if (m.Header.ToString() == "Use Custom" )
+            {
+                SavePathMode = "Use Custom";
+                Configuration.FileSavePathMode = EFileSavePathMode.UseCustom;
+                if (String.IsNullOrWhiteSpace(Configuration.CustomSavePath)) SavePath = Configuration.DefaultSavePath;
+                else SavePath = Configuration.CustomSavePath;
+                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                editPath.Visibility = Visibility.Visible;
+                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                pathField.Visibility = Visibility.Visible;
+                var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
+                pathLabel.Visibility = Visibility.Visible;
 
-        private void GetPicFromFIle()
+            }
+            else if (m.Header.ToString() == "Use Default" )
+            {
+                SavePathMode = "Use Default";
+                Configuration.FileSavePathMode = EFileSavePathMode.UseDefault;
+                SavePath = Configuration.DefaultSavePath;
+                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                editPath.Visibility = Visibility.Collapsed;
+                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                pathField.Visibility = Visibility.Visible;
+                var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
+                pathLabel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SavePathMode = "Ask Always";
+                Configuration.FileSavePathMode = EFileSavePathMode.AskForPath;
+                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                editPath.Visibility = Visibility.Collapsed;
+                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                pathField.Visibility = Visibility.Collapsed;
+                var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
+                pathLabel.Visibility = Visibility.Collapsed;
+            }
+            Configuration.SaveConfiguration();
+        }
+
+        private void EditPath(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog;
+            folderBrowserDialog = new FolderBrowserDialog();
+            folderBrowserDialog.Description = "Select Your File Save Path";
+
+            DialogResult dr = folderBrowserDialog.ShowDialog();
+            if (dr == System.Windows.Forms.DialogResult.OK)
+
+            {
+                string path = folderBrowserDialog.SelectedPath;
+                Configuration.CustomSavePath = path;
+                Configuration.SaveConfiguration();
+                SavePath = path;
+            }
+
+                
+        }
+
+
+        private void EditPicture(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.OpenFileDialog openFileDialog1;
             openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             openFileDialog1.Filter = "Images (*.BMP;*.JPG;*.GIF,*.PNG,*.TIFF)|*.BMP;*.JPG;*.GIF;*.PNG;*.TIFF|" +"All files (*.*)|*.*";
-            openFileDialog1.Title = "Select Profile Picture";
+            openFileDialog1.Title = "Select Your Profile Picture";
 
             DialogResult dr = openFileDialog1.ShowDialog();
 
@@ -103,7 +214,7 @@ namespace LANshare
                 try
 
                 {
-                    Configuration.CurrentUser.ProfilePicture = null;
+                    //Configuration.CurrentUser.ProfilePicture = null;
                     System.IO.File.Copy(file, Properties.Settings.Default.CustomPic, true);
                     BitmapImage profile_pic = new BitmapImage();
                     //profile_pic.BeginInit();
@@ -175,5 +286,13 @@ namespace LANshare
         {
             transfersButtonClick?.Invoke(this, null);
         }
+        private void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+
+        }
+
+
+
     }
 }

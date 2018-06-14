@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
         mc:Ignorable="d"
-        Height="500" Width="500" MinWidth="700" Visibility="Visible" WindowStartupLocation="Manual" Left="70" Top="100" Foreground="{x:Null}"
+        Height="600" Width="1000" MinWidth="700" Visibility="Visible" WindowStartupLocation="CenterScreen" Foreground="{x:Null}"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown">
 
     <Grid Style="{StaticResource windowStyle}" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition />
             <ColumnDefinition Width="0.2*"/>
         </Grid.ColumnDefinitions>
