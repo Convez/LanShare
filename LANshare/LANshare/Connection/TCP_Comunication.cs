@@ -29,6 +29,7 @@ namespace LANshare.Connection
         private List<TcpListener> listeners;
         private TcpListener loopback;
         private Task loopbackTask;
+        public event EventHandler requestSeen;
         public event EventHandler<List<string>> FileSendRequested;
         public event EventHandler<User> TransferRequested;
         public event EventHandler<IFileTransferHelper> UploadAccepted;
@@ -243,6 +244,7 @@ namespace LANshare.Connection
                             }
                         });
 
+                        requestSeen?.Invoke(this, null);
 
                         if (rejected) {
 

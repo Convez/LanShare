@@ -30,7 +30,8 @@ namespace LANshare
         private int _menuY;
         private int _privacyMenuItemPosition = 1; //this must be update if position in the privacy menu item is changed in xaml
         private int _transfersMenuItemPosition = 2;
-        private LinkedList<Notification> _notificationsQueue;
+        private int _notifications;
+        //private ObservableCollection<Notification> _notificationsList;
         private Icon _icon;
         public int Transfers { get => _transfers;
             set {
@@ -82,12 +83,12 @@ namespace LANshare
             _tcpComunication.UploadAccepted += (o, a) => NewTransfer(a);
             _tcpComunication.TransferRequested += (o, a) =>
             {
-                string otherUser;
-                if (!string.IsNullOrEmpty(a.NickName)) otherUser = a.NickName;
-                else otherUser = a.Name;
-                Notification n = new Notification("", Notification.NotificationType.transferRequest, otherUser);
+                
+                Notification n = new Notification("", Notification.NotificationType.transferRequest, a);
                 NewNotification(n);
             };
+
+            _tcpComunication.requestSeen += (o, a) => OnNotificationClosed(o, a);
 
             _menu.Loaded += new RoutedEventHandler(Menu_Loaded);
             _menu.Unloaded += new RoutedEventHandler(Menu_Unloaded);
@@ -121,8 +122,9 @@ namespace LANshare
             
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
-            _notificationsQueue = new LinkedList<Notification>();
-            UnseenNotificationsIconOverlay();
+            _notifications =1;
+            UnseenNotificationsIconOverlay(true);
+            //_notificationsList = new ObservableCollection<Notification>();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -345,52 +347,31 @@ namespace LANshare
 
         public void NewNotification(Notification notification)
         {
-            if(notification.MsgType==Notification.NotificationType.transferRequest || notification.MsgType == Notification.NotificationType.transferAbort)
-            {
-                System.Media.SystemSounds.Exclamation.Play();
-            }
-            int w = Application.Current.Windows.OfType<NotificationWindow>().Count(); //se w=1 vuol dire che c'è una finestra già aperta che aspetta di essere clickata o chiusa ed eventualmente anche altre notifiche in coda
-            if (w == 1)
-            {
-                _notificationsQueue.AddLast(notification);
-                NotificationWindow n= Application.Current.Windows.OfType<NotificationWindow>().First();
-                n.NewNotificationInQueue();
-                UnseenNotificationsIconOverlay();
-
-            }
-            else if (w == 0)
-            {
-                NotificationWindow n = new NotificationWindow(notification, _notificationsQueue.Count());
-                n.Closing += OnNotificationClosed;
-                n.Show();
-            }
+            //_notificationsList.Add(notification);
+            _notifications++;
+            UnseenNotificationsIconOverlay(true);
         }
 
-        public void OnNotificationClosed(object sender, CancelEventArgs a)
-        {  
-            _notificationsQueue.RemoveFirst();
-            if(_notificationsQueue.Count>0)
-            {
-                NotificationWindow n = new NotificationWindow( _notificationsQueue.First() , _notificationsQueue.Count()); //here i will have to check if the next notification is a user online notification.. if so i have to check if that user is still online and if it makes sense to display the notification at all
-                n.Closing += OnNotificationClosed;
-                n.Show();
-                UnseenNotificationsIconOverlay();
+        public void OnNotificationClosed(object sender, EventArgs a)
+        {
+            if (_notifications >0) _notifications--;
+
+            if(_notifications==0)    UnseenNotificationsIconOverlay(false);
                 
-            }
+            
         }
 
 
         // sets an overlay on the trayicon with the number of notifications in the notification queue
-        private void UnseenNotificationsIconOverlay()
+        private void UnseenNotificationsIconOverlay(bool notificationsUnseen)
         {
-            int n = 0;
-            foreach (Notification nf in _notificationsQueue)
-            {
-                if (nf.MsgType != Notification.NotificationType.userOnline) n++; //user online notifications are not very important and should not be considered in the overlay
-            }
 
-            //devo controllare se n=0.. in caso positivo ripristino l'icona pulita senza overlay
- 
+            string n;
+            if (notificationsUnseen) n = "!";
+            else n = "";
+            
+
+            
             Graphics canvas;
             Bitmap iconBitmap = new Bitmap(32, 32);
             canvas = Graphics.FromImage(iconBitmap);
@@ -402,9 +383,9 @@ namespace LANshare
             Font f = new Font("Verdana Pro Black", 18.00f);
 
             canvas.DrawString(
-                n.ToString(),
+                n,
                 f,
-                new SolidBrush(System.Drawing.Color.Blue),
+                new SolidBrush(System.Drawing.Color.IndianRed),
                 new RectangleF(9, 5, 30, 30),
                 format
             );
