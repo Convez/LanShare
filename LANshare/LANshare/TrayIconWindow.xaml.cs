@@ -80,6 +80,14 @@ namespace LANshare
             };
 
             _tcpComunication.UploadAccepted += (o, a) => NewTransfer(a);
+            _tcpComunication.TransferRequested += (o, a) =>
+            {
+                string otherUser;
+                if (!string.IsNullOrEmpty(a.NickName)) otherUser = a.NickName;
+                else otherUser = a.Name;
+                Notification n = new Notification("", Notification.NotificationType.transferRequest, otherUser);
+                NewNotification(n);
+            };
 
             _menu.Loaded += new RoutedEventHandler(Menu_Loaded);
             _menu.Unloaded += new RoutedEventHandler(Menu_Unloaded);

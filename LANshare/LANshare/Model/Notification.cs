@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +11,12 @@ namespace LANshare.Model
     {
         private NotificationType _messageType;
         private String _title;
-        private String _subjectOfNotification;
+        private User _subjectOfNotification;
+
+
         public enum NotificationType { transferRequest, transferCompletion, transferAbort, userOnline } //teniamo userOnline? va trattato diversaente come notifica..
 
-        public Notification( string title, NotificationType messageType, String subjectOfNotification)
+        public Notification( string title, NotificationType messageType, User subjectOfNotification)
         {
             _messageType = messageType;
             _title = title;
@@ -28,10 +31,12 @@ namespace LANshare.Model
         {
             get => _title;
         }
-        public string SubjectOfNotification
+        public User SubjectOfNotification
         {
             get => _subjectOfNotification;
         }
+
+
 
     }
 }

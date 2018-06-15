@@ -1,52 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using LANshare.Connection;
 using LANshare.Model;
+using LANshare.Properties;
+using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.Collections;
+using System.Windows.Interop;
+using System.Drawing;
+using System.Windows.Controls;
+using System.IO;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Windows.Input;
 
 namespace LANshare
 {
-    /// <summary>
-    /// Interaction logic for NotificationWindow.xaml
-    /// </summary>
-    public partial class NotificationWindow : LanShareWindow
+    class NotificationManager
     {
 
-
         private string _message;
-        private ObservableCollection<Notification> notificationList = new ObservableCollection<Notification>();
+        private Notification.NotificationType _notificationType;
+        private int _notificationsInQueue;
 
         /// <summary>
         /// Called when the notification is clicked. provides the messageType
         /// </summary>
-        public NotificationWindow(ObservableCollection<Notification> nList)
+        public NotificationManager(Notification n, int notificationsInQueue)
         {
-            InitializeComponent();
 
-            notificationList = nList;
-            NotificationsList.ItemsSource = notificationList;
-            DataContext = this;
-
+            _notificationType = n.MsgType;
+            _notificationsInQueue = notificationsInQueue;
+            switch ((int)_notificationType)
+            {
+                case 0:
+                    {
+                        _message = "File transfer pending request from " + n.SubjectOfNotification + ".";
+                        break;
+                    }
+                case 1:
+                    {
+                        _message = "File transfer with user " + n.SubjectOfNotification + " has completed successfully.";
+                        break;
+                    }
+                case 2:
+                    {
+                        _message = "File transfer with user " + n.SubjectOfNotification + " has been aborted.\nClick here for more info.";
+                        break;
+                    }
+                case 3:
+                    {
+                        _message = n.SubjectOfNotification + " is online.";
+                        break;
+                    }
+            }
         }
         public String Message
         {
             get => _message;
         }
 
-        private void Exit_Button_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
 
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
@@ -121,10 +137,13 @@ namespace LANshare
                         break;
                     }
             }
-            Close();
+            //Close();
 
         }
 
-       
+        public void NewNotificationInQueue()
+        {
+            _notificationsInQueue++;
+        }
     }
 }

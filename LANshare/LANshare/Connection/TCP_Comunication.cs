@@ -30,7 +30,7 @@ namespace LANshare.Connection
         private TcpListener loopback;
         private Task loopbackTask;
         public event EventHandler<List<string>> FileSendRequested;
-
+        public event EventHandler<User> TransferRequested;
         public event EventHandler<IFileTransferHelper> UploadAccepted;
         
         public TCP_Comunication()
@@ -222,10 +222,12 @@ namespace LANshare.Connection
                 case MessageType.FileUploadRequest:
                     User from = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                     string username = from.NickName != null ? from.NickName : from.Name;
+
                     //TODO Ask user for permission
                     if (Configuration.FileAcceptanceMode.Equals(EFileAcceptanceMode.AskAlways))
                     {
                         bool rejected = false;
+                        OnTransferRequested(from);
                         System.Windows.Application.Current.Dispatcher.Invoke(() =>
                         {
                             lock (l)
@@ -241,14 +243,12 @@ namespace LANshare.Connection
                             }
                         });
 
-                        lock (l)
-                        {
 
-                            if (rejected) {
+                        if (rejected) {
 
-                                break;
-                            }
-                        }    
+                            break;
+                        }
+                            
                         
 
 
@@ -382,6 +382,12 @@ namespace LANshare.Connection
         {
             FileSendRequested?.Invoke(this, l);
         }
+
+        private void OnTransferRequested(User u)
+        {
+            TransferRequested?.Invoke(this, u);
+        }
+
 
         protected virtual void OnUploadAccepted(IFileTransferHelper t)
         {
