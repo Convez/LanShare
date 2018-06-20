@@ -125,7 +125,7 @@ namespace LANshare.Model
                     else
                         bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
                     bi.EndInit();
-                    _profilepicture = bi;
+                    ProfilePicture = bi;
                 }
                 else
                 {
@@ -135,7 +135,7 @@ namespace LANshare.Model
                        
                         bi.UriSource=new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative);
                         bi.EndInit();
-                        _profilepicture = bi;
+                        ProfilePicture = bi;
 
                     }
                     catch (Exception e) when (e is ArgumentException || e is ArgumentNullException || e is FileNotFoundException)
@@ -144,7 +144,7 @@ namespace LANshare.Model
                         {
                             bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
                             bi.EndInit();
-                            _profilepicture = bi;
+                            ProfilePicture = bi;
                         }
                         catch (Exception ex)
                         {
@@ -152,7 +152,6 @@ namespace LANshare.Model
                         }
                     }
                 }
-                _profilepicture.Freeze();
 
             }
             catch (Exception ex)
