@@ -42,16 +42,16 @@ namespace LANshare
             //List<string> files= new List<string>("uno")
             //fu.InitFileSend(u,)
             //transfersList.Add()
-            u = new User("gigino",3,EUserAdvertisementMode.Public,null,null);
+            //u = new User("gigino",3,EUserAdvertisementMode.Public,null,null);
        
-            u.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute));
-            transf = new FileDownloadHelper();
-            transf.Counterpart = u;
-            transf.Status = TransferCompletitionStatus.Sending;
-            FileTransferProgressChangedArgs args = new FileTransferProgressChangedArgs(10,10,50, new TimeSpan(0,5,45));
-            transf.Args=args;
-            transf.FileName = "verylongfilenamethatjustdoesntend123456789youwishitwasover.jpg";
-            AddTransfer(this, transf);
+            //u.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute));
+            //transf = new FileDownloadHelper();
+            //transf.Counterpart = u;
+            //transf.Status = TransferCompletitionStatus.Sending;
+            //FileTransferProgressChangedArgs args = new FileTransferProgressChangedArgs(10,10,50, new TimeSpan(0,5,45));
+            //transf.Args=args;
+            //transf.FileName = "verylongfilenamethatjustdoesntend123456789youwishitwasover.jpg";
+            //AddTransfer(this, transf);
         }
 
 

@@ -123,8 +123,6 @@ namespace LANshare
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
             _notifications =0;
-            UnseenNotificationsIconOverlay(true);
-            //_notificationsList = new ObservableCollection<Notification>();
         }
 
         protected override void OnClosed(EventArgs e)
