@@ -188,17 +188,17 @@ namespace LANshare.Connection
 
                 curSize = newCurr;
                 previousInstant = Environment.TickCount/1000;
-                stopWatch.Stop();
                 i++;
                 if (i % 7 == 0)
                 {
+                    stopWatch.Stop();
                     estimatedTime = totSize / data.Length * stopWatch.ElapsedMilliseconds;
                     remainingTime = estimatedTime - previousInstant;
+                    stopWatch.Reset();
+                    stopWatch.Start();
                 }
                 OnProgressChanged(
                     new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromMilliseconds(remainingTime)));
-                stopWatch.Reset();
-                stopWatch.Start();
                 message = TCP_Comunication.ReadMessage(from);
             }
             stopWatch.Stop();
@@ -437,14 +437,17 @@ namespace LANshare.Connection
                 ConnectionMessage message = new ConnectionMessage(MessageType.FileChunk, true, block);
                 TCP_Comunication.SendMessage(to, message);
                 long newCurr = curSize + bytesRed;
+                float percentage = ((float)newCurr / (float)totSize) * 100;
 
                 previousInstant = Environment.TickCount / 1000;
-                stopWatch.Stop();
                 i++;
                 if (i % 7 == 0)
                 {
+                    stopWatch.Stop();
                     estimatedTime = totSize / bytesRed * stopWatch.ElapsedMilliseconds;
                     remainingTime = estimatedTime - previousInstant;
+                    stopWatch.Reset();
+                    stopWatch.Start();
                 }
                 OnProgressChanged(
                     new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromTicks(remainingTime)));
