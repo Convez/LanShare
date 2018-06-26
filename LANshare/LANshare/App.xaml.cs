@@ -50,7 +50,9 @@ namespace LANshare
                 if (alreadyRunning)
                 {
                     //There is another instance running. Don't need another one
-                    MessageBox.Show("LANshare is already running");
+                    NotificationWindow C = new NotificationWindow("An instance of LANshare is already running.");
+                    C.ShowDialog();
+
                     Shutdown();
                 }
                 else

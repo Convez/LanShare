@@ -61,7 +61,8 @@ namespace LANshare
             List<User> selectedUsers = ConnectedUsers.SelectedItems.OfType<User>().Distinct().ToList();
             if (selectedUsers.Count <= 0)
             {
-                MessageBox.Show("Select at least one user");
+                NotificationWindow C = new NotificationWindow("Please, select at least one user.");
+                C.ShowDialog();
             }
             else
             {

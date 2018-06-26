@@ -333,7 +333,8 @@ namespace LANshare.Connection
             int bytesRed = ns.Read(messageSize, 0, messageSize.Length);
             if (bytesRed <= 0)
             {
-                MessageBox.Show("Connection aborted");
+                NotificationWindow C = new NotificationWindow("Connection aborted.");
+                C.ShowDialog();
                 return null;
             }
             int messageLength = BitConverter.ToInt32(messageSize, 0);

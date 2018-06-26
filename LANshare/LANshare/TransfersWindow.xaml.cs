@@ -71,6 +71,15 @@ namespace LANshare
                   
                 }
             });
+
+            foreach (ListViewItem item in ActiveTransfers.Items)
+            {
+                if (item.Content.Equals("ciao"))
+                {
+
+                }
+            }
+
         }
 
         public void RemoveTransfer(object sender, IFileTransferHelper t)
@@ -81,6 +90,14 @@ namespace LANshare
                 {
                     transfersList.Remove(t);
 
+                    foreach (ListViewItem item in ActiveTransfers.Items)
+                    {
+                        if (item.Content.Equals("ciao"))
+                        {
+                            
+                        }
+                    }
+                    
                 }
             });
         }
