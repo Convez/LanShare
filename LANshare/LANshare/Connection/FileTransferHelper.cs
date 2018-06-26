@@ -138,8 +138,8 @@ namespace LANshare.Connection
                                 string fileNoExt = Path.GetFileNameWithoutExtension(path);
                                 string ext = Path.GetExtension(path);
                                 int fileCount = -1;
-                                do { fileCount++; } while (File.Exists(fileNoExt + "(" + fileCount.ToString() + ")" + ext));
-                                path = fileNoExt + "(" + fileCount.ToString() + ")" + ext;
+                                do { fileCount++; } while (File.Exists(Path.Combine(basePath, fileNoExt + "(" + fileCount.ToString() + ")" + ext)));
+                                path =Path.Combine(basePath, fileNoExt + "(" + fileCount.ToString() + ")" + ext);
                             }
 
                             f = File.Create(path);
