@@ -41,16 +41,17 @@ namespace LANshare
             InitializeComponent();
             userList = new ObservableCollection<User>();
             ConnectedUsers.ItemsSource = userList;
-            SendButton.Click += SendButtonClicked;
+            
         }
         public ShowUsersWindow(List<User> starting)
         {
             InitializeComponent();
             userList = new ObservableCollection<User>(starting);
             ConnectedUsers.ItemsSource = userList;
-            SendButton.Click += SendButtonClicked;
+            
         }
-        private void SendButtonClicked(object sender,EventArgs args)
+        
+        private void SendButtonClicked(object sender, RoutedEventArgs args)
         {
             List<User> selectedUsers = ConnectedUsers.SelectedItems.OfType<User>().Distinct().ToList();
             if (selectedUsers.Count <= 0)

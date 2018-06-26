@@ -113,7 +113,9 @@ namespace LANshare.Connection
                     foldersDownloaded.Reverse();
                     foldersDownloaded.Where(x => !Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
                     Status = TransferCompletitionStatus.Error;
-                    OnCanceled();
+
+                    if(ex is ObjectDisposedException) OnCanceled();
+                    else cancelRequested?.Invoke(this, client);
                 }
             }
         }

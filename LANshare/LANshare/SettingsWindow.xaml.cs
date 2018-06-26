@@ -39,6 +39,17 @@ namespace LANshare
             
         }
 
+        private Visibility _visibility = Visibility.Collapsed;
+        public Visibility PathAAVisibility
+        {
+            get => _visibility;
+            set
+            {
+                _visibility = value;
+                OnPropertyChanged("PathAAVisibility");
+            }
+
+        }
         public string SavePath { get => _savePath;
             set
             {
@@ -55,7 +66,50 @@ namespace LANshare
             set
             {
                 _savePathMode = value;
+                if (value == "Use Custom")
+                {
+                    Configuration.FileSavePathMode = EFileSavePathMode.UseCustom;
+                    if (String.IsNullOrWhiteSpace(Configuration.CustomSavePath)) SavePath = Configuration.DefaultSavePath;
+                    else SavePath = Configuration.CustomSavePath;
+                    var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                    editPath.Visibility = Visibility.Visible;
+                    var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                    pathField.Visibility = Visibility.Visible;
+                    var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
+                    pathLabel.Visibility = Visibility.Visible;
+                }else if (value=="Use Default")
+                {
+                    Configuration.FileSavePathMode = EFileSavePathMode.UseDefault;
+                    SavePath = Configuration.DefaultSavePath;
+                    var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                    editPath.Visibility = Visibility.Collapsed;
+                    var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                    pathField.Visibility = Visibility.Visible;
+                    var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
+                    pathLabel.Visibility = Visibility.Visible;
+                }
+                else if (value=="Ask Always")
+                {
+                    Configuration.FileSavePathMode = EFileSavePathMode.AskForPath;
+                    var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
+                    editPath.Visibility = Visibility.Collapsed;
+                    var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
+                    pathField.Visibility = Visibility.Collapsed;
+                    var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
+                    pathLabel.Visibility = Visibility.Collapsed;
+                }
                 OnPropertyChanged("SavePathMode");
+            }
+        }
+
+        private string _acceptanceMode;
+        public string AcceptanceMode
+        {
+            get => _acceptanceMode;
+            set
+            {
+                _acceptanceMode = value;
+                OnPropertyChanged("AcceptanceMode");
             }
         }
 
@@ -65,31 +119,32 @@ namespace LANshare
             if(!String.IsNullOrWhiteSpace(Configuration.CustomSavePath) && Configuration.FileSavePathMode == EFileSavePathMode.UseCustom)
             {
                 SavePathMode = "Use Custom";
-                SavePath = Configuration.CustomSavePath;
-                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
-                editPath.Visibility = Visibility.Visible;
-                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
-                pathField.Visibility = Visibility.Visible;
             }
             else if (Configuration.FileSavePathMode == EFileSavePathMode.UseDefault)
             {
                 SavePathMode = "Use Default";
-                SavePath = Configuration.DefaultSavePath;
-                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
-                editPath.Visibility = Visibility.Collapsed;
-                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
-                pathField.Visibility = Visibility.Visible;
             }
             else
             {
                 SavePathMode = "Ask Always";
-                SavePath = null;
-                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
-                editPath.Visibility = Visibility.Collapsed;
-                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
-                pathField.Visibility = Visibility.Collapsed;
             }
 
+            if (Configuration.FileAcceptanceMode == EFileAcceptanceMode.AcceptAll)
+            {
+                AcceptanceMode = "Accept Automatically";
+
+                System.Windows.Controls.ContextMenu m = EditSaveButton.ContextMenu;
+                System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)m.Items[2];
+                mi.Visibility = Visibility.Collapsed;
+
+            }
+            else
+            {
+                AcceptanceMode = "Ask Always";
+                System.Windows.Controls.ContextMenu m = EditSaveButton.ContextMenu;
+                System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)m.Items[2];
+                mi.Visibility = Visibility.Visible;
+            }
             DataContext = this;
             
         }
@@ -127,52 +182,50 @@ namespace LANshare
         private void PrivacySetter(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
+            
             if (m.Header.ToString() != Configuration.CurrentUser.PrivacyMode)
             {
                 privacyChanged?.Invoke(this, null);
             }
         }
+
+        private void AcceptanceSetter(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
+            if (m.Header.ToString() =="Ask Always")
+            {
+                AcceptanceMode = "Ask Always";
+                System.Windows.Controls.ContextMenu m2 = EditSaveButton.ContextMenu;
+                System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)m2.Items[2];
+                mi.Visibility = Visibility.Visible;
+                Configuration.FileAcceptanceMode = EFileAcceptanceMode.AskAlways;
+            }
+            else if(m.Header.ToString()== "Accept Automatically")
+            {
+                AcceptanceMode = "Accept Automatically";
+                System.Windows.Controls.ContextMenu m2 = EditSaveButton.ContextMenu;
+                System.Windows.Controls.MenuItem mi = (System.Windows.Controls.MenuItem)m2.Items[2];
+                mi.Visibility = Visibility.Collapsed;
+                Configuration.FileAcceptanceMode = EFileAcceptanceMode.AcceptAll;
+                if (SavePathMode == "Ask Always") {
+                    if (String.IsNullOrWhiteSpace(Configuration.CustomSavePath))
+                    {
+                        SavePathMode = "Use Default";
+                        
+                    }
+                    else
+                    {
+                        SavePathMode = "Use Custom";
+                        
+                    }
+                } 
+            }
+        }
         private void PathSetter(object sender, RoutedEventArgs e)
         {
             System.Windows.Controls.MenuItem m = (System.Windows.Controls.MenuItem)sender;
-            //Configuration.CustomSavePath = m.Header.ToString();
-            if (m.Header.ToString() == "Use Custom" )
-            {
-                SavePathMode = "Use Custom";
-                Configuration.FileSavePathMode = EFileSavePathMode.UseCustom;
-                if (String.IsNullOrWhiteSpace(Configuration.CustomSavePath)) SavePath = Configuration.DefaultSavePath;
-                else SavePath = Configuration.CustomSavePath;
-                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
-                editPath.Visibility = Visibility.Visible;
-                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
-                pathField.Visibility = Visibility.Visible;
-                var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
-                pathLabel.Visibility = Visibility.Visible;
-
-            }
-            else if (m.Header.ToString() == "Use Default" )
-            {
-                SavePathMode = "Use Default";
-                Configuration.FileSavePathMode = EFileSavePathMode.UseDefault;
-                SavePath = Configuration.DefaultSavePath;
-                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
-                editPath.Visibility = Visibility.Collapsed;
-                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
-                pathField.Visibility = Visibility.Visible;
-                var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
-                pathLabel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                SavePathMode = "Ask Always";
-                Configuration.FileSavePathMode = EFileSavePathMode.AskForPath;
-                var editPath = (System.Windows.Controls.Button)this.FindName("editPathButton");
-                editPath.Visibility = Visibility.Collapsed;
-                var pathField = (System.Windows.Controls.TextBlock)this.FindName("pathView");
-                pathField.Visibility = Visibility.Collapsed;
-                var pathLabel = (System.Windows.Controls.TextBlock)this.FindName("pathLabel");
-                pathLabel.Visibility = Visibility.Collapsed;
-            }
+            SavePathMode = m.Header.ToString();
+              
             Configuration.SaveConfiguration();
         }
 

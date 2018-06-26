@@ -195,7 +195,7 @@ namespace LANshare
                 });
             }
 
-            OpenTransfers(this, null);
+            
         }
 
         private void NewTransfer(IFileTransferHelper h)

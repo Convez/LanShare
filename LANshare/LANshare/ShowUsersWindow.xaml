@@ -107,7 +107,7 @@
             </ListView>
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
-            <Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2" Name="SendButton"  HorizontalAlignment="Right" Width="50">
+            <Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
                 Send
             </Button>
         </Border>

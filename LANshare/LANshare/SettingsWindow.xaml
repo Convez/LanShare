@@ -14,7 +14,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*"/>
             <ColumnDefinition />
-            <ColumnDefinition Width="0.1*"/>
+            <ColumnDefinition Width="0.2*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -64,7 +64,7 @@
                 People Online
             </Button>
             <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Click="OnTransfersClick" >
-                Transfers
+                File Transfers
             </Button>
             <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Background="{x:Null}" Foreground="#FFCDDFF5" >
                 Settings
@@ -87,7 +87,8 @@
                     <RowDefinition Height="0.2*"/>
                     <RowDefinition Height="0.2*"/>
                     <RowDefinition Height="0.2*"/>
-                    <RowDefinition Height="0.1*"/>
+                    <RowDefinition Height="0.2*"/>
+                    <RowDefinition Height="0.05*"/>
                 </Grid.RowDefinitions>
 
                 
@@ -114,7 +115,11 @@
                 <Button Style="{StaticResource textButton}" Content="Edit" Grid.Column="2" Grid.Row="2"  Click="EditNick" FontStyle="Italic"  />
                 
                 <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Right" >Privacy Mode :</TextBlock>
-                <TextBlock Name="CurrentPrivacyMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding User.PrivacyMode}" />
+                <TextBlock Name="CurrentPrivacyMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="3" Text="{Binding User.PrivacyMode}" 
+                           ToolTipService.InitialShowDelay="500"
+                            ToolTipService.ShowDuration="5000" 
+                            ToolTipService.BetweenShowDelay="0" 
+                            ToolTip="In Private mode you will be able to send files but other users won't see you online."/>
                 <Button Content="Edit" Grid.Column="2" Grid.Row="3" Name="EditPrivButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -159,9 +164,64 @@
                     </Button.ContextMenu>
                 </Button>
 
-                <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right">Save Mode :</TextBlock>
-                <TextBlock Name="CurrentSaveMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="4" Text="{Binding SavePathMode}" />
-                <Button Content="Edit" Grid.Column="2" Grid.Row="4" Name="EditSaveButton"  FontSize="12" FontStyle="Italic"  >
+
+                <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Right" >Acceptance Mode :</TextBlock>
+                <TextBlock Name="CurrentAcceptMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="4" Text="{Binding AcceptanceMode}" 
+                           ToolTipService.InitialShowDelay="500"
+                            ToolTipService.ShowDuration="5000" 
+                            ToolTipService.BetweenShowDelay="0" 
+                            ToolTip="If you specify 'Accept Authomatically' the files will be downloaded on your pc without need to confirm the transfer."/>
+                <Button Content="Edit" Grid.Column="2" Grid.Row="4" Name="EditAcceptButton"  FontSize="12" FontStyle="Italic"  >
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="TextElement.Foreground" Value="#FF004DF1"/>
+                                </Trigger>
+                                <EventTrigger RoutedEvent="Click">
+                                    <EventTrigger.Actions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <BooleanAnimationUsingKeyFrames Storyboard.TargetProperty="ContextMenu.IsOpen">
+                                                    <DiscreteBooleanKeyFrame KeyTime="0:0:0" Value="True"/>
+                                                </BooleanAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger.Actions>
+                                </EventTrigger>
+                            </Style.Triggers>
+
+                            <Setter Property="Background" Value="#00DDDDDD" />
+                            <Setter Property="Foreground" Value="Gray"/>
+                            <Setter Property="BorderBrush" Value="{x:Null}" />
+                            <Setter Property="FontFamily" Value="Gadugi" />
+
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Foreground="LightGray" Header="Ask Always" Click="AcceptanceSetter" FontStyle="Normal" />
+                            <MenuItem Foreground="LightGray" Header="Accept Automatically" Click="AcceptanceSetter" FontStyle="Normal" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                </Button>
+
+                <TextBlock Style="{StaticResource StaticTextStyle}" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right">Save Mode :</TextBlock>
+                <TextBlock Name="CurrentSaveMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="5" Text="{Binding SavePathMode}" 
+                           ToolTipService.InitialShowDelay="500" 
+                            ToolTipService.ShowDuration="5000" 
+                            ToolTipService.BetweenShowDelay="0" 
+                            ToolTip="Edit this field to specify where the received files will be saved"/>
+                <Button Content="Edit" Grid.Column="2" Grid.Row="5" Name="EditSaveButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
                             <Style.Triggers>
@@ -201,14 +261,14 @@
                         <ContextMenu>
                             <MenuItem Foreground="LightGray" Header="Use Default" Click="PathSetter" FontStyle="Normal" />
                             <MenuItem Foreground="LightGray" Header="Use Custom" Click="PathSetter" FontStyle="Normal" />
-                            <MenuItem Foreground="LightGray" Header="Ask Always" Click="PathSetter" FontStyle="Normal" />
+                            <MenuItem Visibility="{Binding PathAAVisibility}" Foreground="LightGray" Header="Ask Always" Click="PathSetter" FontStyle="Normal" />
                         </ContextMenu>
                     </Button.ContextMenu>
                 </Button>
 
-                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="5" HorizontalAlignment="Right">Save Path :</TextBlock>
-                <TextBlock Style="{StaticResource RelevantTextStyle}" x:Name="pathView" Grid.Column="1" FontSize="12" TextWrapping="WrapWithOverflow" Grid.Row="5" Text="{Binding SavePath}"   />
-                <Button Style="{StaticResource textButton}" x:Name="editPathButton" Content="Edit" Grid.Column="2" Grid.Row="5" Click="EditPath" FontStyle="Italic"  />
+                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right">Save Path :</TextBlock>
+                <TextBlock Style="{StaticResource RelevantTextStyle}" x:Name="pathView" Grid.Column="1" FontSize="12" TextWrapping="WrapWithOverflow" Grid.Row="6" Text="{Binding SavePath}"   />
+                <Button Style="{StaticResource textButton}" x:Name="editPathButton" Content="Edit" Grid.Column="2" Grid.Row="6" Click="EditPath" FontStyle="Italic"  />
             </Grid>
 
         </Border>
