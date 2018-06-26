@@ -135,9 +135,11 @@ namespace LANshare.Connection
                             string path = Path.Combine(basePath, message.Message as string);
                             if (File.Exists(path))
                             {
+                                string fileNoExt = Path.GetFileNameWithoutExtension(path);
+                                string ext = Path.GetExtension(path);
                                 int fileCount = -1;
-                                do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
-                                path = path + "(" + fileCount.ToString() + ")";
+                                do { fileCount++; } while (File.Exists(fileNoExt + "(" + fileCount.ToString() + ")" + ext));
+                                path = fileNoExt + "(" + fileCount.ToString() + ")" + ext;
                             }
 
                             f = File.Create(path);
@@ -178,7 +180,7 @@ namespace LANshare.Connection
                 Int64 remainingTime = Int64.MaxValue;
                 try
                 {
-                    remainingTime = (totSize - newCurr) / data.Length * (Environment.TickCount - previousInstant);
+                    remainingTime = (totSize - newCurr) / data.Length * (Environment.TickCount - previousInstant+1);
                 }
                 catch (Exception)
                 {
@@ -421,7 +423,7 @@ namespace LANshare.Connection
                 Int64 remainingTime = Int64.MaxValue;
                 try
                 {
-                    remainingTime = (totSize - newCurr) / bytesRed * (Environment.TickCount - previousInstant);
+                    remainingTime = (totSize - newCurr) / bytesRed * (Environment.TickCount - previousInstant+1);
                 }
                 catch (Exception)
                 {
