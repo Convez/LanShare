@@ -30,7 +30,12 @@ namespace LANshare
         private readonly object l = "";
 
         public event EventHandler<List<User>> UsersSelected;
-        
+        private bool _isSubscribed = false;
+        public Boolean isSubscribed
+        {
+            get => _isSubscribed;
+            set => _isSubscribed=value;
+        }
 
         public event EventHandler peopleButtonClick;
         public event EventHandler transfersButtonClick;
