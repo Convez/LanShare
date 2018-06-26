@@ -21,7 +21,8 @@ namespace LANshare.Connection
         Canceled,
         Error,
         Requested,
-        Receiving
+        Receiving,
+        Refused
     }
 
     public interface IFileTransferHelper : INotifyPropertyChanged
@@ -301,7 +302,11 @@ namespace LANshare.Connection
             if (message.MessageType == MessageType.FileUploadResponse)
             {
                 if (message.Next == false)
+                {
+                    Status = TransferCompletitionStatus.Refused;
+                    cancelRequested?.Invoke(this, client);
                     return false;
+                }
 
                 Status = TransferCompletitionStatus.Sending;
 

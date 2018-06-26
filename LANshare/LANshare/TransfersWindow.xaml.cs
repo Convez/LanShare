@@ -166,15 +166,23 @@ namespace LANshare
         }
 
         public void AbortTransfer(object sender, RoutedEventArgs e) {
-            ConfirmationWindow C = new ConfirmationWindow("The file transfer will be aborted, continue?");
-            C.ShowDialog();
-            if (C.DialogResult == true)
+            Button b = (Button)sender;
+            IFileTransferHelper t = b.DataContext as IFileTransferHelper;
+            if(t.Status!=TransferCompletitionStatus.Canceled && t.Status!= TransferCompletitionStatus.Completed && t.Status!= TransferCompletitionStatus.Error)
             {
-                Button b= (Button)sender;
-                IFileTransferHelper t = b.DataContext as IFileTransferHelper;
-                t.Cancel();
-                
+                ConfirmationWindow C = new ConfirmationWindow("The file transfer will be aborted, continue?");
+                C.ShowDialog();
+                if (C.DialogResult == true)
+                {
+                    t.Cancel();
+                    RemoveTransfer(null, t);
+                }
             }
+            else
+            {
+                RemoveTransfer(null, t);
+            }
+           
             
         }
 

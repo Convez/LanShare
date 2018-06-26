@@ -302,14 +302,12 @@ namespace LANshare
                 tf.peopleButtonClick += (o, a) => ShowPeople(this, null);
                 tf.settingsButtonClick += (o, a) => OpenSettings(this, null);
                 addedToTransfers += tf.AddTransfer;
-                removedFromTransfers += tf.RemoveTransfer;
                 tf.Closing += (o, a) =>
                 {
                     tf.isSubscribed = false;
                     tf.transfersButtonClick -= ShowPeople;
                     tf.settingsButtonClick -= OpenSettings;
                     addedToTransfers -= tf.AddTransfer;
-                    removedFromTransfers -= tf.RemoveTransfer;
                 };
             }
         }
