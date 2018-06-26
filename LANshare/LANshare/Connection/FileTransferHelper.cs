@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -165,10 +166,14 @@ namespace LANshare.Connection
             }
         }
 
-        internal void ReceiveFile(FileStream to, TcpClient from, long totSize =1, long curSize = 1, long previousInstant=1)
+        internal void ReceiveFile(FileStream to, TcpClient from, long totSize =1, long curSize = 1, long previousInstant=0)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(from);
             byte[] data;
+            Stopwatch stopWatch = new Stopwatch();
+        
+            stopWatch.Reset();
+            stopWatch.Start();
             while (message.Next)
             {
                 if (message.MessageType == MessageType.OperationCanceled)
@@ -177,21 +182,21 @@ namespace LANshare.Connection
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
                 float percentage = ((float)newCurr / (float)totSize)*100;
-                Int64 remainingTime = Int64.MaxValue;
-                try
-                {
-                    remainingTime = (totSize - newCurr) / data.Length * (Environment.TickCount - previousInstant+1);
-                }
-                catch (Exception)
-                {
-                    remainingTime = Int64.MaxValue;
-                }
+
+                stopWatch.Stop();
+                long speed = data.Length / stopWatch.ElapsedMilliseconds;
+                long estimatedTime = totSize / speed;
+                long remainingTime = estimatedTime - previousInstant;
+
                 curSize = newCurr;
                 previousInstant = Environment.TickCount;
                 OnProgressChanged(
-                    new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromTicks(remainingTime)));
+                    new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromMilliseconds(remainingTime)));
+                stopWatch.Reset();
+                stopWatch.Start();
                 message = TCP_Comunication.ReadMessage(from);
             }
+            stopWatch.Stop();
         }
 
         protected virtual void OnProgressChanged(FileTransferProgressChangedArgs e)
