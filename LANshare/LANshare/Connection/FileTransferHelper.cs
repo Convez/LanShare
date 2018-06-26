@@ -168,12 +168,12 @@ namespace LANshare.Connection
 
         internal void ReceiveFile(FileStream to, TcpClient from, long totSize =1, long curSize = 1, long previousInstant=0)
         {
-            ConnectionMessage message = TCP_Comunication.ReadMessage(from);
-            byte[] data;
             Stopwatch stopWatch = new Stopwatch();
-        
+
             stopWatch.Reset();
             stopWatch.Start();
+            ConnectionMessage message = TCP_Comunication.ReadMessage(from);
+            byte[] data;
             while (message.Next)
             {
                 if (message.MessageType == MessageType.OperationCanceled)
@@ -183,13 +183,12 @@ namespace LANshare.Connection
                 long newCurr = curSize + data.Length;
                 float percentage = ((float)newCurr / (float)totSize)*100;
 
+                curSize = newCurr;
+                previousInstant = Environment.TickCount/1000;
                 stopWatch.Stop();
-                long speed = data.Length / stopWatch.ElapsedMilliseconds;
-                long estimatedTime = totSize / speed;
+                long estimatedTime = totSize / data.Length * stopWatch.ElapsedMilliseconds;
                 long remainingTime = estimatedTime - previousInstant;
 
-                curSize = newCurr;
-                previousInstant = Environment.TickCount;
                 OnProgressChanged(
                     new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromMilliseconds(remainingTime)));
                 stopWatch.Reset();
