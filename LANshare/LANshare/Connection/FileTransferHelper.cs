@@ -125,19 +125,27 @@ namespace LANshare.Connection
                 switch (message.MessageType)
                 {
                     case MessageType.NewFile:
-                       FileName = message.Message as string;
-                        string path = Path.Combine(basePath, message.Message as string);
-                        if (File.Exists(path)) {
-                            int fileCount = -1;
-                            do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
-                            path = path + "(" + fileCount.ToString() + ")";
-                        }
+                        FileStream f = null;
+                        try
+                        {
+                            FileName = message.Message as string;
+                            string path = Path.Combine(basePath, message.Message as string);
+                            if (File.Exists(path))
+                            {
+                                int fileCount = -1;
+                                do { fileCount++; } while (File.Exists(path + "(" + fileCount.ToString() + ")"));
+                                path = path + "(" + fileCount.ToString() + ")";
+                            }
 
-                        FileStream f = File.Create(path);
-                        filesDownloaded.Add(path);
-                        ReceiveFile(f, client, totSize, currSize, Environment.TickCount);
-                        currSize += new FileInfo(path).Length;
-                        f.Close();
+                            f = File.Create(path);
+                            filesDownloaded.Add(path);
+                            ReceiveFile(f, client, totSize, currSize, Environment.TickCount);
+                            currSize += new FileInfo(path).Length;
+                            f.Close();
+                        }catch(Exception e)
+                        {
+                            f?.Close();
+                        }
                         break;
                     case MessageType.NewDirectory:
                         string p = Path.Combine(basePath, message.Message as string);
@@ -271,7 +279,23 @@ namespace LANshare.Connection
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
             TCP_Comunication.SendMessage(client, message);
             message = TCP_Comunication.ReadMessage(client);
-            
+            Task.Run(() =>
+            {
+                try
+                {
+                    while (true)
+                    {
+                        ConnectionMessage isCancelRequested= TCP_Comunication.ReadMessage(client);
+                        if (isCancelRequested.MessageType == MessageType.OperationCanceled)
+                        {
+                            cts.Cancel();
+                        }
+                    }
+                }catch(Exception ex)
+                {
+
+                }
+            });
             if (message.MessageType == MessageType.FileUploadResponse)
             {
                 if (message.Next == false)

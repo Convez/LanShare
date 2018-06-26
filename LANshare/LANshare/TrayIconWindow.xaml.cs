@@ -111,7 +111,7 @@ namespace LANshare
 
             _icon = new Icon(System.IO.Path.Combine(
                         AppDomain.CurrentDomain.BaseDirectory, //Directory where executable is (NEVER NULL)
-                        "Media/Images/ApplicationImages/lslogo.ico"));
+                        "Media/Images/ApplicationImages/logosimple.ico"));
             //Crea TrayIcon
             _trayIcon = new System.Windows.Forms.NotifyIcon
             {
@@ -122,7 +122,7 @@ namespace LANshare
             
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
-            _notifications =1;
+            _notifications =0;
             UnseenNotificationsIconOverlay(true);
             //_notificationsList = new ObservableCollection<Notification>();
         }
@@ -206,6 +206,12 @@ namespace LANshare
             OnAddedToTransfers(h);
             h.cancelRequested += (o, a) => RemoveTransaction(h);
             h.TransferCompleted += (o, a) => RemoveTransaction(h);
+            Dispatcher.Invoke(() =>
+            {
+                OpenTransfers(this, null);
+
+            });
+
         }
 
         private void RemoveTransaction(IFileTransferHelper e)
@@ -349,6 +355,8 @@ namespace LANshare
         {
             //_notificationsList.Add(notification);
             _notifications++;
+            System.Media.SystemSounds.Exclamation.Play();
+
             UnseenNotificationsIconOverlay(true);
         }
 
@@ -380,13 +388,17 @@ namespace LANshare
 
             StringFormat format = new StringFormat();
             format.Alignment = StringAlignment.Center;
-            Font f = new Font("Verdana Pro Black", 18.00f);
+            Font f = new Font("Goudy Stout", 16.00f);
+            Pen p = new Pen(new SolidBrush(System.Drawing.Color.Green));
+            
+            //canvas.DrawEllipse(new Pen(new SolidBrush(System.Drawing.Color.Green)), new RectangleF(0, 0, 20, 20));
+            canvas.FillEllipse(new SolidBrush(System.Drawing.Color.White), new RectangleF(9, 9, 22, 22));
 
             canvas.DrawString(
                 n,
                 f,
-                new SolidBrush(System.Drawing.Color.IndianRed),
-                new RectangleF(9, 5, 30, 30),
+                new SolidBrush(System.Drawing.Color.Blue),
+                new RectangleF(9, 7, 21, 21),
                 format
             );
 
