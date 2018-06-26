@@ -31,7 +31,12 @@ namespace LANshare
         public event EventHandler settingsButtonClick;
         public event EventHandler privacyChanged;
         public event PropertyChangedEventHandler PropertyChanged;
-
+        private bool _isSubscribed;
+        public Boolean isSubscribed
+        {
+            get => _isSubscribed;
+            set => _isSubscribed = value;
+        }
         private string _savePath;
         public User User
         {

@@ -14,7 +14,6 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using LANshare.Connection;
-using System.ComponentModel;
 using Newtonsoft.Json;
 namespace LANshare.Model
 {

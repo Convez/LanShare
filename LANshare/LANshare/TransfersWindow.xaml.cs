@@ -28,7 +28,12 @@ namespace LANshare
         public event EventHandler transfersButtonClick;
         public event EventHandler settingsButtonClick;
         private readonly object l = "";
-
+        private bool _isSubscribed;
+        public Boolean isSubscribed
+        {
+            get => _isSubscribed;
+            set => _isSubscribed = value;
+        }
         private IFileTransferHelper transf;
         private User u;
 
@@ -68,8 +73,18 @@ namespace LANshare
             });
         }
 
+        public void RemoveTransfer(object sender, IFileTransferHelper t)
+        {
+            ActiveTransfers.Dispatcher.Invoke(() =>
+            {
+                lock (l)
+                {
+                    transfersList.Remove(t);
 
-       
+                }
+            });
+        }
+
 
         private void Exit_Button_Click(object sender, RoutedEventArgs e)
         {

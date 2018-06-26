@@ -252,50 +252,66 @@ namespace LANshare
         private void ShowPeople(object sender, EventArgs e)
         {
             ShowUsersWindow userWindow = OpenWindow<ShowUsersWindow,User>(_comunication.GetUsers());
-            _comunication.UserFound += userWindow.AddUser;
-            _comunication.UsersExpired += userWindow.RemoveUsers;
-            userWindow.transfersButtonClick +=OpenTransfers;
-            userWindow.settingsButtonClick += OpenSettings;
-            userWindow.UsersSelected += (send, arg) =>
+            if (!userWindow.isSubscribed)
             {
-                StartUpload(new List<String>(), arg.Distinct().ToList());
-            };
-
-            userWindow.Closing += (o, a) =>
-            {
-                _comunication.UserFound -= userWindow.AddUser;
-                _comunication.UsersExpired -= userWindow.RemoveUsers;
-                userWindow.transfersButtonClick -= OpenTransfers;
-                userWindow.settingsButtonClick -= OpenSettings;
-            };
+                userWindow.isSubscribed = true;
+                _comunication.UserFound += userWindow.AddUser;
+                _comunication.UsersExpired += userWindow.RemoveUsers;
+                userWindow.transfersButtonClick += OpenTransfers;
+                userWindow.settingsButtonClick += OpenSettings;
+                userWindow.UsersSelected += (send, arg) =>
+                {
+                    StartUpload(new List<String>(), arg.Distinct().ToList());
+                };
+                userWindow.Closing += (o, a) =>
+                {
+                    userWindow.isSubscribed = false;
+                    _comunication.UserFound -= userWindow.AddUser;
+                    _comunication.UsersExpired -= userWindow.RemoveUsers;
+                    userWindow.transfersButtonClick -= OpenTransfers;
+                    userWindow.settingsButtonClick -= OpenSettings;
+                };
+            }
         }
 
 
         private void OpenSettings(object sender, EventArgs e)
         {
             SettingsWindow settw = OpenWindow<SettingsWindow, User>(null);
-            settw.peopleButtonClick += ShowPeople;
-            settw.transfersButtonClick += OpenTransfers;
-            settw.privacyChanged += SetPrivacy;
-            settw.Closing += (o, a) =>
+            if (!settw.isSubscribed)
             {
-                settw.transfersButtonClick -= OpenTransfers;
-                settw.settingsButtonClick -= ShowPeople;
-                settw.privacyChanged -= SetPrivacy;
-            };
+                settw.isSubscribed = true;
+                settw.peopleButtonClick += ShowPeople;
+                settw.transfersButtonClick += OpenTransfers;
+                settw.privacyChanged += SetPrivacy;
+                settw.Closing += (o, a) =>
+                {
+                    settw.isSubscribed = false;
+                    settw.transfersButtonClick -= OpenTransfers;
+                    settw.settingsButtonClick -= ShowPeople;
+                    settw.privacyChanged -= SetPrivacy;
+                };
+            }
         }
         private void OpenTransfers(object sender, EventArgs e)
         {
             TransfersWindow tf= OpenWindow<TransfersWindow, IFileTransferHelper>(ongoingTransfers);
-            tf.peopleButtonClick += (o, a) => ShowPeople(this, null);
-            tf.settingsButtonClick += (o, a) => OpenSettings(this, null);
-            addedToTransfers += (o, a) => tf.AddTransfer(this, a);
-            tf.Closing += (o, a) =>
+            if (!tf.isSubscribed)
             {
-                tf.transfersButtonClick -= ShowPeople;
-                tf.settingsButtonClick -= OpenSettings;
-                addedToTransfers -=  tf.AddTransfer;
-            };
+                tf.isSubscribed = true;
+                tf.peopleButtonClick += (o, a) => ShowPeople(this, null);
+                tf.settingsButtonClick += (o, a) => OpenSettings(this, null);
+                addedToTransfers += tf.AddTransfer;
+                removedFromTransfers += tf.RemoveTransfer;
+                tf.Closing += (o, a) =>
+                {
+                    tf.isSubscribed = false;
+                    tf.transfersButtonClick -= ShowPeople;
+                    tf.settingsButtonClick -= OpenSettings;
+                    addedToTransfers -= tf.AddTransfer;
+                    removedFromTransfers -= tf.RemoveTransfer;
+                };
+            }
         }
 
         private void SetPrivacy(object sender, EventArgs e)
@@ -318,6 +334,7 @@ namespace LANshare
                     
                     _menuX = System.Windows.Forms.Cursor.Position.X;
                     _menuY = System.Windows.Forms.Cursor.Position.Y;
+                   
                     _menu.IsOpen = true;
                 } 
                 else _menu.IsOpen = false;
