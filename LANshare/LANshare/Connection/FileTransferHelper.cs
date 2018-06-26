@@ -175,7 +175,6 @@ namespace LANshare.Connection
             ConnectionMessage message = TCP_Comunication.ReadMessage(from);
             byte[] data;
             int i = 0;
-            long estimatedTime = 0;
             long remainingTime = 0;
             while (message.Next)
             {
@@ -192,8 +191,7 @@ namespace LANshare.Connection
                 if (i % 7 == 0)
                 {
                     stopWatch.Stop();
-                    estimatedTime = totSize / data.Length * stopWatch.ElapsedMilliseconds;
-                    remainingTime = estimatedTime - previousInstant;
+                    remainingTime = ( totSize - newCurr ) / data.Length * stopWatch.ElapsedMilliseconds;
                     stopWatch.Reset();
                     stopWatch.Start();
                 }
@@ -424,7 +422,6 @@ namespace LANshare.Connection
             int bytesRed = from.Read(block, 0, block.Length);
 
             int i = 0;
-            long estimatedTime = 0;
             long remainingTime = 0;
             do
             {
@@ -444,8 +441,8 @@ namespace LANshare.Connection
                 if (i % 7 == 0)
                 {
                     stopWatch.Stop();
-                    estimatedTime = totSize / bytesRed * stopWatch.ElapsedMilliseconds;
-                    remainingTime = estimatedTime - previousInstant;
+                    long remainingBytes = totSize - newCurr;
+                    remainingTime = (totSize - newCurr) / bytesRed * stopWatch.ElapsedMilliseconds;
                     stopWatch.Reset();
                     stopWatch.Start();
                 }
