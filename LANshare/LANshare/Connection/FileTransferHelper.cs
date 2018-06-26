@@ -105,6 +105,7 @@ namespace LANshare.Connection
                 ReceiveFiles(from, destinationPath, totalSize, 0);
                 TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                 Status = TransferCompletitionStatus.Completed;
+                Args = new FileTransferProgressChangedArgs(totalSize, totalSize, 100, TimeSpan.FromMilliseconds(0));
             }
             catch (Exception ex)
             {
@@ -145,7 +146,7 @@ namespace LANshare.Connection
 
                             f = File.Create(path);
                             filesDownloaded.Add(path);
-                            ReceiveFile(f, client, totSize, currSize, Environment.TickCount);
+                            ReceiveFile(f, client, totSize, currSize);
                             currSize += new FileInfo(path).Length;
                             f.Close();
                         }catch(Exception e)
@@ -166,7 +167,7 @@ namespace LANshare.Connection
             }
         }
 
-        internal void ReceiveFile(FileStream to, TcpClient from, long totSize =1, long curSize = 1, long previousInstant=0)
+        internal void ReceiveFile(FileStream to, TcpClient from, long totSize =1, long curSize = 1)
         {
             Stopwatch stopWatch = new Stopwatch();
 
@@ -174,8 +175,10 @@ namespace LANshare.Connection
             stopWatch.Start();
             ConnectionMessage message = TCP_Comunication.ReadMessage(from);
             byte[] data;
-            int i = 0;
+
             long remainingTime = 0;
+            long localCurr=0;
+            List<long> previousTimes = new List<long>();
             while (message.Next)
             {
                 if (message.MessageType == MessageType.OperationCanceled)
@@ -183,17 +186,23 @@ namespace LANshare.Connection
                 data = Convert.FromBase64String(message.Message as string);
                 to.Write(data, 0, data.Length);
                 long newCurr = curSize + data.Length;
+                localCurr += data.Length;
                 float percentage = ((float)newCurr / (float)totSize)*100;
 
                 curSize = newCurr;
-                previousInstant = Environment.TickCount/1000;
-                i++;
-                if (i % 7 == 0)
+                if (stopWatch.ElapsedMilliseconds > 500)
                 {
-                    stopWatch.Stop();
-                    remainingTime = ( totSize - newCurr ) / data.Length * stopWatch.ElapsedMilliseconds;
-                    stopWatch.Reset();
-                    stopWatch.Start();
+                    remainingTime = ( totSize - newCurr ) / localCurr * stopWatch.ElapsedMilliseconds;
+
+                    previousTimes.Add(remainingTime);
+                    if (previousTimes.Count > 10)
+                    {
+                        previousTimes = previousTimes.GetRange(previousTimes.Count - 10, 10);
+                    }
+                    long sum = previousTimes.Sum();
+                    remainingTime = sum / previousTimes.Count;
+                    stopWatch.Restart();
+                    localCurr = 0;
                 }
                 OnProgressChanged(
                     new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromMilliseconds(remainingTime)));
@@ -350,6 +359,7 @@ namespace LANshare.Connection
                     SendFiles(client, folder, files, ctok, totalSize, 0);
                     TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                     Status = TransferCompletitionStatus.Completed;
+                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, 100, TimeSpan.FromMilliseconds(0));
                 }
                 catch (OperationCanceledException ex)
                 {
@@ -397,7 +407,8 @@ namespace LANshare.Connection
                     ConnectionMessage message = new ConnectionMessage(MessageType.NewFile, true, file);
                     TCP_Comunication.SendMessage(client, message);
                     FileStream f = File.OpenRead(path);
-                    SendFile(f, client,totalSize,currSize,Environment.TickCount);
+                    SendFile(f, client,totalSize,currSize);
+                    currSize += new FileInfo(path).Length;
                     f.Close();
                 }
             }
@@ -412,7 +423,7 @@ namespace LANshare.Connection
         }
         
 
-        internal void SendFile(FileStream from, TcpClient to, long totSize = 1, long curSize = 1, long previousInstant = 1)
+        internal void SendFile(FileStream from, TcpClient to, long totSize = 1, long curSize = 1)
         {
             Stopwatch stopWatch = new Stopwatch();
 
@@ -420,9 +431,10 @@ namespace LANshare.Connection
             stopWatch.Start();
             byte[] block = new byte[1024];
             int bytesRed = from.Read(block, 0, block.Length);
-
-            int i = 0;
+            
             long remainingTime = 0;
+            long localCurr = 0;
+            List<long> previousTimes = new List<long>();
             do
             {
                 if (ctok.IsCancellationRequested)
@@ -434,20 +446,25 @@ namespace LANshare.Connection
                 ConnectionMessage message = new ConnectionMessage(MessageType.FileChunk, true, block);
                 TCP_Comunication.SendMessage(to, message);
                 long newCurr = curSize + bytesRed;
+                localCurr += bytesRed;
+                curSize = newCurr;
                 float percentage = ((float)newCurr / (float)totSize) * 100;
 
-                previousInstant = Environment.TickCount / 1000;
-                i++;
-                if (i % 7 == 0)
+                if (stopWatch.ElapsedMilliseconds > 500)
                 {
-                    stopWatch.Stop();
-                    long remainingBytes = totSize - newCurr;
-                    remainingTime = (totSize - newCurr) / bytesRed * stopWatch.ElapsedMilliseconds;
-                    stopWatch.Reset();
-                    stopWatch.Start();
+                    remainingTime = (totSize - newCurr) / localCurr * stopWatch.ElapsedMilliseconds;
+                    previousTimes.Add(remainingTime);
+                    if (previousTimes.Count > 10)
+                    {
+                        previousTimes = previousTimes.GetRange(previousTimes.Count - 10, 10);
+                    }
+                    long sum = previousTimes.Sum();
+                    remainingTime = sum / previousTimes.Count;
+                    stopWatch.Restart();
+                    localCurr = 0;
                 }
                 OnProgressChanged(
-                    new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromTicks(remainingTime)));
+                    new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromMilliseconds(remainingTime)));
                 bytesRed = from.Read(block, 0, block.Length);
             } while (bytesRed > 0);
             ConnectionMessage mess = new ConnectionMessage(MessageType.FileChunk, false, null);
