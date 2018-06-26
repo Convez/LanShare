@@ -176,7 +176,7 @@ namespace LANshare.Connection
                 curSize = newCurr;
                 previousInstant = Environment.TickCount;
                 OnProgressChanged(
-                    new FileTransferProgressChangedArgs(totSize, curSize, percentage, TimeSpan.FromTicks(remainingTime)));
+                    new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromTicks(remainingTime)));
                 message = TCP_Comunication.ReadMessage(from);
             }
         }
@@ -374,7 +374,7 @@ namespace LANshare.Connection
                 curSize = newCurr;
                 previousInstant = Environment.TickCount;
                 OnProgressChanged(
-                    new FileTransferProgressChangedArgs(totSize, curSize, percentage, TimeSpan.FromTicks(remainingTime)));
+                    new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromTicks(remainingTime)));
                 bytesRed = from.Read(block, 0, block.Length);
             } while (bytesRed > 0);
             ConnectionMessage mess = new ConnectionMessage(MessageType.FileChunk, false, null);
@@ -415,11 +415,11 @@ namespace LANshare.Connection
     {
         public long TotalTransferSize{ get; private set; }
         public long CurrentTransferedSize{ get; private set; }
-        public float DownloadPercentage { get; set; }
+        public int DownloadPercentage { get; set; }
         public TimeSpan RemainingTime { get; private set; }
 
         internal FileTransferProgressChangedArgs(long totalTransferSize, long currentTransferedSize,
-            float downloadPercentage, TimeSpan remainingTime)
+            int downloadPercentage, TimeSpan remainingTime)
         {
             TotalTransferSize = totalTransferSize;
             CurrentTransferedSize = currentTransferedSize;
