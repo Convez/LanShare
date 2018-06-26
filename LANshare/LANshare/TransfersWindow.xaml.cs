@@ -151,13 +151,13 @@ namespace LANshare
         public void AbortTransfer(object sender, RoutedEventArgs e) {
             Button b = (Button)sender;
             IFileTransferHelper t = b.DataContext as IFileTransferHelper;
-            if(t.Status!=TransferCompletitionStatus.Canceled && t.Status!= TransferCompletitionStatus.Completed && t.Status!= TransferCompletitionStatus.Error)
+            if(t.Status!= TransferCompletitionStatus.Refused && t.Status!=TransferCompletitionStatus.Canceled && t.Status!= TransferCompletitionStatus.Completed && t.Status!= TransferCompletitionStatus.Error)
             {
                 ConfirmationWindow C = new ConfirmationWindow("The file transfer will be aborted, continue?");
                 C.ShowDialog();
                 if (C.DialogResult == true)
                 {
-                    t.Cancel();
+                    Task.Run(() => t.Cancel());
                     RemoveTransfer(null, t);
                 }
             }
