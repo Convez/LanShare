@@ -320,7 +320,6 @@ namespace LANshare
                     
                     _menuX = System.Windows.Forms.Cursor.Position.X;
                     _menuY = System.Windows.Forms.Cursor.Position.Y;
-
                     _menu.IsOpen = true;
                 } 
                 else _menu.IsOpen = false;
@@ -332,9 +331,13 @@ namespace LANshare
             else if(e.Button== System.Windows.Forms.MouseButtons.Middle )
             {
 
-                double w = _menu.ActualWidth;   
+                double w = _menu.ActualWidth; 
                 double h = _menu.ActualHeight;
-                if(e.X<_menuX || e.X> (_menuX + w))
+
+                double centerX = _menu.RenderTransformOrigin.X;
+               
+                
+                if(e.X<_menuX -w || e.X> (_menuX + w))
                 {
                     if(e.Y<_menuY || (e.Y> _menuY+h)) _menu.IsOpen = false; //checks wether the click is outside menu
                 }
