@@ -288,8 +288,16 @@ namespace LANshare.Connection
                     
                     FileDownloadHelper helper = new FileDownloadHelper();
                     
-                        helper.Counterpart = from;
-                        helper.Status = TransferCompletitionStatus.Receiving;
+                    helper.Counterpart = from;
+                    if (File.Exists(Path.Combine("tmp", from.SessionId + ".jpg")))
+                    {
+                        from.ProfilePicture = new BitmapImage(new Uri(Path.Combine("tmp", from.SessionId + ".jpg"), UriKind.Relative));
+                    }
+                    else
+                    {
+                        from.SetupImage();
+                    }
+                    helper.Status = TransferCompletitionStatus.Receiving;
                         OnUploadAccepted(helper);
                     
                     helper.HandleFileDownload(client, savePath, (long)message.Message);
