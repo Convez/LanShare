@@ -267,6 +267,29 @@
         </Style>
 
 
+        <!--send button style-->
+        <Style x:Key="sendButton" TargetType="{x:Type Button}">
+
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="Gray"/>
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="FontFamily" Value="Gadugi" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" >
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF4E4E53"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
 
 
@@ -473,14 +496,14 @@
 
         <SolidColorBrush x:Key="StandardBorderBrush" Color="Red" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
-            <SolidColorBrush x:Key="HoverBorderBrush" Color="Red" />
-            <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="Red" />
+        <SolidColorBrush x:Key="HoverBorderBrush" Color="#FF05080C" />
+        <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#FF05080C" />
             <SolidColorBrush x:Key="SelectedForegroundBrush" Color="Green" />
-            <SolidColorBrush x:Key="DisabledForegroundBrush" Color="AliceBlue" />
+            <SolidColorBrush x:Key="DisabledForegroundBrush" Color="Red" />
         <SolidColorBrush x:Key="NormalBrush" Color="#FF05080C" />
         <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF9AB5B9" />
-        <SolidColorBrush x:Key="HorizontalNormalBrush" Color="Red" />
-                    <SolidColorBrush x:Key="HorizontalNormalBorderBrush" Color="Red" />
+        <SolidColorBrush x:Key="HorizontalNormalBrush" Color="#FF05080C" />
+        <SolidColorBrush x:Key="HorizontalNormalBorderBrush" Color="#FF9AB5B9" />
         <LinearGradientBrush x:Key="ListBoxBackgroundBrush"
 
             StartPoint="0,0" EndPoint="1,0.001">
@@ -488,7 +511,7 @@
                             <GradientStopCollection>
                                 <GradientStop Color="Black" Offset="0.0" />
                     <GradientStop Color="Red" Offset="0.6" />
-                    <GradientStop Color="Azure" Offset="1.2"/>
+                    <GradientStop Color="Black" Offset="1.2"/>
                 </GradientStopCollection>
             </GradientBrush.GradientStops>
         </LinearGradientBrush>
@@ -504,10 +527,10 @@
         <LinearGradientBrush x:Key="PressedBrush" StartPoint="0,0" EndPoint="0,1">
             <GradientBrush.GradientStops>
                 <GradientStopCollection>
-                    <GradientStop Color="Cyan" Offset="0.0"/>
-                    <GradientStop Color="DarkViolet" Offset="0.1"/>
+                    <GradientStop Color="Azure" Offset="0.0"/>
+                    <GradientStop Color="#FF9AB5B9" Offset="0.1"/>
                     <GradientStop Color="IndianRed" Offset="0.9"/>
-                    <GradientStop Color="Beige" Offset="1.0"/>
+                    <GradientStop Color="Red" Offset="1.0"/>
                 </GradientStopCollection>
             </GradientBrush.GradientStops>
          </LinearGradientBrush>
@@ -717,6 +740,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
+                            <Rectangle x:Name="Corner" Grid.Column="1" Fill="Transparent" Grid.Row="1"/>
                             <ScrollContentPresenter Grid.Column="1"/>
 
                             <ScrollBar Name="PART_VerticalScrollBar"

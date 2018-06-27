@@ -114,9 +114,40 @@
             </ListView>
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
-            <Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  />
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="50" />
+
+                </Grid.ColumnDefinitions>
+                <!--<Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
                 Send
-            </Button>
+            </Button>-->
+                <TextBlock Grid.Column="0" Style="{StaticResource StaticTextStyle}" Foreground="#FF9AB5B9"  HorizontalAlignment="Right">
+                Send :
+                </TextBlock>
+                <Button Style="{StaticResource baseButton}" Grid.Column="1" Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50" Background="Transparent">
+                    <Viewbox Width="16" Height="16">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M13,9V3.5L18.5,9M6,2C4.89,2 4,2.89 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6Z" Fill="#FF9AB5B9" />
+                        </Canvas>
+                    </Viewbox>
+
+                </Button>
+
+                <Button Style="{StaticResource baseButton}" Grid.Column="2" Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50" Background="Transparent">
+                    <Viewbox Width="16" Height="16">
+                        <Canvas Width="24" Height="24">
+                            <Path Data="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z" Fill="#FF9AB5B9" />
+                        </Canvas>
+                    </Viewbox>
+
+                </Button>
+
+            </Grid>
+            
         </Border>
 
     </Grid>
