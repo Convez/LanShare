@@ -292,6 +292,8 @@ namespace LANshare
                     profile_pic.EndInit();
 
                     Configuration.CurrentUser.ProfilePicture = profile_pic;
+                    Configuration.CurrentUser.LastPicModification = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+
                     Configuration.SaveConfiguration();
                     //this.FindResource("profileImg");
                     this.UpdateLayout();
