@@ -214,6 +214,7 @@ namespace LANshare.Connection
                                             User previousUDP = userList.Get(u.SessionId);
                                             if (previousUDP.LastPicModification < u.LastPicModification)
                                             {
+                                                previousUDP.UserAddress = endPoint.Address;
                                                 previousUDP.SetupImage();
                                             }
                                         }
