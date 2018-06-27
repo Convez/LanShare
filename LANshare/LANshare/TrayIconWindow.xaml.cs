@@ -15,6 +15,7 @@ using System.Windows.Controls;
 using System.IO;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Windows.Media.Imaging;
 
 namespace LANshare
 {
@@ -189,6 +190,14 @@ namespace LANshare
                     CancellationTokenSource cts = new CancellationTokenSource();
                     FileUploadHelper uploader = new FileUploadHelper();
                     uploader.Counterpart = u;
+                    if (File.Exists(Path.Combine("tmp", u.SessionId + ".jpg")))
+                    {
+                        u.ProfilePicture = new BitmapImage(new Uri(Path.Combine("tmp", u.SessionId + ".jpg"), UriKind.Relative));
+                    }
+                    else
+                    {
+                        u.SetupImage();
+                    }
                     uploader.Status = TransferCompletitionStatus.Requested;
                     NewTransfer(uploader);
                     bool accepted=uploader.InitFileSend(u, what, cts.Token);                    

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -61,6 +62,11 @@ namespace LANshare
                     trayIcon.Activate();
                 }
             }
+        }
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+            Directory.EnumerateFiles("tmp/").ToList().ForEach(File.Delete);
         }
     }
 }
