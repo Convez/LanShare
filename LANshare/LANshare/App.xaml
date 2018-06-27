@@ -122,7 +122,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ContextMenu}">
-                        <Border Background="#FF05080C" BorderBrush="#FF7A7A7A" BorderThickness="2" Opacity="0.96">
+                        <Border Background="#FF05080C" BorderBrush="#FF9AB5B9" BorderThickness="2" Opacity="0.96">
                             <StackPanel ClipToBounds="True" Orientation="Vertical" IsItemsHost="True" Margin="5,4,5,4"/>
                         </Border>
                     </ControlTemplate>
@@ -468,6 +468,8 @@
             </Style.Triggers>
         </Style>
 
+        
+        <!--scrollbar style-->
 
         <SolidColorBrush x:Key="StandardBorderBrush" Color="Red" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
@@ -476,7 +478,7 @@
             <SolidColorBrush x:Key="SelectedForegroundBrush" Color="Green" />
             <SolidColorBrush x:Key="DisabledForegroundBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="NormalBrush" Color="#FF05080C" />
-                <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF1C8D8D" />
+        <SolidColorBrush x:Key="NormalBorderBrush" Color="#FF9AB5B9" />
         <SolidColorBrush x:Key="HorizontalNormalBrush" Color="Red" />
                     <SolidColorBrush x:Key="HorizontalNormalBorderBrush" Color="Red" />
         <LinearGradientBrush x:Key="ListBoxBackgroundBrush"

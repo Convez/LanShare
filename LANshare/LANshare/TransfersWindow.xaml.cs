@@ -84,13 +84,6 @@ namespace LANshare
                 {
                     transfersList.Remove(t);
 
-                    //foreach (ListViewItem item in ActiveTransfers.Items)
-                    //{
-                    //    if (item.Content.Equals("ciao"))
-                    //    {
-                            
-                    //    }
-                    //}
                     
                 }
             });
@@ -197,6 +190,32 @@ namespace LANshare
             
         }
 
-        
+        private void ClearButtonClick(object sender, RoutedEventArgs e)
+        {
+            List<IFileTransferHelper> selectedUsers = ActiveTransfers.SelectedItems.OfType<IFileTransferHelper>().ToList();
+            if (selectedUsers.Count <= 0)
+            {
+                List<IFileTransferHelper> temp =new List<IFileTransferHelper>() ;
+                foreach (IFileTransferHelper t in transfersList)
+                {
+                    if (t.Status == TransferCompletitionStatus.Canceled || t.Status == TransferCompletitionStatus.Error || t.Status == TransferCompletitionStatus.Completed || t.Status == TransferCompletitionStatus.Refused)
+                        temp.Add(t);
+                }
+                foreach (IFileTransferHelper t in temp)
+                {
+                    if (t.Status == TransferCompletitionStatus.Canceled || t.Status == TransferCompletitionStatus.Error || t.Status == TransferCompletitionStatus.Completed || t.Status == TransferCompletitionStatus.Refused)
+                        transfersList.Remove(t);
+                }
+            }
+            else
+            {
+                foreach(IFileTransferHelper t in selectedUsers)
+                {
+                    if(t.Status==TransferCompletitionStatus.Canceled || t.Status == TransferCompletitionStatus.Error || t.Status == TransferCompletitionStatus.Completed || t.Status == TransferCompletitionStatus.Refused)
+                        transfersList.Remove(t);
+                }
+                //Close();
+            }
+        }
     }
 }

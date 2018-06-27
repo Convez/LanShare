@@ -4,15 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LANshare"
-        mc:Ignorable="d" Title="Transfers" Height="600" Width="1000" WindowStartupLocation="CenterScreen" Foreground="{x:Null}"
+        mc:Ignorable="d" Title="Transfers" Height="600" Width="1000" MinHeight="400" MinWidth="600" WindowStartupLocation="CenterScreen" Foreground="{x:Null}"
         Style="{StaticResource StandardStyle}" MouseDown="Window_MouseDown">
     
 
     <Grid Style="{StaticResource windowStyle}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="200"/>
             <ColumnDefinition />
-            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition Width="0.05*"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -150,5 +150,10 @@
             </ListView>
         </Border>
 
+        <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
+            <Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="ClearButtonClick"  HorizontalAlignment="Right" Width="50">
+                Clear
+            </Button>
+        </Border>
     </Grid>
 </Window>
