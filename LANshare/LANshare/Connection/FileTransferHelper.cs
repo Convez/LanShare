@@ -37,6 +37,7 @@ namespace LANshare.Connection
 
 
         string FileName { get; set; }
+        string destPath { get; set; }
 
         FileTransferProgressChangedArgs Args { get; set; }
 
@@ -69,6 +70,7 @@ namespace LANshare.Connection
             }
 
         }
+        public string destPath { get; set; }
 
 
         public string FileName { get => _filename;
@@ -98,8 +100,10 @@ namespace LANshare.Connection
         public void HandleFileDownload(string destinationPath, long totalSize) => HandleFileDownload(client, destinationPath, totalSize);
         public void HandleFileDownload(TcpClient from,string destinationPath, long totalSize)
         {
+            destPath = destinationPath;
 
             if (client == null) client = from;
+
             try
             {
                 ReceiveFiles(from, destinationPath, totalSize, 0);
@@ -117,7 +121,10 @@ namespace LANshare.Connection
                     foldersDownloaded.Where(x => !Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
                     Status = TransferCompletitionStatus.Error;
 
-                    if(ex is OperationCanceledException) OnCanceled();
+                    if (ex is OperationCanceledException) {
+                        Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
+                        OnCanceled();
+                    }
                     else cancelRequested?.Invoke(this, client);
                 }
             }
@@ -133,7 +140,6 @@ namespace LANshare.Connection
                         FileStream f = null;
                         try
                         {
-                            FileName = message.Message as string;
                             string path = Path.Combine(basePath, message.Message as string);
                             if (File.Exists(path))
                             {
@@ -143,7 +149,7 @@ namespace LANshare.Connection
                                 do { fileCount++; } while (File.Exists(Path.Combine(basePath, fileNoExt + "(" + fileCount.ToString() + ")" + ext)));
                                 path =Path.Combine(basePath, fileNoExt + "(" + fileCount.ToString() + ")" + ext);
                             }
-
+                            FileName = Path.GetFileName(path);
                             f = File.Create(path);
                             filesDownloaded.Add(path);
                             ReceiveFile(f, client, totSize, currSize);
@@ -257,6 +263,8 @@ namespace LANshare.Connection
             }
 
         }
+        public string destPath { get; set; }
+
         private TcpClient client;
         private CancellationTokenSource cts;
         private CancellationToken ctok;
@@ -295,7 +303,7 @@ namespace LANshare.Connection
         public bool InitFileSend(User to, List<string> files, CancellationToken ct, string subject = null)
         {
             cts = new CancellationTokenSource();
-     
+            destPath = files.ElementAt(0);
             ctok = cts.Token;
             client = new TcpClient(to.UserAddress.ToString(), to.TcpPortTo);
             ConnectionMessage message = new ConnectionMessage(MessageType.FileUploadRequest, true, Configuration.CurrentUser);
@@ -364,6 +372,7 @@ namespace LANshare.Connection
                 catch (OperationCanceledException ex)
                 {
                     client.Close();
+                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
                     OnCanceled();
                     return false;
                 }

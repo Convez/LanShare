@@ -69,6 +69,7 @@ namespace LANshare.Model
                 return _privacymode.ToString(); 
             }
         }
+
         [JsonIgnore]
         public ImageSource ProfilePicture
         {
@@ -80,8 +81,11 @@ namespace LANshare.Model
                 OnPropertyChanged("ProfilePicture");
             }
        }
-
-        
+        private long _lastPicModification;
+        public long LastPicModification
+        {
+            get;set;
+        }
        
         //Session Id
         [JsonProperty("SessionId")]
@@ -158,6 +162,7 @@ namespace LANshare.Model
                 Console.WriteLine(ex.Message);
                 _profilepicture = null;
             }
+            LastPicModification = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
 
         public void SetupImage()

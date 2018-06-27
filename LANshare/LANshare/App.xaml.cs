@@ -22,6 +22,7 @@ namespace LANshare
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            Directory.EnumerateFiles("tmp/").ToList().ForEach(File.Delete);
 
             Model.Configuration.LoadConfiguration();
             Model.Configuration.CurrentUser.SessionId = Model.User.GenerateSessionId();
@@ -62,11 +63,6 @@ namespace LANshare
                     trayIcon.Activate();
                 }
             }
-        }
-        protected override void OnExit(ExitEventArgs e)
-        {
-            base.OnExit(e);
-            Directory.EnumerateFiles("tmp/").ToList().ForEach(File.Delete);
         }
     }
 }
