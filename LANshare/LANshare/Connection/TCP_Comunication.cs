@@ -23,8 +23,7 @@ namespace LANshare.Connection
     class TCP_Comunication
     {
         private CancellationTokenSource shuttingDown;
-
-        private Task serverTask;
+        private List<Task> serverTasks;
         private readonly object l = "";
         private List<TcpListener> listeners;
         private TcpListener loopback;
@@ -118,25 +117,27 @@ namespace LANshare.Connection
             if (Configuration.UserAdvertisementMode == EUserAdvertisementMode.Private)
                 return;
             listeners = GenerateServers(Configuration.TcpPort);
-            serverTask = Task.Run(() => listeners.AsParallel().ForAll((server) =>
+            serverTasks = listeners.Select((server) =>
             {
-                CancellationToken shutDown = shuttingDown.Token;
-                while(!shutDown.IsCancellationRequested)
-                {
-                    try
+                return Task.Run(() =>{
+                    CancellationToken shutDown = shuttingDown.Token;
+                    while (!shutDown.IsCancellationRequested)
                     {
-                        TcpClient clientAccepted = server.AcceptTcpClient();
-                        Task.Run(() => HandleClient(clientAccepted, shutDown));
+                        try
+                        {
+                            TcpClient clientAccepted = server.AcceptTcpClient();
+                            Task.Run(() => HandleClient(clientAccepted, shutDown));
+                        }
+                        catch (SocketException)
+                        {
+                        }
+                        catch (ObjectDisposedException)
+                        {
+                        }
+                        catch (InvalidOperationException) { }
                     }
-                    catch (SocketException)
-                    {
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                    }
-                    catch (InvalidOperationException) { }
-                }
-            }));
+                });
+            }).ToList();
         }
         
         private void NetAvailabilityCallback(object sender, NetworkAvailabilityEventArgs args)
@@ -149,8 +150,8 @@ namespace LANshare.Connection
         public void StopAll()
         {
             shuttingDown?.Cancel();
-            listeners?.ForEach((l)=> { l.Stop(); });
-            serverTask?.Wait();
+            listeners?.ForEach((l)=> { l?.Stop(); });
+            serverTasks?.ForEach(t => t?.Wait());
         }
         public void StopLoopback()
         {

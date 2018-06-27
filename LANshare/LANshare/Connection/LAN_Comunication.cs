@@ -122,19 +122,28 @@ namespace LANshare.Connection
             var endpoint = new IPEndPoint(Configuration.MulticastAddress, Configuration.UdpPort);
             List<UdpClient> advertisers = GenerateUdpClients(0);
             this.advertisers = advertisers;
-
-            //Serialize user
-            ConnectionMessage userMessage =
-                new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
-            byte[] data = ConnectionMessage.Serialize(userMessage);
+            
             advertiserTask = Task.Run(()=>advertisers.AsParallel().ForAll((advertiser) =>
             {
                 CancellationToken ct = cts.Token;
                 int newSessionIdNotified=0;
                 try
                 {
+                    //Serialize user
+
+                    ConnectionMessage userMessage =
+                        new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
+                    byte[] data = ConnectionMessage.Serialize(userMessage);
+                    long previousTime = Configuration.CurrentUser.LastPicModification;
+
                     while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
                     {
+                        if (Configuration.CurrentUser.LastPicModification > previousTime)
+                        {
+                            userMessage = new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
+                            data = ConnectionMessage.Serialize(userMessage);
+                            previousTime = Configuration.CurrentUser.LastPicModification;
+                        }
                         Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
                         if (newSessionIdAvailable == 1)
                         {
@@ -214,6 +223,7 @@ namespace LANshare.Connection
                                             User previousUDP = userList.Get(u.SessionId);
                                             if (previousUDP.LastPicModification < u.LastPicModification)
                                             {
+                                                previousUDP.UserAddress = endPoint.Address;
                                                 previousUDP.SetupImage();
                                             }
                                         }
