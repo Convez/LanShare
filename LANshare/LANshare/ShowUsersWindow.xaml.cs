@@ -155,16 +155,18 @@ namespace LANshare
         {
 
             List<User> l = new List<User>();
-            User u = sender as User;
-            l.Add((User)sender);
+            ListViewItem u = (ListViewItem)sender;
+            object x = u.Content;
+            l.Add((User)x);
             OnUsersSelected(l);
         }
 
-        private void ListViewItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            ContextMenu cm = new ContextMenu();
+        //private void ListViewItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    //ContextMenu cm = new ContextMenu();
+        //    //Button b = new Button();
             
-            cm.IsOpen = true;
-        }
+        //    //cm.IsOpen = true;
+        //}
     }
 }
