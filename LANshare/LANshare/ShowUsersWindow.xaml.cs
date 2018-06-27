@@ -150,5 +150,21 @@ namespace LANshare
         {
             transfersButtonClick?.Invoke(this, null);
         }
+
+        private void ListViewItem_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+            List<User> l = new List<User>();
+            User u = sender as User;
+            l.Add((User)sender);
+            OnUsersSelected(l);
+        }
+
+        private void ListViewItem_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ContextMenu cm = new ContextMenu();
+            
+            cm.IsOpen = true;
+        }
     }
 }

@@ -124,7 +124,7 @@ namespace LANshare
             _trayIcon.Visible = true;
             _cts = new CancellationTokenSource();
             _notifications =0;
-            UnseenNotificationsIconOverlay(true);
+            
         }
 
         protected override void OnClosed(EventArgs e)
@@ -401,8 +401,6 @@ namespace LANshare
         {
 
             string n;
-            if (notificationsUnseen) n = "!";
-            else n = "";
             
 
             
@@ -412,21 +410,27 @@ namespace LANshare
 
             canvas.DrawIcon(_icon, 0, 0);
 
-            StringFormat format = new StringFormat();
-            format.Alignment = StringAlignment.Center;
-            Font f = new Font("Goudy Stout", 16.00f);
-            Pen p = new Pen(new SolidBrush(System.Drawing.Color.Green));
-            
-            //canvas.DrawEllipse(new Pen(new SolidBrush(System.Drawing.Color.Green)), new RectangleF(0, 0, 20, 20));
-            canvas.FillEllipse(new SolidBrush(System.Drawing.Color.White), new RectangleF(9, 9, 22, 22));
+            if (notificationsUnseen)
+            {
+                n = "!";
 
-            canvas.DrawString(
-                n,
-                f,
-                new SolidBrush(System.Drawing.Color.Blue),
-                new RectangleF(9, 7, 21, 21),
-                format
-            );
+                StringFormat format = new StringFormat();
+                format.Alignment = StringAlignment.Center;
+                Font f = new Font("Goudy Stout", 16.00f);
+                Pen p = new Pen(new SolidBrush(System.Drawing.Color.Green));
+
+                //canvas.DrawEllipse(new Pen(new SolidBrush(System.Drawing.Color.Green)), new RectangleF(0, 0, 20, 20));
+                canvas.FillEllipse(new SolidBrush(System.Drawing.Color.White), new RectangleF(9, 9, 22, 22));
+
+                canvas.DrawString(
+                    n,
+                    f,
+                    new SolidBrush(System.Drawing.Color.Blue),
+                    new RectangleF(9, 7, 21, 21),
+                    format
+                );
+
+            }
 
             _trayIcon.Icon = System.Drawing.Icon.FromHandle(iconBitmap.GetHicon());
 
