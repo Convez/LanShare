@@ -312,8 +312,8 @@
         <Color x:Key="SliderTrackDarkColor">#CC000000</Color>
 
         <Color x:Key="NavButtonFrameColor">#CC000000</Color>
+        <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
 
-  
         <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill"
                      StartPoint="0,0"
                      EndPoint="1,0">
@@ -527,7 +527,7 @@
         <LinearGradientBrush x:Key="PressedBrush" StartPoint="0,0" EndPoint="0,1">
             <GradientBrush.GradientStops>
                 <GradientStopCollection>
-                    <GradientStop Color="Azure" Offset="0.0"/>
+                    <GradientStop Color="#FF50C70C" Offset="0.0"/>
                     <GradientStop Color="#FF9AB5B9" Offset="0.1"/>
                     <GradientStop Color="IndianRed" Offset="0.9"/>
                     <GradientStop Color="Red" Offset="1.0"/>
@@ -730,7 +730,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <Grid>
+                        <Grid >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition/>
@@ -740,8 +740,8 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <Rectangle x:Name="Corner" Grid.Column="1" Fill="Transparent" Grid.Row="1"/>
-                            <ScrollContentPresenter Grid.Column="1"/>
+                            <Rectangle Name="Corner" Grid.Column="1" Fill="Red" Grid.Row="1"/>
+                            <ScrollContentPresenter Grid.Column="1" />
 
                             <ScrollBar Name="PART_VerticalScrollBar"
 
