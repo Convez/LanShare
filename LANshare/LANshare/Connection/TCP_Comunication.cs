@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Collections.Concurrent;
 
 namespace LANshare.Connection
 {
@@ -32,7 +33,9 @@ namespace LANshare.Connection
         public event EventHandler<List<string>> FileSendRequested;
         public event EventHandler<User> TransferRequested;
         public event EventHandler<IFileTransferHelper> UploadAccepted;
-        
+
+        private ConcurrentBag<Task> connectedUsers = new ConcurrentBag<Task>();
+
         public TCP_Comunication()
         {
             NetworkChange.NetworkAvailabilityChanged += NetAvailabilityCallback;
@@ -59,7 +62,7 @@ namespace LANshare.Connection
                             try
                             {
                                 TcpClient clientAccepted = loopback.AcceptTcpClient();
-                                Task.Run(() => HandleClient(clientAccepted, shutDown));
+                                connectedUsers.Add(Task.Run(() => HandleClient(clientAccepted, shutDown)));
                             }
                             catch (SocketException)
                             {
@@ -126,7 +129,7 @@ namespace LANshare.Connection
                         try
                         {
                             TcpClient clientAccepted = server.AcceptTcpClient();
-                            Task.Run(() => HandleClient(clientAccepted, shutDown));
+                            connectedUsers.Add( Task.Run(() => HandleClient(clientAccepted, shutDown)) );
                         }
                         catch (SocketException)
                         {
@@ -152,6 +155,7 @@ namespace LANshare.Connection
             shuttingDown?.Cancel();
             listeners?.ForEach((l)=> { l?.Stop(); });
             serverTasks?.ForEach(t => t?.Wait());
+            connectedUsers?.ToList().ForEach(c => c.Wait());
         }
         public void StopLoopback()
         {
@@ -160,6 +164,7 @@ namespace LANshare.Connection
         }
         public void RequestImage(User from)
         {
+            FileStream f = null;
             try
             {
                 TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
@@ -169,18 +174,31 @@ namespace LANshare.Connection
                 if (message.MessageType == MessageType.ProfileImageResponse && message.Next == true)
                 {
                     string p = Path.GetTempPath() + "\\LANShare";
-                    p = AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "tmp\\";
+                    p = "tmp\\";
+                    string basePath = p;
                     Directory.CreateDirectory(p);
-                    FileStream f = new FileStream(p + from.SessionId + ".jpg", FileMode.OpenOrCreate, FileAccess.Write);
+                    string fileName = (from.SessionId as string).Substring(0, 64);
+                    p = p + fileName + ".jpg";
+                    if (File.Exists(p))
+                    {
+                        string ext = ".jpg";
+                        int fileCount = -1;
+                        do { fileCount++; } while (File.Exists(basePath + fileName + "(" + fileCount.ToString() + ")" + ext));
+                        p = basePath + fileName + "(" + fileCount.ToString() + ")" + ext;
+                    }
+                    f = new FileStream(p, FileMode.Create, FileAccess.Write);
                     new FileDownloadHelper().ReceiveFile(f, client);
                     f.Close();
-                    from.ProfilePicture = new BitmapImage(new Uri(p + from.SessionId + ".jpg", UriKind.Absolute));
+                    from.ProfilePicture = new BitmapImage(new Uri(p , UriKind.Relative));
                 }
             }catch(SocketException ex)
             {
+                f?.Close();
             }
             catch (IOException ex)
             {
+                Debug.WriteLine(ex.Message);
+                f?.Close();
             }
         }
 

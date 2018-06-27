@@ -224,6 +224,7 @@ namespace LANshare.Connection
                                             if (previousUDP.LastPicModification < u.LastPicModification)
                                             {
                                                 previousUDP.UserAddress = endPoint.Address;
+                                                previousUDP.LastPicModification = u.LastPicModification;
                                                 previousUDP.SetupImage();
                                             }
                                         }
