@@ -47,16 +47,16 @@ namespace LANshare
             //List<string> files= new List<string>("uno")
             //fu.InitFileSend(u,)
             //transfersList.Add()
-            //u = new User("gigino",3,EUserAdvertisementMode.Public,null,null);
-       
-            //u.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute));
-            //transf = new FileDownloadHelper();
-            //transf.Counterpart = u;
-            //transf.Status = TransferCompletitionStatus.Sending;
-            //FileTransferProgressChangedArgs args = new FileTransferProgressChangedArgs(10,10,50, new TimeSpan(0,5,45));
-            //transf.Args=args;
-            //transf.FileName = "verylongfilenamethatjustdoesntend123456789youwishitwasover.jpg";
-            //AddTransfer(this, transf);
+            u = new User("gigino", 3, EUserAdvertisementMode.Public, null, null);
+
+            u.ProfilePicture = new BitmapImage(new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute));
+            transf = new FileDownloadHelper();
+            transf.Counterpart = u;
+            transf.Status = TransferCompletitionStatus.Sending;
+            FileTransferProgressChangedArgs args = new FileTransferProgressChangedArgs(10, 10, 50, new TimeSpan(0, 5, 45));
+            transf.Args = args;
+            transf.FileName = "verylongfilenamethatjustdoesntend123456789youwishitwasover.jpg";
+            AddTransfer(this, transf);
         }
 
 
@@ -72,13 +72,7 @@ namespace LANshare
                 }
             });
 
-            foreach (ListViewItem item in ActiveTransfers.Items)
-            {
-                if (item.Content.Equals("ciao"))
-                {
-
-                }
-            }
+            
 
         }
 
@@ -90,13 +84,13 @@ namespace LANshare
                 {
                     transfersList.Remove(t);
 
-                    foreach (ListViewItem item in ActiveTransfers.Items)
-                    {
-                        if (item.Content.Equals("ciao"))
-                        {
+                    //foreach (ListViewItem item in ActiveTransfers.Items)
+                    //{
+                    //    if (item.Content.Equals("ciao"))
+                    //    {
                             
-                        }
-                    }
+                    //    }
+                    //}
                     
                 }
             });
@@ -150,7 +144,28 @@ namespace LANshare
         public void OnPeopleWindowSelected()
         {
             peopleButtonClick?.Invoke(this, null);
+            foreach ( object item in ActiveTransfers.Items)
+            {
+                ListViewItem l = (ListViewItem)ActiveTransfers.ItemContainerGenerator.ContainerFromItem(item);
+                DependencyObject o = VisualTreeHelper.GetChild(l, 0);
+                int i = VisualTreeHelper.GetChildrenCount(o);
+                DependencyObject o1 = VisualTreeHelper.GetChild(o, 0);
+                int j = VisualTreeHelper.GetChildrenCount(o1);
 
+                DependencyObject o2 = VisualTreeHelper.GetChild(o1, 0);
+                DependencyObject o3 = VisualTreeHelper.GetChild(o2, 0);
+                int ji = VisualTreeHelper.GetChildrenCount(o3);
+
+                DependencyObject o4 = VisualTreeHelper.GetChild(o3, 6);
+                DependencyObject o5 = VisualTreeHelper.GetChild(o4, 0);
+                ProgressBar progressBar = (ProgressBar)o5;
+                
+                //object border=progressBar.FindResource("PART_Indicator");
+                //foreach (object child in FindVisualChildren<T>(child))
+                //{
+                //    return childOfChild;
+                //}
+            }
         }
 
         public void OnSettingWindowSelected()

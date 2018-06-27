@@ -225,6 +225,8 @@ namespace LANshare
                     }
                 } 
             }
+
+            Configuration.SaveConfiguration();
         }
         private void PathSetter(object sender, RoutedEventArgs e)
         {

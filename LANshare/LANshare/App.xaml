@@ -279,8 +279,8 @@
 
 
 
-        <Color x:Key="GlyphColor">#FF444444</Color>
-        <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
+        <Color x:Key="ColorAbort">Red</Color>
+        <Color x:Key="ColorAbortLight">IndianRed</Color>
 
 
         <!--Control-specific resources.-->
@@ -290,17 +290,7 @@
 
         <Color x:Key="NavButtonFrameColor">#CC000000</Color>
 
-        <LinearGradientBrush x:Key="MenuPopupBrush"
-                     EndPoint="0.5,1"
-                     StartPoint="0.5,0">
-            <GradientStop Color="{DynamicResource ControlLightColor}"
-                Offset="0" />
-            <GradientStop Color="{DynamicResource ControlMediumColor}"
-                Offset="0.5" />
-            <GradientStop Color="{DynamicResource ControlLightColor}"
-                Offset="1" />
-        </LinearGradientBrush>
-
+  
         <LinearGradientBrush x:Key="ProgressBarIndicatorAnimatedFill"
                      StartPoint="0,0"
                      EndPoint="1,0">
@@ -316,52 +306,39 @@
                     Offset="1" />
                 </GradientStopCollection>
             </LinearGradientBrush.GradientStops>
+            
         </LinearGradientBrush>
 
+        <Style x:Key="AnimatedBubble" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="{StaticResource ProgressBarIndicatorAnimatedFill}">
+                
+            </Setter>
+            <Style.Triggers>
+                <DataTrigger  Binding="{Binding Status}" Value="Sending">
+                    <Setter Property="Background" Value="Transparent">
+                        
+                    </Setter>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
 
 
 
-
-        <Style x:Key="{x:Type ProgressBar}"
-       TargetType="{x:Type ProgressBar}">
+        <Style x:Key="{x:Type ProgressBar}" TargetType="{x:Type ProgressBar}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ProgressBar}">
-                        <Grid MinHeight="14"
-              MinWidth="50"
-              Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Determinate" />
-                                    <VisualState x:Name="Indeterminate">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Duration="00:00:00"
-                                                 Storyboard.TargetName="PART_Indicator"
-                                                 Storyboard.TargetProperty="Background">
-                                                <DiscreteObjectKeyFrame KeyTime="00:00:00">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <SolidColorBrush>Transparent</SolidColorBrush>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
+                        <Grid MinHeight="14" MinWidth="50" Background="{TemplateBinding Background}">
                             <Border x:Name="PART_Track"
                             CornerRadius="5"
                             BorderThickness="1">
                                 <Border.BorderBrush>
-                                    <LinearGradientBrush StartPoint="0,0"
-                                   EndPoint="0,1">
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                         <GradientBrush.GradientStops>
                                             <GradientStopCollection>
-                                                <GradientStop Color="White"
-                                  Offset="0.0" />
-                                                <GradientStop Color="Turquoise"
-                                  Offset="1.0" />
+                                                <GradientStop Color="White" Offset="0.0" />
+                                                <GradientStop Color="Turquoise" Offset="1.0" />
                                             </GradientStopCollection>
                                         </GradientBrush.GradientStops>
                                     </LinearGradientBrush>
@@ -380,24 +357,21 @@
                                    EndPoint="0,1">
                                         <GradientBrush.GradientStops>
                                             <GradientStopCollection>
-                                                <GradientStop Color="White"
-                                  Offset="0.0" />
-                                                <GradientStop Color="Turquoise"
-                                  Offset="1.0" />
+                                                <GradientStop Color="White" Offset="0.0" />
+                                                <GradientStop x:Name="gradient" Color="Turquoise" Offset="1.0" />
                                             </GradientStopCollection>
                                         </GradientBrush.GradientStops>
                                     </LinearGradientBrush>
+                                    
 
                                 </Border.BorderBrush>
-                                <Grid ClipToBounds="True"
-                                      Margin="4,-1,4,-1"
-                                x:Name="Animation">
-                                    <Border x:Name="PART_GlowRect"
+                                <Grid ClipToBounds="True" Margin="4,-1,4,-1" x:Name="Animation">
+                                    <Border Style="{StaticResource AnimatedBubble}" x:Name="PART_GlowRect"
                                          Width="30"
                                          CornerRadius="5" 
                                          BorderThickness="2"
                                          HorizontalAlignment="Left"
-                                         Background="{StaticResource ProgressBarIndicatorAnimatedFill}"
+                                         
                                           >
                                         <Border.BorderBrush>
                                             <SolidColorBrush Color="Transparent" />
@@ -409,6 +383,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            
             <Setter Property="Background">
                 <Setter.Value>
                     <LinearGradientBrush EndPoint="0,1"
@@ -431,6 +406,34 @@
                     </LinearGradientBrush>
                 </Setter.Value>
             </Setter>
+
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding Status}" Value="Sending">
+                    <Setter Property="Foreground" >
+                        <Setter.Value>
+                            <LinearGradientBrush EndPoint="0.5,1"
+                           StartPoint="0.5,0">
+                                <GradientStop Color="{DynamicResource ColorAbort}" Offset="0" />
+                                <GradientStop Color="{DynamicResource ColorAbortLight}"  Offset="1" />
+                            </LinearGradientBrush>
+                        </Setter.Value>
+                    </Setter>
+
+                    
+
+
+                </DataTrigger>
+                
+                
+                
+                
+                <!--<DataTrigger Binding="{Binding Priority}" Value="1">
+                    <Setter Property="Fill" Value="{StaticResource NormalPriorityBrush}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Priority}" Value="2">
+                    <Setter Property="Fill" Value="{StaticResource HighPriorityBrush}" />
+                </DataTrigger>-->
+            </Style.Triggers>
         </Style>
  
 
