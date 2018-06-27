@@ -144,28 +144,24 @@ namespace LANshare
         public void OnPeopleWindowSelected()
         {
             peopleButtonClick?.Invoke(this, null);
-            foreach ( object item in ActiveTransfers.Items)
-            {
-                ListViewItem l = (ListViewItem)ActiveTransfers.ItemContainerGenerator.ContainerFromItem(item);
-                DependencyObject o = VisualTreeHelper.GetChild(l, 0);
-                int i = VisualTreeHelper.GetChildrenCount(o);
-                DependencyObject o1 = VisualTreeHelper.GetChild(o, 0);
-                int j = VisualTreeHelper.GetChildrenCount(o1);
+            //foreach ( object item in ActiveTransfers.Items)
+            //{
+            //    ListViewItem l = (ListViewItem)ActiveTransfers.ItemContainerGenerator.ContainerFromItem(item);
+            //    DependencyObject o = VisualTreeHelper.GetChild(l, 0);
+            //    int i = VisualTreeHelper.GetChildrenCount(o);
+            //    DependencyObject o1 = VisualTreeHelper.GetChild(o, 0);
+            //    int j = VisualTreeHelper.GetChildrenCount(o1);
 
-                DependencyObject o2 = VisualTreeHelper.GetChild(o1, 0);
-                DependencyObject o3 = VisualTreeHelper.GetChild(o2, 0);
-                int ji = VisualTreeHelper.GetChildrenCount(o3);
+            //    DependencyObject o2 = VisualTreeHelper.GetChild(o1, 0);
+            //    DependencyObject o3 = VisualTreeHelper.GetChild(o2, 0);
+            //    int ji = VisualTreeHelper.GetChildrenCount(o3);
 
-                DependencyObject o4 = VisualTreeHelper.GetChild(o3, 6);
-                DependencyObject o5 = VisualTreeHelper.GetChild(o4, 0);
-                ProgressBar progressBar = (ProgressBar)o5;
+            //    DependencyObject o4 = VisualTreeHelper.GetChild(o3, 6);
+            //    DependencyObject o5 = VisualTreeHelper.GetChild(o4, 0);
+            //    ProgressBar progressBar = (ProgressBar)o5;
                 
-                //object border=progressBar.FindResource("PART_Indicator");
-                //foreach (object child in FindVisualChildren<T>(child))
-                //{
-                //    return childOfChild;
-                //}
-            }
+                
+            //}
         }
 
         public void OnSettingWindowSelected()
