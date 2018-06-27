@@ -191,6 +191,7 @@ namespace LANshare
                     CancellationTokenSource cts = new CancellationTokenSource();
                     FileUploadHelper uploader = new FileUploadHelper();
                     uploader.Counterpart = u;
+
                     if (File.Exists(Path.Combine("tmp", u.SessionId + ".jpg")))
                     {
                         u.ProfilePicture = new BitmapImage(new Uri(Path.Combine("tmp", u.SessionId + ".jpg"), UriKind.Relative));

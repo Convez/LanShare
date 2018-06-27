@@ -209,6 +209,14 @@ namespace LANshare.Connection
                                             }
                                             OnUserFound(u);
                                         }
+                                        else
+                                        {
+                                            User previousUDP = userList.Get(u.SessionId);
+                                            if (previousUDP.LastPicModification < u.LastPicModification)
+                                            {
+                                                previousUDP.SetupImage();
+                                            }
+                                        }
                                         if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))
                                         {
                                             if (newSessionIdAvailable == 0)
