@@ -290,6 +290,7 @@ namespace LANshare.Connection
                     FileDownloadHelper helper = new FileDownloadHelper();
                     
                     helper.Counterpart = from;
+                    from.UserAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address;
                     if (File.Exists(Path.Combine("tmp", from.SessionId + ".jpg")))
                     {
                         from.ProfilePicture = new BitmapImage(new Uri(Path.Combine("tmp", from.SessionId + ".jpg"), UriKind.Relative));

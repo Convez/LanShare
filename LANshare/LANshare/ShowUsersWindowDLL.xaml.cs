@@ -23,7 +23,7 @@ namespace LANshare
     /// <summary>
     /// Interaction logic for ShowUsersWindow.xaml
     /// </summary>
-    public partial class ShowUsersWindow : Window,ListWindow<User>
+    public partial class ShowUsersWindowDLL : Window,ListWindow<User>
     {
 
         private readonly ObservableCollection<User> userList;
@@ -41,14 +41,14 @@ namespace LANshare
         public event EventHandler transfersButtonClick;
         public event EventHandler settingsButtonClick;
 
-        public ShowUsersWindow()
+        public ShowUsersWindowDLL()
         {
             InitializeComponent();
             userList = new ObservableCollection<User>();
             ConnectedUsers.ItemsSource = userList;
             
         }
-        public ShowUsersWindow(List<User> starting)
+        public ShowUsersWindowDLL(List<User> starting)
         {
             InitializeComponent();
             userList = new ObservableCollection<User>(starting);
@@ -70,6 +70,7 @@ namespace LANshare
                 Button b = (Button)sender;
                 if(b.Name=="File")  OnUsersSelected(selectedUsers, "file");
                 else if(b.Name=="Folder") OnUsersSelected(selectedUsers, "folder");
+                else OnUsersSelected(selectedUsers, "dll");
                 //Close();
             }
         }

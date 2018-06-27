@@ -57,6 +57,7 @@ namespace LANshare
         public event EventHandler<IFileTransferHelper> addedToTransfers;
         public event EventHandler<IFileTransferHelper> removedFromTransfers;
 
+        
         public TrayIconWindow()
         {
             SetupApplication();
@@ -146,41 +147,63 @@ namespace LANshare
         {
             Dispatcher.Invoke(() =>
             {
-                ShowUsersWindow suw = new ShowUsersWindow(_comunication.GetUsers());
+                ShowUsersWindowDLL suw = new ShowUsersWindowDLL(_comunication.GetUsers());
                 _comunication.UserFound += suw.AddUser;
                 _comunication.UsersExpired += suw.RemoveUsers;
                 suw.Closing += (o, a) => _comunication.UserFound -= suw.AddUser;
                 suw.Closing += (o, a) => _comunication.UsersExpired -= suw.RemoveUsers;
-                suw.UsersSelected += (send, arg) => 
+                suw.UsersSelected += (send, argx) => 
                 {
-                    StartUpload(args, arg);
+                    List<User> l = (List<User>)argx.Args[0];
+                    StartUpload(args, l, argx.Args[1] as string);
                 };
             });
         }
 
-        private void StartUpload(List<string>what, List<User> to)
+        private void StartUpload(List<string>what, List<User> to, string mode) //mode is "file" if file must be sent, "folder" if folder
         {
             //TODO TEST
             if (what.Count == 0)
             {
 
-                System.Windows.Forms.OpenFileDialog openFileDialog;
-                openFileDialog = new System.Windows.Forms.OpenFileDialog();
-                openFileDialog.Title = "Select files";
-                openFileDialog.Multiselect = true;
-                System.Windows.Forms.DialogResult dr = openFileDialog.ShowDialog();
-
-                if (dr == System.Windows.Forms.DialogResult.OK)
+                if (mode == "file")
                 {
-                    var names = openFileDialog.FileNames;
-                    string basePath = Path.GetDirectoryName(names.First());
-                    what.Add(basePath);
-                    foreach (String file in names)
+                    System.Windows.Forms.OpenFileDialog openFileDialog;
+                    openFileDialog = new System.Windows.Forms.OpenFileDialog();
+                    openFileDialog.Title = "Select files";
+                    openFileDialog.Multiselect = true;
+                    System.Windows.Forms.DialogResult dr = openFileDialog.ShowDialog();
+
+                    if (dr == System.Windows.Forms.DialogResult.OK)
                     {
-                        what.Add(Path.GetFileName(file));
+                        var names = openFileDialog.FileNames;
+                        string basePath = Path.GetDirectoryName(names.First());
+                        what.Add(basePath);
+                        foreach (String file in names)
+                        {
+                            what.Add(Path.GetFileName(file));
+                        }
                     }
+                    else return;
                 }
-                else return;
+                else if (mode == "folder")
+                {
+                    System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+                    folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+                    folderBrowserDialog.Description = "Select a folder";
+
+                    System.Windows.Forms.DialogResult dr = folderBrowserDialog.ShowDialog();
+                    if (dr == System.Windows.Forms.DialogResult.OK)
+
+                    {
+                        string path = folderBrowserDialog.SelectedPath;
+                        string basepath = Directory.GetParent(path).FullName;
+                        what.Add(basepath );
+                        what.Add(Path.GetDirectoryName(path));
+                    }
+
+                }
+
 
             }
 
@@ -270,9 +293,10 @@ namespace LANshare
                 _comunication.UsersExpired += userWindow.RemoveUsers;
                 userWindow.transfersButtonClick += OpenTransfers;
                 userWindow.settingsButtonClick += OpenSettings;
-                userWindow.UsersSelected += (send, arg) =>
+                userWindow.UsersSelected += (send, args) =>
                 {
-                    StartUpload(new List<String>(), arg.Distinct().ToList());
+                    List<User> l = (List<User>)args.Args[0];
+                    StartUpload(new List<String>(), l.Distinct().ToList(), args.Args[1] as string);
                 };
                 userWindow.Closing += (o, a) =>
                 {

@@ -1,4 +1,4 @@
-﻿<Window x:Class="LANshare.ShowUsersWindow"
+﻿<Window x:Class="LANshare.ShowUsersWindowDLL"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,7 +10,7 @@
 
     <Grid Style="{StaticResource windowStyle}" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="40"/>
             <ColumnDefinition />
             <ColumnDefinition Width="0.05*"/>
         </Grid.ColumnDefinitions>
@@ -24,24 +24,7 @@
 
         <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"  Background="#FF05080C">
-                <Button Style="{StaticResource windowButton}"   Width="42" Height="32" Click="Minimize_Button_Click"  >
-
-                    <Viewbox Width="16" Height="16">
-                        <Canvas Width="24" Height="24">
-                            <Path Data="M19,13H5V11H19V13Z" Fill="Gray" />
-                        </Canvas>
-                    </Viewbox>
-
-                </Button>
-                <Button Style="{StaticResource windowButton}"   Width="42" Height="32" Click="Maximize_Button_Click"  >
-
-                    <Viewbox Width="16" Height="16">
-                        <Canvas Width="24" Height="24">
-                            <Path Data="M3,21V3H21V21H3M5,5V19H19V5H5Z" Fill="Gray" />
-                        </Canvas>
-                    </Viewbox>
-
-                </Button>
+                
                 <Button Style="{StaticResource closeButton}"   Width="42" Height="32" Click="Exit_Button_Click"  >
 
                     <Viewbox Width="16" Height="16">
@@ -57,21 +40,7 @@
 
 
         <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
-        <StackPanel Grid.Column="0" Grid.Row="1" >
-
-            <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Foreground="#FFCDDFF5" >
-                People Online
-            </Button>
-            <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Click="OnTransfersClick" >
-                Transfers
-            </Button>
-            <Button Style="{StaticResource textButton}" Margin="10" FontSize="16" Click="OnSettingsClick" >
-                Settings
-            </Button>
-
-        </StackPanel>
-
-
+        
 
 
         <Border Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1">
@@ -115,30 +84,12 @@
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition  />
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="40" />
-                    <ColumnDefinition Width="10" />
-
-                </Grid.ColumnDefinitions>
-                <!--<Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
+            
+                <Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
                 Send
-            </Button>-->
-                <TextBlock Grid.Column="0" Style="{StaticResource StaticTextStyle}" Foreground="#FF9AB5B9"  HorizontalAlignment="Right">
-                Send :
-                </TextBlock>
-                <Button x:Name="File" Style="{StaticResource sendFileButton}" Grid.Column="1" Click="SendButtonClicked"  HorizontalAlignment="Center"  Background="Transparent">
-                    
-                </Button>
-
-                <Button x:Name="Folder" Style="{StaticResource sendFolderButton}" Grid.Column="2" Click="SendButtonClicked"  HorizontalAlignment="Center"  Background="Transparent">
-                    
-
-                </Button>
-
-            </Grid>
+            </Button>
+                
+            
             
         </Border>
 

@@ -143,6 +143,9 @@
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ShowUsersWindowDLL.xaml.cs">
+      <DependentUpon>ShowUsersWindowDLL.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShowUsersWindow.xaml.cs">
       <DependentUpon>ShowUsersWindow.xaml</DependentUpon>
     </Compile>
@@ -173,6 +176,10 @@
     <Page Include="SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ShowUsersWindowDLL.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="ShowUsersWindow.xaml">
       <SubType>Designer</SubType>
