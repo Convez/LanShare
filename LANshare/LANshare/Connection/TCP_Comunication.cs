@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Collections.Concurrent;
 
 namespace LANshare.Connection
 {
@@ -32,7 +33,9 @@ namespace LANshare.Connection
         public event EventHandler<List<string>> FileSendRequested;
         public event EventHandler<User> TransferRequested;
         public event EventHandler<IFileTransferHelper> UploadAccepted;
-        
+
+        private ConcurrentBag<Task> connectedUsers = new ConcurrentBag<Task>();
+
         public TCP_Comunication()
         {
             NetworkChange.NetworkAvailabilityChanged += NetAvailabilityCallback;
@@ -59,7 +62,7 @@ namespace LANshare.Connection
                             try
                             {
                                 TcpClient clientAccepted = loopback.AcceptTcpClient();
-                                Task.Run(() => HandleClient(clientAccepted, shutDown));
+                                connectedUsers.Add(Task.Run(() => HandleClient(clientAccepted, shutDown)));
                             }
                             catch (SocketException)
                             {
@@ -126,7 +129,7 @@ namespace LANshare.Connection
                         try
                         {
                             TcpClient clientAccepted = server.AcceptTcpClient();
-                            Task.Run(() => HandleClient(clientAccepted, shutDown));
+                            connectedUsers.Add( Task.Run(() => HandleClient(clientAccepted, shutDown)) );
                         }
                         catch (SocketException)
                         {
@@ -152,6 +155,7 @@ namespace LANshare.Connection
             shuttingDown?.Cancel();
             listeners?.ForEach((l)=> { l?.Stop(); });
             serverTasks?.ForEach(t => t?.Wait());
+            connectedUsers?.ToList().ForEach(c => c.Wait());
         }
         public void StopLoopback()
         {
@@ -185,7 +189,7 @@ namespace LANshare.Connection
                     f = new FileStream(p, FileMode.Create, FileAccess.Write);
                     new FileDownloadHelper().ReceiveFile(f, client);
                     f.Close();
-                    from.ProfilePicture = new BitmapImage(new Uri(p, UriKind.Relative));
+                    from.ProfilePicture = new BitmapImage(new Uri(p , UriKind.Relative));
                 }
             }catch(SocketException ex)
             {
