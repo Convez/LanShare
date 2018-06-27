@@ -96,8 +96,9 @@
                                         <ImageBrush  ImageSource="{Binding ProfilePicture}"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                <TextBlock Grid.Column="1"  Margin="10"  Text="{Binding Name}"  HorizontalAlignment="Left" />
+                                <TextBlock Grid.Column="1"  Margin="10"  Style="{StaticResource NicknameBlock}" HorizontalAlignment="Left" />
                                 <TextBlock Grid.Column="3"  Margin="10"  Text="{Binding IpAddress}" HorizontalAlignment="Right" />
+                            
                             </Grid>
 
                         </Border>
