@@ -52,6 +52,17 @@
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
 
+        <!-- Textfield style for relevant text fields -->
+        <Style x:Key="NicknameBlock" TargetType="{x:Type TextBlock}">
+
+            <Setter Property="Text" Value="{Binding Nickname}"/>
+            <Style.Triggers>
+                <Trigger Property="Text" Value="{x:Null}">
+                    <Setter Property="Text" Value="{Binding Name}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <!--standard style for every window-->
 
         <Style x:Key="StandardStyle" TargetType="{x:Type Window}">
