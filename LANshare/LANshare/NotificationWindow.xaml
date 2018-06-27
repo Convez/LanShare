@@ -28,7 +28,7 @@
 
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top" >
 
-                <Button Style="{StaticResource closeButton}"   Width="32" Height="22" Click="Exit_Button_Click"  >
+                <Button Style="{StaticResource closeButton}"   Width="42" Height="32" Click="Exit_Button_Click"  >
 
                     <Viewbox Width="16" Height="16">
                         <Canvas Width="24" Height="24">
@@ -51,12 +51,12 @@
                         <RowDefinition/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <Border Grid.Column="0"  Grid.Row="0"  HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top" >
+                    <Border Grid.Column="0"  Grid.Row="0"  HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center" >
                         <Label HorizontalAlignment="Left" >
-                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF8CA6AA"  >Please, select at least one user.</TextBlock>
+                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF87D8D1"  >Please, select at least one user.</TextBlock>
                         </Label>
                     </Border>
-                    <Button Style="{StaticResource baseButton}" Grid.Row="2"  Width="46" Height="20"  Click="Confirm" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="#FFB4DAE0">Ok</Button>
+                    <Button Style="{StaticResource baseButton}" Grid.Row="2" BorderBrush="#FF9AB5B9" BorderThickness="2" Width="46" Height="25"  Click="Confirm" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="#FFB4DAE0" Background="#FF3D4D4C">Ok</Button>
 
                 </Grid>
 

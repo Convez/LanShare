@@ -52,16 +52,7 @@
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
 
-        <!-- Textfield style for relevant text fields -->
-        <Style x:Key="NicknameBlock" TargetType="{x:Type TextBlock}">
-
-            <Setter Property="Text" Value="{Binding Nickname}"/>
-            <Style.Triggers>
-                <Trigger Property="Text" Value="{x:Null}">
-                    <Setter Property="Text" Value="{Binding Name}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+     
 
         <!--standard style for every window-->
 
@@ -576,10 +567,10 @@
         <LinearGradientBrush x:Key="PressedBrush" StartPoint="0,0" EndPoint="0,1">
             <GradientBrush.GradientStops>
                 <GradientStopCollection>
-                    <GradientStop Color="#FF50C70C" Offset="0.0"/>
-                    <GradientStop Color="#FF9AB5B9" Offset="0.1"/>
-                    <GradientStop Color="IndianRed" Offset="0.9"/>
-                    <GradientStop Color="Red" Offset="1.0"/>
+                    <GradientStop Color="#FF05080C" Offset="0.0"/>
+                    <GradientStop Color="#FF04108D" Offset="0.4"/>
+                    <GradientStop Color="#FF04108D" Offset="0.6"/>
+                    <GradientStop Color="#FF05080C" Offset="1.0"/>
                 </GradientStopCollection>
             </GradientBrush.GradientStops>
          </LinearGradientBrush>
