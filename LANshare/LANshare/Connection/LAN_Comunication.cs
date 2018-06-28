@@ -135,14 +135,15 @@ namespace LANshare.Connection
                         new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
                     byte[] data = ConnectionMessage.Serialize(userMessage);
                     long previousTime = Configuration.CurrentUser.LastPicModification;
-
+                    long previousNickTime = Configuration.CurrentUser.NickModTime;
                     while (!ct.IsCancellationRequested && (advertiser.Send(data, data.Length, endpoint)) > 0)
                     {
-                        if (Configuration.CurrentUser.LastPicModification > previousTime)
+                        if (Configuration.CurrentUser.LastPicModification > previousTime || Configuration.CurrentUser.NickModTime > previousNickTime)
                         {
                             userMessage = new ConnectionMessage(MessageType.UserAdvertisement, false, Configuration.CurrentUser);
                             data = ConnectionMessage.Serialize(userMessage);
                             previousTime = Configuration.CurrentUser.LastPicModification;
+                            previousNickTime = Configuration.CurrentUser.NickModTime;
                         }
                         Thread.Sleep(Configuration.UdpPacketsIntervalMilliseconds);
                         if (newSessionIdAvailable == 1)
@@ -207,6 +208,7 @@ namespace LANshare.Connection
                                     case MessageType.UserAdvertisement:
                                         User u = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                                         u.UserAddress = endPoint.Address;
+                                        if (string.IsNullOrEmpty(u.NickName)) u.NickName = u.Name;
                                         if (userList.Add(u.SessionId, u))
                                         {
                                             try
@@ -226,6 +228,10 @@ namespace LANshare.Connection
                                                 previousUDP.UserAddress = endPoint.Address;
                                                 previousUDP.LastPicModification = u.LastPicModification;
                                                 previousUDP.SetupImage();
+                                            }
+                                            if(previousUDP.NickModTime< u.NickModTime)
+                                            {
+                                                previousUDP.NickName = u.NickName;
                                             }
                                         }
                                         if (u.SessionId.Equals(Configuration.CurrentUser.SessionId))

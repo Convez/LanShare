@@ -124,6 +124,7 @@ namespace LANshare
 
         public void setList(List<User> list)
         {
+            userList.Clear();
             list.ForEach(userList.Add);
         }
 

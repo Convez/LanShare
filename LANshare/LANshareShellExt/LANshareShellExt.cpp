@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "LANshareShellExt.h"
-#include "resource.h"
+#include "resource1.h"
 #include <strsafe.h>
 #include <Shlwapi.h>
 #include <shellapi.h>
+#include <stdlib.h>
 #include <string>
 #include <sstream>
 #pragma comment(lib,"shlwapi.lib")
@@ -25,9 +26,8 @@ LANshareShellExt::LANshareShellExt() : m_cRef(1),
 	m_pwszVerbHelpText(L"Open with LANshare")
 {
 	InterlockedIncrement(&g_cDllRef);
-	//Eventuale icona (Al momento ritorna null)
-	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_OK), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
-
+	//Carica icona: Un bitmap 16x16 dalle resources
+	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
 }
 
 
@@ -55,7 +55,8 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 
 	std::wstring s = std::wstring();
 	std::getline(ss,s);
-	CreateProcess(
+	
+	if (!CreateProcess(
 		&s[0],												//Path to exe
 		&(*m_szSelectedFile)[0],												//Startup Arguments
 		NULL,
@@ -65,7 +66,9 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 		NULL,
 		NULL,
 		&si,
-		&pi);
+		&pi)) {
+		DWORD error = GetLastError();
+	}
 	if(pi.hThread)
 	{
 		CloseHandle(pi.hThread);
@@ -129,14 +132,21 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 			UINT nFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 			std::wstringstream ss = std::wstringstream();
 			wchar_t tmp[MAX_PATH];
-			
+			if (DragQueryFile(hDrop, 0, tmp, ARRAYSIZE(tmp)) != 0)
+			{
+				if (PathRemoveFileSpec(tmp) != 0)
+				{
+					ss << L"\"" << "rumore" << L" \" ";
+					ss << L"\"" << tmp << L"\" ";
+				}
+			}
 			for(int i=0;i<nFiles;i++)
 			{
 				//get the path of the file
 				if (DragQueryFile(hDrop, i, tmp, ARRAYSIZE(tmp))!=0)
 				{
 
-					ss <<L"\"" << PathFindFileName(tmp) <<L" \" ";
+					ss <<L"\"" << PathFindFileName(tmp) <<L"\" ";
 					hr = S_OK;
 				}
 			}

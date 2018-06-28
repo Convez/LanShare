@@ -58,8 +58,14 @@ namespace LANshare.Model
                     LANshare.Properties.Settings.Default.UserNickName = _nickname;
                     Properties.Settings.Default.Save();
                 }
+                NickModTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 OnPropertyChanged("NickName");
             }
+        }
+        private long _nickModTime;
+        public long NickModTime
+        {
+            get;set;
         }
         [JsonProperty("PrivacyMode")]
         public String PrivacyMode
@@ -124,9 +130,9 @@ namespace LANshare.Model
                     
 
                     if (File.Exists(Properties.Settings.Default.CustomPic))
-                        bi.UriSource=new Uri(Properties.Settings.Default.CustomPic, UriKind.Relative);
+                        bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                     else
-                        bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
+                        bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                     bi.EndInit();
                     ProfilePicture = bi;
                 }
@@ -136,7 +142,7 @@ namespace LANshare.Model
                     {
                         System.IO.File.Copy(profilePicUri.AbsolutePath, Properties.Settings.Default.CustomPic, true);
                        
-                        bi.UriSource=new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative);
+                        bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                         bi.EndInit();
                         ProfilePicture = bi;
 
@@ -145,7 +151,7 @@ namespace LANshare.Model
                     {
                         try
                         {
-                            bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
+                            bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                             bi.EndInit();
                             ProfilePicture = bi;
                         }

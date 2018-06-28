@@ -127,6 +127,7 @@ namespace LANshare
             {
                 lock (l)
                 {
+                    list.Clear();
                     list.ForEach(t => transfersList.Add(t));
                 }
             });

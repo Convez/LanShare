@@ -275,7 +275,7 @@ namespace LANshare
 
                 {
                     //Configuration.CurrentUser.ProfilePicture = null;
-                    System.IO.File.Copy(file, Properties.Settings.Default.CustomPic, true);
+                    System.IO.File.Copy(file, AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Properties.Settings.Default.CustomPic, true);
                     BitmapImage profile_pic = new BitmapImage();
                     //profile_pic.BeginInit();
                     //profile_pic.CacheOption = BitmapCacheOption.OnLoad;
@@ -288,7 +288,7 @@ namespace LANshare
                     profile_pic.UriCachePolicy = new System.Net.Cache.RequestCachePolicy(RequestCacheLevel.BypassCache);
                     profile_pic.CacheOption = BitmapCacheOption.OnLoad;
                     profile_pic.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                    profile_pic.UriSource = new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative);
+                    profile_pic.UriSource = new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + LANshare.Properties.Settings.Default.CustomPic, UriKind.Absolute);
                     profile_pic.EndInit();
 
                     Configuration.CurrentUser.ProfilePicture = profile_pic;
