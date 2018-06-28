@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "LANshareShellExt.h"
-#include "resource.h"
+#include "resource1.h"
 #include <strsafe.h>
 #include <Shlwapi.h>
 #include <shellapi.h>
@@ -26,9 +26,8 @@ LANshareShellExt::LANshareShellExt() : m_cRef(1),
 	m_pwszVerbHelpText(L"Open with LANshare")
 {
 	InterlockedIncrement(&g_cDllRef);
-	//Eventuale icona (Al momento ritorna null)
-	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_OK), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
-
+	//Carica icona: Un bitmap 16x16 dalle resources
+	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
 }
 
 
