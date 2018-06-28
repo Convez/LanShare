@@ -19,7 +19,7 @@
 
             <RowDefinition Height="32"/>
             <RowDefinition/>
-            <RowDefinition Height="0.1*" />
+            <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
         <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
@@ -128,7 +128,7 @@
                 Send
             </Button>-->
                 <TextBlock Grid.Column="0" Style="{StaticResource StaticTextStyle}" Foreground="#FF9AB5B9"  HorizontalAlignment="Right">
-                Send :
+                Send 🡒
                 </TextBlock>
                 <Button x:Name="File" Style="{StaticResource sendFileButton}" Grid.Column="1" Click="SendButtonClicked"  HorizontalAlignment="Center"  Background="Transparent">
                     

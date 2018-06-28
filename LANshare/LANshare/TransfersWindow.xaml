@@ -19,7 +19,7 @@
 
             <RowDefinition Height="32"/>
             <RowDefinition/>
-            <RowDefinition Height="0.1*"/>
+            <RowDefinition Height="32"/>
         </Grid.RowDefinitions>
 
         <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
@@ -77,7 +77,11 @@
                 <ListView.ItemTemplate>
                     
                     <DataTemplate>
-                        <Border CornerRadius="5" Background="#CC000000" BorderThickness="1" HorizontalAlignment="Stretch" MinWidth="470" Height="55" >
+                        <Border CornerRadius="5" Background="#CC000000" BorderThickness="1" HorizontalAlignment="Stretch" MinWidth="470" Height="55"
+                                ToolTipService.InitialShowDelay="500" 
+                            ToolTipService.ShowDuration="5000" 
+                            ToolTipService.BetweenShowDelay="0" 
+                            ToolTip="Double click to view containing folder">
                             <Border.BorderBrush>
                                 <SolidColorBrush Color="Black" />
                             </Border.BorderBrush>
@@ -145,12 +149,11 @@
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                <!--<ListView.Style>
+                <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <EventSetter Event="PreviewMouseDoubleClick" Handler="ListViewItem_PreviewMouseDoubleClick" />
                     </Style>
-
-                </ListView.Style>-->
+                </ListView.ItemContainerStyle>
                 
             </ListView>
         </Border>

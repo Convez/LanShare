@@ -10,7 +10,7 @@
 
     <Grid Style="{StaticResource windowStyle}" >
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40"/>
+            <ColumnDefinition Width="30"/>
             <ColumnDefinition />
             <ColumnDefinition Width="0.05*"/>
         </Grid.ColumnDefinitions>
@@ -19,10 +19,12 @@
 
             <RowDefinition Height="32"/>
             <RowDefinition/>
-            <RowDefinition Height="0.1*" />
+            <RowDefinition Height="32" />
         </Grid.RowDefinitions>
 
+
         <Border  Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
+
             <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"  Background="#FF05080C">
                 
                 <Button Style="{StaticResource closeButton}"   Width="42" Height="32" Click="Exit_Button_Click"  >
@@ -37,6 +39,8 @@
 
             </StackPanel>
         </Border>
+
+        <TextBlock Name="Title" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF87D8D1" >Select users :</TextBlock>
 
 
         <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>

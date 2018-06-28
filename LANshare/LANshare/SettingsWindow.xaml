@@ -120,7 +120,7 @@
                            ToolTipService.InitialShowDelay="500"
                             ToolTipService.ShowDuration="5000" 
                             ToolTipService.BetweenShowDelay="0" 
-                            ToolTip="In Private mode you will be able to send files but other users won't see you online."/>
+                            ToolTip="Select Private mode if you don't want to be seen by other users. You will still be able to send files but not receive them."/>
                 <Button Content="Edit" Grid.Column="2" Grid.Row="3" Name="EditPrivButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -221,7 +221,7 @@
                            ToolTipService.InitialShowDelay="500" 
                             ToolTipService.ShowDuration="5000" 
                             ToolTipService.BetweenShowDelay="0" 
-                            ToolTip="Edit this field to specify where the received files will be saved"/>
+                            ToolTip="Edit this field to specify how you want to manage the save path for your downloads"/>
                 <Button Content="Edit" Grid.Column="2" Grid.Row="5" Name="EditSaveButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -267,7 +267,11 @@
                     </Button.ContextMenu>
                 </Button>
 
-                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right">Save Path :</TextBlock>
+                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right"
+                           ToolTipService.InitialShowDelay="500" 
+                            ToolTipService.ShowDuration="5000" 
+                            ToolTipService.BetweenShowDelay="0" 
+                            ToolTip="Edit this field to specify where the received files will be saved">Save Path :</TextBlock>
                 <TextBlock Style="{StaticResource RelevantTextStyle}" x:Name="pathView" Grid.Column="1" FontSize="12" TextWrapping="WrapWithOverflow" Grid.Row="6" Text="{Binding SavePath}"   />
                 <Button Style="{StaticResource textButton}" x:Name="editPathButton" Content="Edit" Grid.Column="2" Grid.Row="6" Click="EditPath" FontStyle="Italic"  />
             </Grid>

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using LANshare.Model;
 using LANshare.Connection;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace LANshare
 {
@@ -216,6 +217,16 @@ namespace LANshare
                 }
                 //Close();
             }
+        }
+
+        private void ListViewItem_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            ListViewItem l = (ListViewItem)sender;
+            IFileTransferHelper t = l.DataContext as IFileTransferHelper;
+
+            string path;
+            path = Configuration.CustomSavePath;
+            Process.Start(path);
         }
     }
 }
