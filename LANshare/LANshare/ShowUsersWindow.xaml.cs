@@ -80,6 +80,7 @@ namespace LANshare
             {
                 lock (l)
                 {
+                    if (string.IsNullOrEmpty(u.NickName)) u.NickName = u.Name;
                     userList.Add(u);
                 }
             });

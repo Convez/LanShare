@@ -11,11 +11,11 @@
         >
     <Window.Resources>
         <ContextMenu x:Key="NotifierContextMenu" Placement="MousePoint" Background="Black" Foreground="Black">
-            <MenuItem Foreground="#FF9AB5B9" Header="People Online" Click="ShowPeople"/>
-            <MenuItem x:Name="PrivacyItem" Foreground="#FF9AB5B9" Header="{Binding PrivacyMode}" HeaderStringFormat="Privacy Mode: {0}" Click="SetPrivacy" diag:PresentationTraceSources.TraceLevel="High" />
-            <MenuItem Foreground="#FF9AB5B9" Header="{Binding Transfers}" HeaderStringFormat="Active File Transfers: {0}" Click="OpenTransfers" />
-            <MenuItem Foreground="#FF9AB5B9" Header="Settings" Click="OpenSettings"  />
-            <MenuItem Foreground="#FF9AB5B9" Header="Exit" Click="ExitApplication"/>
+            <MenuItem Foreground="#FF87D8D1" Header="People Online" Click="ShowPeople"/>
+            <MenuItem x:Name="PrivacyItem" Foreground="#FF87D8D1" Header="{Binding PrivacyMode}" HeaderStringFormat="Privacy Mode: {0}" Click="SetPrivacy" diag:PresentationTraceSources.TraceLevel="High" />
+            <MenuItem Foreground="#FF87D8D1" Header="{Binding Transfers}" HeaderStringFormat="Active File Transfers: {0}" Click="OpenTransfers" />
+            <MenuItem Foreground="#FF87D8D1" Header="Settings" Click="OpenSettings"  />
+            <MenuItem Foreground="#FF87D8D1" Header="Exit" Click="ExitApplication"/>
 
         </ContextMenu>
     </Window.Resources>
