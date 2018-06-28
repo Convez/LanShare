@@ -80,7 +80,6 @@ namespace LANshare
             {
                 lock (l)
                 {
-                    if (string.IsNullOrEmpty(u.NickName)) u.NickName = u.Name;
                     userList.Add(u);
                 }
             });
@@ -124,6 +123,7 @@ namespace LANshare
 
         public void setList(List<User> list)
         {
+            userList.Clear();
             list.ForEach(userList.Add);
         }
 

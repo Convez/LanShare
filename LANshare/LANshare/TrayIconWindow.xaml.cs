@@ -146,7 +146,7 @@ namespace LANshare
         {
             Dispatcher.Invoke(() =>
             {
-                ShowUsersWindowDLL suw = new ShowUsersWindowDLL(_comunication.GetUsers());
+                ShowUsersWindowDLL suw = new ShowUsersWindowDLL();
                 _comunication.UserFound += suw.AddUser;
                 _comunication.UsersExpired += suw.RemoveUsers;
                 suw.Closing += (o, a) => _comunication.UserFound -= suw.AddUser;
@@ -157,6 +157,8 @@ namespace LANshare
                     StartUpload(args, l, argx.Args[1] as string);
                     suw.Close();
                 };
+                suw.setList(_comunication.GetUsers());
+                suw.Show();
             });
         }
 
@@ -235,15 +237,16 @@ namespace LANshare
 
         private void NewTransfer(IFileTransferHelper h)
         {
-            ongoingTransfers.Add(h);
-            OnAddedToTransfers(h);
-            h.cancelRequested += (o, a) => RemoveTransaction(h);
-            h.TransferCompleted += (o, a) => RemoveTransaction(h);
             Dispatcher.Invoke(() =>
             {
                 OpenTransfers(this, null);
 
             });
+            h.cancelRequested += (o, a) => RemoveTransaction(h);
+            h.TransferCompleted += (o, a) => RemoveTransaction(h);
+            ongoingTransfers.Add(h);
+            OnAddedToTransfers(h);
+            
 
         }
 

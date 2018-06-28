@@ -165,6 +165,7 @@ namespace LANshare.Connection
         public void RequestImage(User from)
         {
             FileStream f = null;
+            Stopwatch stopwatch = null;
             try
             {
                 TcpClient client = new TcpClient(from.UserAddress.ToString(), from.TcpPortTo);
@@ -174,7 +175,6 @@ namespace LANshare.Connection
                 if (message.MessageType == MessageType.ProfileImageResponse && message.Next == true)
                 {
                     string p = Path.GetTempPath() + "\\LANShare";
-                    p = "tmp\\";
                     string basePath = p;
                     Directory.CreateDirectory(p);
                     string fileName = (from.SessionId as string).Substring(0, 64);
@@ -187,18 +187,24 @@ namespace LANshare.Connection
                         p = basePath + fileName + "(" + fileCount.ToString() + ")" + ext;
                     }
                     f = new FileStream(p, FileMode.Create, FileAccess.Write);
-                    new FileDownloadHelper().ReceiveFile(f, client);
+                    stopwatch = new Stopwatch();
+                    stopwatch.Reset();
+                    stopwatch.Restart();
+                    new FileDownloadHelper().ReceiveFile(f, client,stopwatch);
                     f.Close();
+                    stopwatch.Stop();
                     from.ProfilePicture = new BitmapImage(new Uri(p , UriKind.Relative));
                 }
             }catch(SocketException ex)
             {
                 f?.Close();
+                stopwatch?.Stop();
             }
             catch (IOException ex)
             {
                 Debug.WriteLine(ex.Message);
                 f?.Close();
+                stopwatch?.Stop();
             }
         }
 
@@ -220,17 +226,23 @@ namespace LANshare.Connection
                     OnSendRequested(files);
                     break;
                 case MessageType.ProfileImageRequest:
+                    Stopwatch stopwatch = null;
                     try
                     {
                         FileStream f = File.OpenRead(Configuration.UserPicPath);
                         ConnectionMessage response =
                             new ConnectionMessage(MessageType.ProfileImageResponse, true, null);
                         SendMessage(client, response);
-                        new FileUploadHelper().SendFile(f,client);
+                        stopwatch = new Stopwatch();
+                        stopwatch.Reset();
+                        stopwatch.Restart();
+                        new FileUploadHelper().SendFile(f,client,stopwatch);
                         f.Close();
+                        stopwatch.Stop();
                     }
                     catch (Exception ex)
                     {
+                        stopwatch?.Stop();
                         if (ex is FileNotFoundException || ex is DirectoryNotFoundException)
                         {
                             ConnectionMessage response =

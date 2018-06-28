@@ -24,7 +24,8 @@ namespace LANshare
             base.OnStartup(e);
             try
             {
-                Directory.EnumerateFiles("tmp/").ToList().ForEach(File.Delete);
+                string p = Path.GetTempPath() + "\\LANShare";
+                Directory.EnumerateFiles(p).ToList().ForEach(File.Delete);
             }catch(Exception ex)
             {
                 //la prossima volta

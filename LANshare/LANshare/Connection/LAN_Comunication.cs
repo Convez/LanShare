@@ -208,6 +208,7 @@ namespace LANshare.Connection
                                     case MessageType.UserAdvertisement:
                                         User u = JsonConvert.DeserializeObject<User>(message.Message.ToString());
                                         u.UserAddress = endPoint.Address;
+                                        if (string.IsNullOrEmpty(u.NickName)) u.NickName = u.Name;
                                         if (userList.Add(u.SessionId, u))
                                         {
                                             try

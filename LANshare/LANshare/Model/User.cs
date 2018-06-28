@@ -130,9 +130,9 @@ namespace LANshare.Model
                     
 
                     if (File.Exists(Properties.Settings.Default.CustomPic))
-                        bi.UriSource=new Uri(Properties.Settings.Default.CustomPic, UriKind.Relative);
+                        bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                     else
-                        bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
+                        bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                     bi.EndInit();
                     ProfilePicture = bi;
                 }
@@ -142,7 +142,7 @@ namespace LANshare.Model
                     {
                         System.IO.File.Copy(profilePicUri.AbsolutePath, Properties.Settings.Default.CustomPic, true);
                        
-                        bi.UriSource=new Uri(LANshare.Properties.Settings.Default.CustomPic, UriKind.Relative);
+                        bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                         bi.EndInit();
                         ProfilePicture = bi;
 
@@ -151,7 +151,7 @@ namespace LANshare.Model
                     {
                         try
                         {
-                            bi.UriSource=new Uri(LANshare.Properties.Settings.Default.DefaultPic, UriKind.Relative);
+                            bi.UriSource= new Uri(AppDomain.CurrentDomain.SetupInformation.ApplicationBase + Configuration.DefaultPicPath, UriKind.Absolute);
                             bi.EndInit();
                             ProfilePicture = bi;
                         }

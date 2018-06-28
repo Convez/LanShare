@@ -103,16 +103,21 @@ namespace LANshare.Connection
             destPath = destinationPath;
 
             if (client == null) client = from;
-
+            Stopwatch stopwatch = null;
             try
             {
-                ReceiveFiles(from, destinationPath, totalSize, 0);
+                stopwatch = new Stopwatch();
+                stopwatch.Reset();
+                stopwatch.Start();
+                ReceiveFiles(from, destinationPath, totalSize, 0,stopwatch);
                 TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                 Status = TransferCompletitionStatus.Completed;
                 Args = new FileTransferProgressChangedArgs(totalSize, totalSize, 100, TimeSpan.FromMilliseconds(0));
+                stopwatch.Stop();
             }
             catch (Exception ex)
             {
+                stopwatch?.Stop();
                 //If the download goes bad -> delete
                 if (ex is ObjectDisposedException || ex is SocketException || ex is OperationCanceledException)
                 {
@@ -129,7 +134,7 @@ namespace LANshare.Connection
                 }
             }
         }
-        private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize)
+        private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize,Stopwatch stopwatch)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(client);
             while (message.MessageType != MessageType.EndDirectory)
@@ -152,7 +157,7 @@ namespace LANshare.Connection
                             FileName = Path.GetFileName(path);
                             f = File.Create(path);
                             filesDownloaded.Add(path);
-                            ReceiveFile(f, client, totSize, currSize);
+                            ReceiveFile(f, client, stopwatch,totSize, currSize);
                             currSize += new FileInfo(path).Length;
                             f.Close();
                         }catch(Exception e)
@@ -164,7 +169,7 @@ namespace LANshare.Connection
                         string p = Path.Combine(basePath, message.Message as string);
                         Directory.CreateDirectory(p);
                         foldersDownloaded.Add(p);
-                        ReceiveFiles(client, p, totSize, currSize);
+                        ReceiveFiles(client, p, totSize, currSize, stopwatch);
                         break;
                     case MessageType.OperationCanceled:
                         throw new OperationCanceledException();
@@ -173,12 +178,8 @@ namespace LANshare.Connection
             }
         }
 
-        internal void ReceiveFile(FileStream to, TcpClient from, long totSize =1, long curSize = 1)
+        internal void ReceiveFile(FileStream to, TcpClient from, Stopwatch stopWatch,long totSize =1, long curSize = 1)
         {
-            Stopwatch stopWatch = new Stopwatch();
-
-            stopWatch.Reset();
-            stopWatch.Start();
             ConnectionMessage message = TCP_Comunication.ReadMessage(from);
             byte[] data;
 
@@ -214,7 +215,6 @@ namespace LANshare.Connection
                     new FileTransferProgressChangedArgs(totSize, curSize, (int)percentage, TimeSpan.FromMilliseconds(remainingTime)));
                 message = TCP_Comunication.ReadMessage(from);
             }
-            stopWatch.Stop();
         }
 
         protected virtual void OnProgressChanged(FileTransferProgressChangedArgs e)
@@ -353,7 +353,7 @@ namespace LANshare.Connection
                     return new FileInfo(path).Length;
                 });
 
-
+                Stopwatch stopwatch = null;
                 try
                 {
                     if (ctok.IsCancellationRequested)
@@ -364,7 +364,10 @@ namespace LANshare.Connection
                     }
                     message = new ConnectionMessage(MessageType.TotalUploadSize, true, totalSize);
                     TCP_Comunication.SendMessage(client, message);
-                    SendFiles(client, folder, files, ctok, totalSize, 0);
+                    stopwatch = new Stopwatch();
+                    stopwatch.Reset();
+                    stopwatch.Start();
+                    SendFiles(client, folder, files, ctok, stopwatch,totalSize, 0);
                     TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                     Status = TransferCompletitionStatus.Completed;
                     Args = new FileTransferProgressChangedArgs(totalSize, totalSize, 100, TimeSpan.FromMilliseconds(0));
@@ -372,17 +375,20 @@ namespace LANshare.Connection
                 catch (OperationCanceledException ex)
                 {
                     client.Close();
-                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
+                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args!=null?Args.DownloadPercentage:0, TimeSpan.FromMilliseconds(0));
                     OnCanceled();
+                    stopwatch?.Stop();
                     return false;
                 }catch (Exception ex)
                 {
                     client.Close();
-                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
+                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args != null ? Args.DownloadPercentage : 0, TimeSpan.FromMilliseconds(0));
                     Status = TransferCompletitionStatus.Error;
                     TransferCompleted?.Invoke(this, TransferCompletitionStatus.Error);
-
+                    stopwatch?.Stop();
+                    return false;
                 }
+                stopwatch?.Stop();
                 client.Close();
                 return true;
             }
@@ -390,7 +396,7 @@ namespace LANshare.Connection
             return false;
         }
 
-        private void SendFiles(TcpClient client, string baseFolder, List<string> files, CancellationToken ct, long totalSize=1, long currSize=1)
+        private void SendFiles(TcpClient client, string baseFolder, List<string> files, CancellationToken ct, Stopwatch stopwatch,long totalSize=1, long currSize=1)
         {
             foreach (string file in files)
             {
@@ -410,7 +416,7 @@ namespace LANshare.Connection
                     List<string> toSend = Directory.GetFileSystemEntries(path).ToList().Select(x => Path.GetFileName(x)).ToList();
                     
                     //toSend.AddRange(Directory.GetDirectories(path).Select(x => Path.GetDirectoryName(x)).ToList());
-                    SendFiles(client, path, toSend, ct,totalSize,currSize);
+                    SendFiles(client, path, toSend, ct, stopwatch,totalSize,currSize);
                 }
                 else
                 {
@@ -423,7 +429,7 @@ namespace LANshare.Connection
                     ConnectionMessage message = new ConnectionMessage(MessageType.NewFile, true, file);
                     TCP_Comunication.SendMessage(client, message);
                     FileStream f = File.OpenRead(path);
-                    SendFile(f, client,totalSize,currSize);
+                    SendFile(f, client, stopwatch,totalSize,currSize);
                     currSize += new FileInfo(path).Length;
                     f.Close();
                 }
@@ -439,12 +445,8 @@ namespace LANshare.Connection
         }
         
 
-        internal void SendFile(FileStream from, TcpClient to, long totSize = 1, long curSize = 1)
+        internal void SendFile(FileStream from, TcpClient to, Stopwatch stopWatch, long totSize = 1, long curSize = 1)
         {
-            Stopwatch stopWatch = new Stopwatch();
-
-            stopWatch.Reset();
-            stopWatch.Start();
             byte[] block = new byte[1024];
             int bytesRed = from.Read(block, 0, block.Length);
             
