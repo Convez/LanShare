@@ -126,20 +126,21 @@ namespace LANshare
             _cts = new CancellationTokenSource();
             _notifications =0;
         }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-            _cts.Cancel();
-            _comunication.StopAll();
-            _tcpComunication.StopAll();
-            _tcpComunication.StopLoopback();
-            Application.Current.Shutdown();
-        }
-        private void ExitApplication(object sender, RoutedEventArgs args)
+        
+        private async void ExitApplication(object sender, RoutedEventArgs args)
         {
             _trayIcon.Visible = false;
-            this.Close();
+            Application.Current.Dispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Send);
+            await new System.Threading.Tasks.Task<bool>(()=> {
+                Application.Current.Windows.OfType<Window>().ToList().ForEach(win =>
+                {
+                    win.Close();
+                });
+                _cts.Cancel();
+                _comunication.StopAll();
+                _tcpComunication.StopAll();
+                _tcpComunication.StopLoopback();
+                return true; });
         }
 
         private void StartSendingProcedure(object sender, List<string> args)
@@ -261,11 +262,12 @@ namespace LANshare
         public static T OpenWindow<T, Y>(List<Y> y)
             where T : Window, ListWindow<Y>, new()
         {
+            T toReturn = null;
             int w = Application.Current.Windows.OfType<T>().Count();
             if (w == 1)
             {
                 Application.Current.Windows.OfType<T>().First().Activate();
-                return Application.Current.Windows.OfType<T>().First();
+                toReturn = Application.Current.Windows.OfType<T>().First();
             }
             else if (w > 1)
             {
@@ -275,21 +277,23 @@ namespace LANshare
                     w = Application.Current.Windows.OfType<T>().Count();
                 }
                 Application.Current.Windows.OfType<T>().First().Activate();
-                return Application.Current.Windows.OfType<T>().First();
+                toReturn = Application.Current.Windows.OfType<T>().First();
             }
             else if (w == 0)
             {
                 T window = new T();
                 window.setList(y);
                 window.Show();
-                return window;
+                toReturn = window;
             }
-            return null;
+            
+            return toReturn;
         }
 
         private void ShowPeople(object sender, EventArgs e)
         {
             ShowUsersWindow userWindow = OpenWindow<ShowUsersWindow,User>(_comunication.GetUsers());
+            
             if (!userWindow.isSubscribed)
             {
                 userWindow.isSubscribed = true;
