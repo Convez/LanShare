@@ -229,7 +229,7 @@ namespace LANshare.Connection
                     Stopwatch stopwatch = null;
                     try
                     {
-                        FileStream f = File.OpenRead(Configuration.UserPicPath);
+                        FileStream f = File.OpenRead(AppDomain.CurrentDomain.SetupInformation.ApplicationBase+Configuration.UserPicPath);
                         ConnectionMessage response =
                             new ConnectionMessage(MessageType.ProfileImageResponse, true, null);
                         SendMessage(client, response);
