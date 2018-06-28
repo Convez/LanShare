@@ -22,8 +22,13 @@ namespace LANshare
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            Directory.EnumerateFiles("tmp/").ToList().ForEach(File.Delete);
-
+            try
+            {
+                Directory.EnumerateFiles("tmp/").ToList().ForEach(File.Delete);
+            }catch(Exception ex)
+            {
+                //la prossima volta
+            }
             Model.Configuration.LoadConfiguration();
             Model.Configuration.CurrentUser.SessionId = Model.User.GenerateSessionId();
             //Check se è attiva una sessione dell'udp advertiser/tcp listener (la parte del programma con la trayicon)

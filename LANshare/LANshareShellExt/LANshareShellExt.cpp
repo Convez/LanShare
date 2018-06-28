@@ -4,6 +4,7 @@
 #include <strsafe.h>
 #include <Shlwapi.h>
 #include <shellapi.h>
+#include <stdlib.h>
 #include <string>
 #include <sstream>
 #pragma comment(lib,"shlwapi.lib")
@@ -55,7 +56,8 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 
 	std::wstring s = std::wstring();
 	std::getline(ss,s);
-	CreateProcess(
+	
+	if (!CreateProcess(
 		&s[0],												//Path to exe
 		&(*m_szSelectedFile)[0],												//Startup Arguments
 		NULL,
@@ -65,7 +67,9 @@ void LANshareShellExt::OnVerbCallLANshare(HWND hWnd)
 		NULL,
 		NULL,
 		&si,
-		&pi);
+		&pi)) {
+		DWORD error = GetLastError();
+	}
 	if(pi.hThread)
 	{
 		CloseHandle(pi.hThread);
@@ -129,7 +133,14 @@ IFACEMETHODIMP LANshareShellExt::Initialize(LPCITEMIDLIST pidlFolder, LPDATAOBJE
 			UINT nFiles = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
 			std::wstringstream ss = std::wstringstream();
 			wchar_t tmp[MAX_PATH];
-			
+			if (DragQueryFile(hDrop, 0, tmp, ARRAYSIZE(tmp)) != 0)
+			{
+				if (PathRemoveFileSpec(tmp) != 0)
+				{
+					ss << L"\"" << "rumore" << L" \" ";
+					ss << L"\"" << tmp << L" \" ";
+				}
+			}
 			for(int i=0;i<nFiles;i++)
 			{
 				//get the path of the file

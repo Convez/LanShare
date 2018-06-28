@@ -147,7 +147,7 @@ namespace LANshare
         {
             Dispatcher.Invoke(() =>
             {
-                ShowUsersWindowDLL suw = new ShowUsersWindowDLL(_comunication.GetUsers());
+                ShowUsersWindow suw = new ShowUsersWindow(_comunication.GetUsers());
                 _comunication.UserFound += suw.AddUser;
                 _comunication.UsersExpired += suw.RemoveUsers;
                 suw.Closing += (o, a) => _comunication.UserFound -= suw.AddUser;
