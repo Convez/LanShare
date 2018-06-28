@@ -375,6 +375,13 @@ namespace LANshare.Connection
                     Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
                     OnCanceled();
                     return false;
+                }catch (Exception ex)
+                {
+                    client.Close();
+                    Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
+                    Status = TransferCompletitionStatus.Error;
+                    TransferCompleted?.Invoke(this, TransferCompletitionStatus.Error);
+
                 }
                 client.Close();
                 return true;
@@ -400,9 +407,9 @@ namespace LANshare.Connection
                     }
                     ConnectionMessage message = new ConnectionMessage(MessageType.NewDirectory, true, file);
                     TCP_Comunication.SendMessage(client, message);
-                    List<string> toSend = Directory.GetFiles(path).Select(x => Path.GetFileName(x)).ToList();
+                    List<string> toSend = Directory.GetFileSystemEntries(path).ToList().Select(x => Path.GetFileName(x)).ToList();
                     
-                    toSend.AddRange(Directory.GetDirectories(path).Select(x => Path.GetDirectoryName(x)).ToList());
+                    //toSend.AddRange(Directory.GetDirectories(path).Select(x => Path.GetDirectoryName(x)).ToList());
                     SendFiles(client, path, toSend, ct,totalSize,currSize);
                 }
                 else

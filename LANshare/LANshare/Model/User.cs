@@ -58,8 +58,14 @@ namespace LANshare.Model
                     LANshare.Properties.Settings.Default.UserNickName = _nickname;
                     Properties.Settings.Default.Save();
                 }
+                NickModTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
                 OnPropertyChanged("NickName");
             }
+        }
+        private long _nickModTime;
+        public long NickModTime
+        {
+            get;set;
         }
         [JsonProperty("PrivacyMode")]
         public String PrivacyMode
