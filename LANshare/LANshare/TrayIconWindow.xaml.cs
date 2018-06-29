@@ -61,6 +61,7 @@ namespace LANshare
         public TrayIconWindow()
         {
             SetupApplication();
+            ShowPeople(this, null);
         }
 
         public TrayIconWindow(StartupEventArgs e)
