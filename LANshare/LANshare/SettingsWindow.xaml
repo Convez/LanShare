@@ -120,7 +120,17 @@
                            ToolTipService.InitialShowDelay="500"
                             ToolTipService.ShowDuration="5000" 
                             ToolTipService.BetweenShowDelay="0" 
-                            ToolTip="Select Private mode if you don't want to be seen by other users. You will still be able to send files but not receive them."/>
+                            >
+                    <TextBlock.ToolTip>
+                        <TextBlock>
+                            <Run Text="Select Private mode if you don't want to be seen by other users."/>
+                            <LineBreak/>
+                            <Run Text="You will still be able to send files but not receive them."/>
+
+                        </TextBlock>
+                        
+                    </TextBlock.ToolTip>
+                </TextBlock>
                 <Button Content="Edit" Grid.Column="2" Grid.Row="3" Name="EditPrivButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -170,8 +180,18 @@
                 <TextBlock Name="CurrentAcceptMode" Style="{StaticResource RelevantTextStyle}" Grid.Column="1" Grid.Row="4" Text="{Binding AcceptanceMode}" 
                            ToolTipService.InitialShowDelay="500"
                             ToolTipService.ShowDuration="5000" 
-                            ToolTipService.BetweenShowDelay="0" 
-                            ToolTip="If you specify 'Accept Authomatically' the files will be downloaded on your pc without need to confirm the transfer."/>
+                            ToolTipService.BetweenShowDelay="0" >
+                    <TextBlock.ToolTip>
+                        <TextBlock>
+                            <Run Text="If you specify 'Accept Automatically' the files will be downloaded"/>
+                            <LineBreak/>
+                            <Run Text="on your pc without need to confirm the transfer."/>
+
+                        </TextBlock>
+                        
+                    </TextBlock.ToolTip>
+                </TextBlock>
+                            <!--ToolTip="If you specify 'Accept Automatically' the files will be downloaded on your pc without need to confirm the transfer."/>-->
                 <Button Content="Edit" Grid.Column="2" Grid.Row="4" Name="EditAcceptButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -221,7 +241,17 @@
                            ToolTipService.InitialShowDelay="500" 
                             ToolTipService.ShowDuration="5000" 
                             ToolTipService.BetweenShowDelay="0" 
-                            ToolTip="Edit this field to specify how you want to manage the save path for your downloads"/>
+                            >
+                    <TextBlock.ToolTip>
+                        <TextBlock>
+                            <Run Text="Edit this field to specify how you want"/>
+                            <LineBreak/>
+                            <Run Text="to manage the save path for your downloads."/>
+
+                        </TextBlock>
+                      
+                    </TextBlock.ToolTip>
+                </TextBlock>
                 <Button Content="Edit" Grid.Column="2" Grid.Row="5" Name="EditSaveButton"  FontSize="12" FontStyle="Italic"  >
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -267,12 +297,22 @@
                     </Button.ContextMenu>
                 </Button>
 
-                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right"
+                <TextBlock Style="{StaticResource StaticTextStyle}"  x:Name="pathLabel" Grid.Column="0" Grid.Row="6" HorizontalAlignment="Right">Save Path :</TextBlock>
+                <TextBlock Style="{StaticResource RelevantTextStyle}" x:Name="pathView" Grid.Column="1" FontSize="12" TextWrapping="WrapWithOverflow" Grid.Row="6" Text="{Binding SavePath}"   
                            ToolTipService.InitialShowDelay="500" 
                             ToolTipService.ShowDuration="5000" 
                             ToolTipService.BetweenShowDelay="0" 
-                            ToolTip="Edit this field to specify where the received files will be saved">Save Path :</TextBlock>
-                <TextBlock Style="{StaticResource RelevantTextStyle}" x:Name="pathView" Grid.Column="1" FontSize="12" TextWrapping="WrapWithOverflow" Grid.Row="6" Text="{Binding SavePath}"   />
+                            >
+                        <TextBlock.ToolTip>
+                            <TextBlock>
+                            <Run Text="Edit this field to specify where"/>
+                            <LineBreak/>
+                            <Run Text="the received files will be saved."/>
+
+                            </TextBlock>
+
+                        </TextBlock.ToolTip>
+                    </TextBlock>
                 <Button Style="{StaticResource textButton}" x:Name="editPathButton" Content="Edit" Grid.Column="2" Grid.Row="6" Click="EditPath" FontStyle="Italic"  />
             </Grid>
 
