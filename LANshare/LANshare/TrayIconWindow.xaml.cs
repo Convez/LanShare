@@ -268,6 +268,7 @@ namespace LANshare
             if (w == 1)
             {
                 Application.Current.Windows.OfType<T>().First().Activate();
+                Application.Current.Windows.OfType<T>().First().WindowState = WindowState.Normal;
                 toReturn = Application.Current.Windows.OfType<T>().First();
             }
             else if (w > 1)
@@ -278,6 +279,7 @@ namespace LANshare
                     w = Application.Current.Windows.OfType<T>().Count();
                 }
                 Application.Current.Windows.OfType<T>().First().Activate();
+                Application.Current.Windows.OfType<T>().First().WindowState = WindowState.Normal;
                 toReturn = Application.Current.Windows.OfType<T>().First();
             }
             else if (w == 0)
@@ -316,6 +318,7 @@ namespace LANshare
                     userWindow.settingsButtonClick -= OpenSettings;
                 };
             }
+            userWindow.setList(_comunication.GetUsers());
         }
 
 

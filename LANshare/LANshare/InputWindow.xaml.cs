@@ -38,7 +38,7 @@ namespace LANshare
         private void SubmitInput(object sender, RoutedEventArgs e)
         {
             _input = null;
-            _input = InputField.Text;
+            _input = !InputField.Text.Equals(_defaultText)?InputField.Text:string.Empty;
             if (_input == String.Empty)
             {
                 this.DialogResult = false;
@@ -61,7 +61,6 @@ namespace LANshare
                     _input = null;
                     return;
                 }
-
                 this.DialogResult = true;
             }
            

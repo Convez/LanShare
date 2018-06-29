@@ -113,6 +113,7 @@ namespace LANshare.Connection
                 TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                 Status = TransferCompletitionStatus.Completed;
                 Args = new FileTransferProgressChangedArgs(totalSize, totalSize, 100, TimeSpan.FromMilliseconds(0));
+                TransferCompleted?.Invoke(this, TransferCompletitionStatus.Completed);
                 stopwatch.Stop();
             }
             catch (Exception ex)
@@ -125,16 +126,17 @@ namespace LANshare.Connection
                     foldersDownloaded.Reverse();
                     foldersDownloaded.Where(x => !Directory.EnumerateFileSystemEntries(x).Any()).ToList().ForEach(Directory.Delete);
                     Status = TransferCompletitionStatus.Error;
+                    TransferCompleted?.Invoke(this, TransferCompletitionStatus.Error);
 
                     if (ex is OperationCanceledException) {
                         Args = new FileTransferProgressChangedArgs(totalSize, totalSize, Args.DownloadPercentage, TimeSpan.FromMilliseconds(0));
+                        Status = TransferCompletitionStatus.Canceled;
                         OnCanceled();
                     }
-                    else cancelRequested?.Invoke(this, client);
                 }
             }
         }
-        private void ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize,Stopwatch stopwatch)
+        private long ReceiveFiles(TcpClient client, string basePath, long totSize, long currSize,Stopwatch stopwatch)
         {
             ConnectionMessage message = TCP_Comunication.ReadMessage(client);
             while (message.MessageType != MessageType.EndDirectory)
@@ -158,24 +160,26 @@ namespace LANshare.Connection
                             f = File.Create(path);
                             filesDownloaded.Add(path);
                             ReceiveFile(f, client, stopwatch,totSize, currSize);
-                            currSize += new FileInfo(path).Length;
                             f.Close();
+                            currSize += new FileInfo(path).Length;
                         }catch(Exception e)
                         {
                             f?.Close();
+                            throw e;
                         }
                         break;
                     case MessageType.NewDirectory:
                         string p = Path.Combine(basePath, message.Message as string);
                         Directory.CreateDirectory(p);
                         foldersDownloaded.Add(p);
-                        ReceiveFiles(client, p, totSize, currSize, stopwatch);
+                        currSize = ReceiveFiles(client, p, totSize, currSize, stopwatch);
                         break;
                     case MessageType.OperationCanceled:
                         throw new OperationCanceledException();
                 }
                 message = TCP_Comunication.ReadMessage(client);
             }
+            return currSize;
         }
 
         internal void ReceiveFile(FileStream to, TcpClient from, Stopwatch stopWatch,long totSize =1, long curSize = 1)
@@ -396,7 +400,7 @@ namespace LANshare.Connection
             return false;
         }
 
-        private void SendFiles(TcpClient client, string baseFolder, List<string> files, CancellationToken ct, Stopwatch stopwatch,long totalSize=1, long currSize=1)
+        private long SendFiles(TcpClient client, string baseFolder, List<string> files, CancellationToken ct, Stopwatch stopwatch,long totalSize=1, long currSize=1)
         {
             foreach (string file in files)
             {
@@ -416,7 +420,7 @@ namespace LANshare.Connection
                     List<string> toSend = Directory.GetFileSystemEntries(path).ToList().Select(x => Path.GetFileName(x)).ToList();
                     
                     //toSend.AddRange(Directory.GetDirectories(path).Select(x => Path.GetDirectoryName(x)).ToList());
-                    SendFiles(client, path, toSend, ct, stopwatch,totalSize,currSize);
+                    currSize = SendFiles(client, path, toSend, ct, stopwatch,totalSize,currSize);
                 }
                 else
                 {
@@ -442,12 +446,13 @@ namespace LANshare.Connection
             }
             ConnectionMessage mess = new ConnectionMessage(MessageType.EndDirectory, false, null);
             TCP_Comunication.SendMessage(client, mess);
+            return currSize;
         }
         
 
         internal void SendFile(FileStream from, TcpClient to, Stopwatch stopWatch, long totSize = 1, long curSize = 1)
         {
-            byte[] block = new byte[1024];
+            byte[] block = new byte[4096];
             int bytesRed = from.Read(block, 0, block.Length);
             
             long remainingTime = 0;
@@ -461,7 +466,7 @@ namespace LANshare.Connection
                     TCP_Comunication.SendMessage(to, me);
                     throw new OperationCanceledException();
                 }
-                ConnectionMessage message = new ConnectionMessage(MessageType.FileChunk, true, block);
+                ConnectionMessage message = new ConnectionMessage(MessageType.FileChunk, true, Convert.ToBase64String(block));
                 TCP_Comunication.SendMessage(to, message);
                 long newCurr = curSize + bytesRed;
                 localCurr += bytesRed;

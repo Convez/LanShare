@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using Newtonsoft.Json;
 
 namespace LANshare.Model
@@ -64,7 +65,16 @@ namespace LANshare.Model
         {
             string s = Encoding.UTF8.GetString(toDeserialize);
             Debug.WriteLine(s);
-            return JsonConvert.DeserializeObject<ConnectionMessage>(s);
+            Console.WriteLine(s);
+            try
+            {
+                return JsonConvert.DeserializeObject<ConnectionMessage>(s);
+            }catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                MessageBox.Show(s);
+                throw new Exception();
+            }
             IFormatter formatter =
                 new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
             try

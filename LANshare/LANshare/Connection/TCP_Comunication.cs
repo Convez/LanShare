@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using System.Collections.Concurrent;
+using Newtonsoft.Json.Linq;
 
 namespace LANshare.Connection
 {
@@ -252,7 +253,9 @@ namespace LANshare.Connection
                     }
                     break;
                 case MessageType.FileUploadRequest:
-                    User from = JsonConvert.DeserializeObject<User>(message.Message.ToString());
+                    User from = message.Message as User;
+                    from.UserAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address;
+                    from.NickName = string.IsNullOrEmpty(from.NickName) || string.IsNullOrWhiteSpace(from.NickName) ? from.Name : from.NickName;
                     string username = from.NickName != null ? from.NickName : from.Name;
 
                     //TODO Ask user for permission
@@ -368,6 +371,26 @@ namespace LANshare.Connection
         }
         internal static ConnectionMessage ReadMessage(TcpClient from)
         {
+            using (var reader = new BinaryReader(from.GetStream(),Encoding.BigEndianUnicode,true))
+            {
+                try
+                {
+                    int size = reader.ReadInt32();
+                    byte[] buffer = reader.ReadBytes(size);
+                    using (var memStream = new MemoryStream(buffer))
+                    {
+                        var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                        return (ConnectionMessage)formatter.Deserialize(memStream);
+                    }
+                }catch(Exception ex)
+                {
+                    if (ex is EndOfStreamException)
+                        throw new OperationCanceledException();
+                    else
+                        throw new SocketException();
+                }
+            }
+            /*
             NetworkStream ns = from.GetStream();
             byte[] messageSize = new byte[sizeof(Int32)];
             int bytesRed = ns.Read(messageSize, 0, messageSize.Length);
@@ -375,7 +398,7 @@ namespace LANshare.Connection
             {
                 //NotificationWindow C = new NotificationWindow("Connection aborted.");
                 //C.ShowDialog();
-                
+
                 throw new OperationCanceledException();
             }
             int messageLength = BitConverter.ToInt32(messageSize, 0);
@@ -384,26 +407,116 @@ namespace LANshare.Connection
             int red = ns.Read(readVector, 0, readVector.Length);
             while (red < toRead)
             {
-                red += ns.Read(readVector, red,toRead-red);
+                int boh = ns.Read(readVector, red, toRead - red);
+                red += boh;
             }
-            try
+            IFormatter formatter =
+                   new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+            
+            using (MemoryStream ms = new MemoryStream(readVector))
             {
-                return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
-            }catch(Exception ex)
-            {
-                return null;
-            }
+                ms.Seek(0, SeekOrigin.Begin);
+                ms.Position = 0;
+                return formatter.Deserialize(ms) as ConnectionMessage;
+            }*/
+                /*
+                using (TextReader textR = new StreamReader(from.GetStream(), Encoding.UTF8, true, 4096, true))
+                using (JsonReader jsonR = new JsonTextReader(textR)
+                {
+                    CloseInput = false
+                })
+                {
+                    jsonR.Read();
+                    JObject jObject = JObject.Load(jsonR);
+                    return jObject.ToObject<ConnectionMessage>();
+                }*/
+                /*
+        NetworkStream ns = from.GetStream();
+        byte[] messageSize = new byte[sizeof(Int32)];
+        int bytesRed = ns.Read(messageSize, 0, messageSize.Length);
+        if (bytesRed <= 0)
+        {
+            //NotificationWindow C = new NotificationWindow("Connection aborted.");
+            //C.ShowDialog();
+
+            throw new OperationCanceledException();
         }
+        int messageLength = BitConverter.ToInt32(messageSize, 0);
+        int toRead = IPAddress.NetworkToHostOrder(messageLength);
+        byte[] readVector = new byte[toRead];
+        int red = ns.Read(readVector, 0, readVector.Length);
+        while (red < toRead)
+        {
+            int boh = ns.Read(readVector, red, toRead - red);
+            red += boh;
+        }
+        if(red > toRead)
+        {
+            MessageBox.Show(red.ToString());
+            MessageBox.Show(toRead.ToString());
+        }
+        try
+        {
+            return bytesRed <= 0 ? null : ConnectionMessage.Deserialize(readVector);
+        }catch(Exception ex)
+        {
+            return null;
+        }*/
+            }
 
         internal static void SendMessage(TcpClient to, ConnectionMessage message)
         {
+            using(var writer = new BinaryWriter(to.GetStream(),Encoding.BigEndianUnicode,true))
+            {
+                var formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                using(var memory = new MemoryStream())
+                {
+                    formatter.Serialize(memory, message);
+                    byte[] data = memory.ToArray();
+                    writer.Write(data.Length);
+                    writer.Write(data);
+                }
+            }
+            /*
+            IFormatter formatter =
+                new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                formatter.Serialize(ms, message);
+                byte[] data = ms.ToArray();
+                NetworkStream ns = to.GetStream();
+                byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.Length));
+                ns.Write(dataSize, 0, dataSize.Length);
+                ns.Flush();
+                ns.Write(data, 0, data.Length);
+                ns.Flush();
+            }
+            */
+            /*
+            string json = JsonConvert.SerializeObject(message);
+            
+            using (TextWriter textW = new StreamWriter(to.GetStream(), Encoding.UTF8,4096,true))
+            using (JsonWriter jsonW = new JsonTextWriter(textW)
+            {
+                CloseOutput=false
+            }
+            )
+            {
+                JObject jObject = JObject.Parse(json);
+
+                jObject.WriteTo(jsonW);
+                jsonW.Flush();
+            }*/
+            /*
             NetworkStream ns = to.GetStream();
             byte[] data = ConnectionMessage.Serialize(message);
-            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(data.Length));
+            byte[] dataSize = BitConverter.GetBytes(IPAddress.HostToNetworkOrder(Encoding.UTF8.GetByteCount(JsonConvert.SerializeObject(message))));
             ns.Write(dataSize, 0, dataSize.Length);
             ns.Flush();
             ns.Write(data, 0, data.Length);
             ns.Flush();
+            */
         }
 
         public static bool OtherInstanceRunning()
