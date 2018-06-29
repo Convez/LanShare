@@ -27,7 +27,7 @@ LANshareShellExt::LANshareShellExt() : m_cRef(1),
 {
 	InterlockedIncrement(&g_cDllRef);
 	//Carica icona: Un bitmap 16x16 dalle resources
-	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT);
+	m_hMenuBmp = LoadImage(g_hInst, MAKEINTRESOURCE(IDB_BITMAP3), IMAGE_BITMAP, 0, 0, LR_DEFAULTSIZE | LR_LOADTRANSPARENT | LR_LOADMAP3DCOLORS);
 }
 
 

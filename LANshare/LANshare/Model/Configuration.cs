@@ -71,7 +71,6 @@ namespace LANshare.Model
             {
                 Directory.CreateDirectory(DefaultSavePath);
             }
-            CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort , Properties.Settings.Default.UserAdvertisementMode , null , Properties.Settings.Default.UserNickName);
             CurrentUser.UserAddress = Dns.GetHostAddresses(Dns.GetHostName())
                 .FirstOrDefault((ip) => ip.AddressFamily == AddressFamily.InterNetwork);
             UserValidityMilliseconds = Properties.Settings.Default.UserValidityMilliseconds;
@@ -79,6 +78,7 @@ namespace LANshare.Model
             DefaultPicPath = Properties.Settings.Default.DefaultPic;
 
             UserPicPath = Properties.Settings.Default.CustomPic;
+            CurrentUser = new User(Properties.Settings.Default.DefaultUser, TcpPort , Properties.Settings.Default.UserAdvertisementMode , null , Properties.Settings.Default.UserNickName);
         }
 
         public static void SaveConfiguration()
