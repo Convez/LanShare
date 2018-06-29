@@ -57,7 +57,7 @@
                         <RowDefinition/>
                         <RowDefinition Height="30"/>
                     </Grid.RowDefinitions>
-                    <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF323840" Foreground="#FF323840" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" BorderBrush="#FF48596C" />
+                    <TextBox Name="InputField" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="#FF323840" Foreground="#FF9AB5B9" FontFamily="Gadugi" FontSize="14" GotFocus="TextBox_GotFocus" BorderBrush="#FF48596C" />
                     <TextBlock Name="HintField"  Text="{Binding Hint}" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"  Foreground="IndianRed" Background="{x:Null}" Margin="0,5,0,0"/>
                     <Button  Style="{StaticResource baseButton}"  Grid.Row="2" Grid.Column="1" Width="46" Height="20" Click="Exit_Button_Click" HorizontalAlignment="Right"  Foreground="#FF9AB5B9" >Cancel</Button>
                     <Button Style="{StaticResource baseButton}"  Grid.Row="2" Grid.Column="2" Width="46" Height="20" Click="SubmitInput" HorizontalAlignment="Right" Foreground="#FFB4DAE0" >OK</Button>
