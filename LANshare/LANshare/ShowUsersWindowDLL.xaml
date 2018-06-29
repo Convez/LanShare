@@ -40,7 +40,7 @@
             </StackPanel>
         </Border>
 
-        <TextBlock Name="Title" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF87D8D1" >Select users :</TextBlock>
+        <TextBlock Name="Title" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF9AB5B9" >Select users :</TextBlock>
 
 
         <Border  Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Background="#FF05080C"/>
@@ -88,8 +88,8 @@
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="#FF05080C">
 
-            
-                <Button Style="{StaticResource textButton}" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
+
+            <Button Style="{StaticResource textButton}" Foreground="#FF9AB5B9" Grid.Column="2" Grid.Row="2" Grid.RowSpan="2"  Click="SendButtonClicked"  HorizontalAlignment="Right" Width="50">
                 Send
             </Button>
                 

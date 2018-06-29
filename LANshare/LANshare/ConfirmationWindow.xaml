@@ -54,11 +54,11 @@
                     </Grid.RowDefinitions>
                     <Border Grid.Column="0"  Grid.Row="0"  HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Top" >
                         <Label HorizontalAlignment="Left" >
-                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF87D8D1"  >The file transfer will be aborted, continue?</TextBlock>
+                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF9AB5B9"  >The file transfer will be aborted, continue?</TextBlock>
                         </Label>
                     </Border>
-                    <Button Style="{StaticResource baseButton}" Grid.Row="2" Grid.Column="0" Width="46" Height="25" Click="Abort" HorizontalAlignment="Right" Margin="0,0,10,0" Background="#FF4D7673" Foreground="#FF87AEAA"  >No</Button>
-                    <Button Style="{StaticResource baseButton}" Grid.Row="2" Grid.Column="1" Width="46" Height="25" Click="Confirm" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="#FFB4DAE0" Background="#FF4D7673">Yes</Button>
+                    <Button Style="{StaticResource baseButton}" Grid.Row="2" Grid.Column="0" Width="46" Height="25" Click="Abort" HorizontalAlignment="Right" Margin="0,0,10,0"  Foreground="#FF9AB5B9"  >No</Button>
+                    <Button Style="{StaticResource baseButton}" Grid.Row="2" Grid.Column="1" Width="46" Height="25" Click="Confirm" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="#FFB4DAE0">Yes</Button>
 
                 </Grid>
 

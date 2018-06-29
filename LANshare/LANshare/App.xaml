@@ -41,6 +41,8 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
+        
+        
 
         <!-- Textfield style for relevant text fields -->
         <Style x:Key="RelevantTextStyle" TargetType="{x:Type TextBlock}">
@@ -52,7 +54,29 @@
             <Setter Property="SnapsToDevicePixels" Value="True"/>
         </Style>
 
-     
+        <!-- Textfield style for static texts -->
+        <Style x:Key="TimerTextStyle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="LightGray"/>
+            <Setter Property="FontSize" Value="12"/>
+            <!--<Setter Property="FontWeight" Value="Bold"/>-->
+            <Setter Property="FontFamily" Value="Gadugi"/>
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+
+            <Style.Triggers>
+                
+                <DataTrigger  Binding="{Binding Status}" Value="Canceled">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+                <DataTrigger  Binding="{Binding Status}" Value="Error">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+                <DataTrigger  Binding="{Binding Status}" Value="Completed">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
 
         <!--standard style for every window-->
 
@@ -247,7 +271,7 @@
         <!--base button style-->
         <Style x:Key="baseButton" TargetType="{x:Type Button}">
 
-            <Setter Property="Background" Value="#FF3A3A3E" />
+            <Setter Property="Background" Value="#FF323840" />
             <Setter Property="Foreground" Value="Gray"/>
             <Setter Property="BorderBrush" Value="{x:Null}" />
             <Setter Property="FontFamily" Value="Gadugi" />
@@ -263,7 +287,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FF4E4E53"/>
+                    <Setter Property="Background" Value="#FF454D57"/>
                 </Trigger>
             </Style.Triggers>
         </Style>

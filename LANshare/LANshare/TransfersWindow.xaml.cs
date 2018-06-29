@@ -211,10 +211,21 @@ namespace LANshare
             }
             else
             {
+                int i = 0; 
                 foreach(IFileTransferHelper t in selectedUsers)
                 {
                     if(t.Status==TransferCompletitionStatus.Canceled || t.Status == TransferCompletitionStatus.Error || t.Status == TransferCompletitionStatus.Completed || t.Status == TransferCompletitionStatus.Refused)
                         transfersList.Remove(t);
+                    else
+                    {
+                        if (i == 0)
+                        {
+                            NotificationWindow n = new NotificationWindow("Sorry, you can't clean active transfers.");
+                            n.ShowDialog();
+                            i++;
+                        }
+                        
+                    }
                 }
                 //Close();
             }

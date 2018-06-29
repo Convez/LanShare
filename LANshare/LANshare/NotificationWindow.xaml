@@ -53,10 +53,10 @@
                     </Grid.RowDefinitions>
                     <Border Grid.Column="0"  Grid.Row="0"  HorizontalAlignment="Left" Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalAlignment="Center" >
                         <Label HorizontalAlignment="Left" >
-                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF87D8D1"  >Please, select at least one user.</TextBlock>
+                            <TextBlock Name="Title" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" FontWeight="Regular" FontSize="15" Foreground="#FF9AB5B9"  >Please, select at least one user.</TextBlock>
                         </Label>
                     </Border>
-                    <Button Style="{StaticResource baseButton}" Grid.Row="2" BorderBrush="#FF9AB5B9" BorderThickness="2" Width="46" Height="25"  Click="Confirm" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="#FFB4DAE0" Background="#FF3D4D4C">Ok</Button>
+                    <Button Style="{StaticResource baseButton}" Grid.Row="2" BorderBrush="#FF9AB5B9" BorderThickness="2" Width="46" Height="25"  Click="Confirm" HorizontalAlignment="Center" Margin="10,0,0,0" Foreground="#FFB4DAE0" >Ok</Button>
 
                 </Grid>
 
