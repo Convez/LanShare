@@ -225,8 +225,13 @@ namespace LANshare
             ListViewItem l = (ListViewItem)sender;
             IFileTransferHelper t = l.DataContext as IFileTransferHelper;
 
-            string path;
-            path = Configuration.CustomSavePath;
+            string path = t.destPath;
+            if (string.IsNullOrEmpty(path))
+            {
+                NotificationWindow n = new NotificationWindow("Sorry, the file was not found.");
+                n.ShowDialog();
+                return;
+            }
             Process.Start(path);
         }
     }
