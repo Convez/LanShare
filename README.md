@@ -3,8 +3,6 @@
 
 LANshare is a .NET desktop application for sending and receiving files through LAN.
 
-It was developed as project for the course "Programmazione di Sistema" at Politecnico di Torino.
-
 It's main features are:
 
 * send and receive files and folders
